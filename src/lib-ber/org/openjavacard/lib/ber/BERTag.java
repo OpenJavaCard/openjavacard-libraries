@@ -20,9 +20,13 @@
 
 package org.openjavacard.lib.ber;
 
+import javacard.framework.Util;
+
 public final class BERTag {
 
-    public static final short TYPE_MASK = (short)0x1F00;
+    public static final short TYPE_MASK       = (short)0x1F7F;
+    public static final short TYPE_MASK_FIRST = (short)0x1F00;
+
     public static final short TYPE_EOC = (short)0x0000;
     public static final short TYPE_BOOLEAN = (short)0x0100;
     public static final short TYPE_INTEGER = (short)0x0200;
@@ -66,12 +70,14 @@ public final class BERTag {
     private static final byte TAGBYTE_FIRST_TYPE_LONG = (byte)0x1F;
     private static final byte TAGBYTE_FLAG_CONTINUES = (byte)0x80;
 
-    public static final boolean byteIsLongForm(byte firstByte) {
+    /** Internal: return true of the given first byte of a tag indicates long form */
+    static boolean byteIsLongForm(byte firstByte) {
         return (firstByte & TAGBYTE_FIRST_TYPE_MASK)
                 == TAGBYTE_FIRST_TYPE_LONG;
     }
 
-    public static final boolean byteIsLast(byte tagByte) {
+    /** Internal: return true of the given tag byte is the last byte of the tag */
+    static boolean byteIsLast(byte tagByte) {
         return (tagByte & TAGBYTE_FLAG_CONTINUES) == 0;
     }
 
@@ -99,12 +105,18 @@ public final class BERTag {
         return (tag & CONSTRUCTED_FLAG) != 0;
     }
 
+    public static final short tagClass(short tag) {
+        return (short)(tag & CLASS_MASK);
+    }
+
+    /** Returns the type of the tag */
     public static final short tagType(short tag) {
         return (short)(tag & TYPE_MASK);
     }
 
-    public static final short tagClass(short tag) {
-        return (short)(tag & CLASS_MASK);
+    /** Returns true of the tag requires two bytes */
+    public static final boolean tagIsLong(short tag) {
+        return (tag & TYPE_MASK_FIRST) == TYPE_LONG;
     }
 
     public static final short tagAsConstructed(short tag) {
@@ -116,12 +128,21 @@ public final class BERTag {
     }
 
     public static final short tagSize(short tag) {
-        return 1;
+        if(tagIsLong(tag)) {
+            return 2;
+        } else {
+            return 1;
+        }
     }
 
-    public static final short putTag(byte[] buf, short bufOff, short tag) {
-        buf[bufOff++] = (byte)(tag & 0xFF);
-        return bufOff;
+    /** Put a tag into the given buffer */
+    public static final short putTag(byte[] buf, short off, short tag) {
+        if(tagIsLong(tag)) {
+            off = Util.setShort(buf, off, tag);
+        } else {
+            buf[off++] = (byte) ((tag >> 8) & 0xFF);
+        }
+        return off;
     }
 
 }
