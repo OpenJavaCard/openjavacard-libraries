@@ -36,7 +36,7 @@ public class BERWriter {
     /** Transient: state variables */
     private final short[]  mVars;
     /** Number of transient variables */
-    private static final byte NUM_VAR = 5;
+    private static final byte NUM_VAR = 4;
     /** Variable: maximum allowed length */
     private static final byte VAR_MAX_LENGTH = 0;
     /** Variable: current running length */
@@ -45,8 +45,6 @@ public class BERWriter {
     private static final byte VAR_DEPTH      = 2;
     /** Variable: current index */
     private static final byte VAR_INDEX      = 3;
-    /** Variable: current class */
-    private static final byte VAR_CLASS      = 4;
 
     /** Transient: stack for tags */
     private final short[]  mTagStk;
@@ -117,11 +115,6 @@ public class BERWriter {
         mVars[VAR_LENGTH]  = 0;
         mVars[VAR_DEPTH]   = 0;
         mVars[VAR_INDEX]   = 0;
-        mVars[VAR_CLASS]   = BERTag.CLASS_UNIVERSAL;
-    }
-
-    public final void setClass(short cls) {
-        mVars[VAR_CLASS] = (short)(cls & BERTag.CLASS_MASK);
     }
 
     /**
@@ -161,7 +154,6 @@ public class BERWriter {
     public final void beginConstructed(short tag) {
         byte current = (byte)mVars[VAR_INDEX];
         byte depth = (byte)mVars[VAR_DEPTH];
-        short cls = mVars[VAR_CLASS];
         // check limits
         if(current == mMaxTags || depth == mMaxDepth) {
             error();
@@ -170,8 +162,6 @@ public class BERWriter {
         checkSingleToplevel();
         // set constructed flag in tag
         tag = BERTag.tagAsConstructed(tag);
-        // apply current tag class
-        tag = BERTag.tagAsClass(tag, cls);
         // push everything
         mTagStk[current] = tag;
         mDepStk[current] = depth;
