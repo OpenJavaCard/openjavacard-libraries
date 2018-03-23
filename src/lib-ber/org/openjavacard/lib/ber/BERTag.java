@@ -81,30 +81,37 @@ public final class BERTag {
         return (tagByte & TAGBYTE_FLAG_CONTINUES) == 0;
     }
 
+    /** True of the tag is of the universal class */
     public static final boolean isUniversal(short tag) {
         return tagClass(tag) == CLASS_UNIVERSAL;
     }
 
+    /** True of the tag is of the application-specific class */
     public static final boolean isApplication(short tag) {
         return tagClass(tag) == CLASS_APPLICATION;
     }
 
+    /** True of the tag is of the context-specific class */
     public static final boolean isContext(short tag) {
         return tagClass(tag) == CLASS_CONTEXT;
     }
 
+    /** True of the tag is of the private class */
     public static final boolean isPrivate(short tag) {
         return tagClass(tag) == CLASS_PRIVATE;
     }
 
+    /** True of the tag is primitive */
     public static final boolean isPrimitive(short tag) {
         return (tag & CONSTRUCTED_FLAG) == 0;
     }
 
+    /** True of the tag is constructed */
     public static final boolean isConstructed(short tag) {
         return (tag & CONSTRUCTED_FLAG) != 0;
     }
 
+    /** Returns the class of the tag */
     public static final short tagClass(short tag) {
         return (short)(tag & CLASS_MASK);
     }
@@ -119,14 +126,17 @@ public final class BERTag {
         return (tag & TYPE_MASK_FIRST) == TYPE_LONG;
     }
 
+    /** Coerce a tag to be constructed */
     public static final short tagAsConstructed(short tag) {
         return (short)(tag & CONSTRUCTED_FLAG);
     }
 
+    /** Coerce a tag to be of the given class */
     public static final short tagAsClass(short tag, short cls) {
         return (short)((tag & ~CLASS_MASK) | (cls & CLASS_MASK));
     }
 
+    /** Get the encoded size of a tag */
     public static final short tagSize(short tag) {
         if(tagIsLong(tag)) {
             return 2;
