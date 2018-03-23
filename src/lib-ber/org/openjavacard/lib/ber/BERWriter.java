@@ -231,13 +231,6 @@ public class BERWriter {
         mVars[VAR_DEPTH]--;
     }
 
-    public final short finishAndSend(APDU apdu) {
-        byte[] buf = apdu.getBuffer();
-        short len = finish(buf, (short)0, (short)buf.length);
-        apdu.setOutgoingAndSend((short)0, len);
-        return len;
-    }
-
     /**
      * Emit all the prepared data
      *
@@ -281,6 +274,19 @@ public class BERWriter {
         }
         // return the length
         return actualLength;
+    }
+
+    /**
+     * Emit prepared data into APDU buffer and send it
+     *
+     * @param apdu to use for sending
+     * @return length of sent data
+     */
+    public final short finishAndSend(APDU apdu) {
+        byte[] buf = apdu.getBuffer();
+        short len = finish(buf, (short)0, (short)buf.length);
+        apdu.setOutgoingAndSend((short)0, len);
+        return len;
     }
 
     private void checkSingleToplevel() {
