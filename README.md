@@ -4,6 +4,8 @@ This is a set of libraries for the JavaCard environment.
 
 CAUTION: All completely experimental at this point.
 
+[![Build Status](https://travis-ci.org/OpenJavaCard/openjavacard-libraries.svg?branch=master)](https://travis-ci.org/OpenJavaCard/openjavacard-libraries)
+
 ### Components
 
  * BER library
