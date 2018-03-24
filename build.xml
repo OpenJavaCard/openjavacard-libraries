@@ -22,6 +22,12 @@
             depends="build-app-demo,build-svc-debug">
     </target>
 
+    <!-- Test target -->
+    <target name="test"
+            description="run tests"
+            depends="build">
+    </target>
+
     <!-- Target for updating in-repository prebuilt files -->
     <target name="prebuilt"
             description="update prebuilt files"
