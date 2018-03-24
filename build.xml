@@ -24,8 +24,7 @@
 
     <!-- Test target -->
     <target name="test"
-            description="run tests"
-            depends="build">
+            description="run tests">
     </target>
 
     <!-- Target for updating in-repository prebuilt files -->
