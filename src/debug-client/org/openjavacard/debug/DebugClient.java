@@ -1,6 +1,5 @@
 package org.openjavacard.debug;
 
-import org.aispring.javacard.debug.api.DebugProtocol;
 import org.openjavacard.iso.ISO7816;
 import org.openjavacard.iso.SWException;
 import org.openjavacard.lib.debug.DebugProtocol;
