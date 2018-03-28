@@ -30,7 +30,6 @@ public class AuthMethodMedium extends AuthMethod {
         mMediumRequired = mediumRequired;
     }
 
-    @Override
     public boolean verify() {
         byte medium = (byte)(APDU.getProtocol() & APDU.PROTOCOL_MEDIA_MASK);
         return medium == mMediumRequired;

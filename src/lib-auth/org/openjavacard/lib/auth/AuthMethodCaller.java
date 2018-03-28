@@ -33,7 +33,6 @@ public class AuthMethodCaller extends AuthMethod {
         Util.arrayCopyNonAtomic(buf, off, mAID, (short)0, len);
     }
 
-    @Override
     public boolean verify() {
         AID client = JCSystem.getPreviousContextAID();
         return client.partialEquals(mAID, (short)0, (byte)mAID.length);
