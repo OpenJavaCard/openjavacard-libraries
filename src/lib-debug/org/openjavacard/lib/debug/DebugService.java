@@ -25,8 +25,10 @@ import javacard.framework.Shareable;
 
 public interface DebugService extends Shareable {
 
-    void logAPDU(byte protocol, APDU apdu);
+    void logAPDUCommand(byte protocol, APDU apdu);
+    void logAPDUResponse(APDU apdu);
     void logException(short type, short code);
     void logMemory(short persistent, short clearReset, short clearDeselect);
+    void logMessage(short code, byte[] buf, short off, short len);
 
 }

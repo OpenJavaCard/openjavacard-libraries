@@ -32,7 +32,12 @@ import javacard.security.CryptoException;
 
 public class DebugException implements DebugProtocol {
 
-    public static final short exceptionType(Throwable t) {
+    /**
+     * Decode an exception and determine its type
+     * @param t to decode
+     * @return type of the exception
+     */
+    public static short exceptionType(Throwable t) {
         if(t instanceof UserException) {
             return EXC_USER_EXCEPTION;
         }
@@ -93,7 +98,12 @@ public class DebugException implements DebugProtocol {
         return EXC_THROWABLE;
     }
 
-    public static final short exceptionCode(Throwable t) {
+    /**
+     * Determine the reason code for an exception
+     * @param t to check
+     * @return the reason code, 0 if undetermined
+     */
+    public static short exceptionCode(Throwable t) {
         if(t instanceof CardException) {
             return ((CardException)t).getReason();
         }

@@ -35,17 +35,17 @@ public final class Debug implements DebugProtocol {
         return res;
     }
 
-    Applet mApplet;
+    private Applet mApplet;
 
-    boolean mEnabled;
-    boolean mActive;
+    private boolean mEnabled;
+    private boolean mActive;
 
-    short mExceptionType;
-    short mExceptionCode;
+    private short mExceptionType;
+    private short mExceptionCode;
 
-    DebugService mService;
+    private DebugService mService;
 
-    byte[]  mBuffer;
+    private byte[] mAIDBytes;
 
     private Debug(Applet applet) {
         mApplet = applet;
@@ -54,7 +54,6 @@ public final class Debug implements DebugProtocol {
         mExceptionType = 0;
         mExceptionCode = 0;
         mService = null;
-        mBuffer = JCSystem.makeTransientByteArray((short)4, JCSystem.CLEAR_ON_DESELECT);
     }
 
     public boolean isEnabled() {
@@ -74,12 +73,14 @@ public final class Debug implements DebugProtocol {
     }
 
     public void attach() {
-        byte[] aidBytes = new byte[] {
-                (byte)0xa0, (byte)0x00, (byte)0x00, (byte)0x02, (byte)0x90, (byte)0xfe, (byte)0xfe, (byte)0x01
-        };
-        AID aid = JCSystem.lookupAID(aidBytes, (short)0, (byte)aidBytes.length);
+        if(mAIDBytes == null) {
+            mAIDBytes = new byte[]{
+                    (byte) 0xa0, (byte) 0x00, (byte) 0x00, (byte) 0x02, (byte) 0x90, (byte) 0xfe, (byte) 0xfe, (byte) 0x01
+            };
+        }
+        AID aid = JCSystem.lookupAID(mAIDBytes, (short)0, (byte)mAIDBytes.length);
         if(aid != null) {
-            Object obj = JCSystem.getAppletShareableInterfaceObject(aid, SID_DEBUG);
+            Object obj = JCSystem.getAppletShareableInterfaceObject(aid, SHARE_DEBUG);
             if(obj instanceof DebugService) {
                 mService = (DebugService)obj;
             }
@@ -97,6 +98,20 @@ public final class Debug implements DebugProtocol {
             short clearDesel = JCSystem.getAvailableMemory(JCSystem.MEMORY_TYPE_TRANSIENT_DESELECT);
             mService.logMemory(persistent, clearReset, clearDesel);
         }
+    }
+
+    public void logMessage(short code, byte[] buf, short off, byte len) {
+        if(isAttached()) {
+            mService.logMessage(code, buf, off, len);
+        }
+    }
+
+    public void logMessage(short code, byte[] buf) {
+        logMessage(code, null, (short)0, (byte)buf.length);
+    }
+
+    public void logMessage(short code) {
+        logMessage(code, null, (short)0, (byte)0);
     }
 
     public boolean process(APDU apdu) {
@@ -128,13 +143,10 @@ public final class Debug implements DebugProtocol {
                 case CMD_LIB_DISABLE:
                     processDbgDisable(apdu);
                     break;
-                case CMD_LIB_GET_EXCEPTION:
-                    processDbgException(apdu);
-                    break;
-                case CMD_LIB_GET_MEMORY:
+                case CMD_LIB_MEM_USAGE:
                     processMemStatus(apdu);
                     break;
-                case CMD_LIB_REQUEST_GC:
+                case CMD_LIB_MEM_COLLECT:
                     processMemCollect(apdu);
                     break;
                 default:
@@ -157,7 +169,7 @@ public final class Debug implements DebugProtocol {
 
         // log the APDU
         if(attached) {
-            mService.logAPDU(APDU.getProtocol(), apdu);
+            mService.logAPDUCommand(APDU.getProtocol(), apdu);
         }
 
         // call user handler with exceptions caught
@@ -210,14 +222,14 @@ public final class Debug implements DebugProtocol {
     }
 
     private void processDbgAttach(APDU apdu) {
-        enable();
         attach();
+        enable();
         processDbgStatus(apdu);
     }
 
     private void processDbgDetach(APDU apdu) {
-        detach();
         disable();
+        detach();
         processDbgStatus(apdu);
     }
 
@@ -229,13 +241,6 @@ public final class Debug implements DebugProtocol {
     private void processDbgDisable(APDU apdu) {
         disable();
         processDbgStatus(apdu);
-    }
-
-    private void processDbgException(APDU apdu) {
-        byte[] buffer = apdu.getBuffer();
-        short v, off = 0;
-
-        apdu.setOutgoingAndSend((short)0, off);
     }
 
     private void processMemStatus(APDU apdu) {

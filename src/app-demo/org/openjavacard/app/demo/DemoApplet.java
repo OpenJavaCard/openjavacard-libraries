@@ -52,6 +52,9 @@ public final class DemoApplet extends Applet implements ISO7816 {
     private static final byte INS_BER_PARSE = (byte)0x20;
     private static final byte INS_BER_WRITE = (byte)0x22;
 
+    private static final byte INS_DEBUG_MEMORY  = (byte)0x30;
+    private static final byte INS_DEBUG_MESSAGE = (byte)0x32;
+
     /**
      * Installation method for the applet
      */
@@ -168,6 +171,12 @@ public final class DemoApplet extends Applet implements ISO7816 {
                 case INS_BER_WRITE:
                     processBerWrite(apdu);
                     break;
+                case INS_DEBUG_MEMORY:
+                    processDebugMemory(apdu);
+                    break;
+                case INS_DEBUG_MESSAGE:
+                    processDebugMessage(apdu);
+                    break;
                 default:
                     ISOException.throwIt(SW_INS_NOT_SUPPORTED);
             }
@@ -220,6 +229,16 @@ public final class DemoApplet extends Applet implements ISO7816 {
         short length = mLongNum.getLength();
         mLongNum.get(buffer, (short)0, length);
         apdu.setOutgoingAndSend((short)0, length);
+    }
+
+    private final void processDebugMemory(APDU apdu) {
+        mDebug.logMemory();
+    }
+    private final void processDebugMessage(APDU apdu) {
+        byte[] buffer = apdu.getBuffer();
+        short code = Util.getShort(buffer, ISO7816.OFFSET_P1);
+        short len = apdu.setIncomingAndReceive();
+        mDebug.logMessage(code, buffer, ISO7816.OFFSET_CDATA, (byte)len);
     }
 
     private final void processBerParse(APDU apdu) {

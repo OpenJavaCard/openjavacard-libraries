@@ -22,7 +22,7 @@ package org.openjavacard.lib.debug;
 
 public interface DebugProtocol {
 
-    byte SID_DEBUG = (byte)0xF0;
+    byte SHARE_DEBUG = (byte)0xF0;
 
     byte INS_SVC_READ_APPLICATIONS = (byte)0x00;
     byte INS_SVC_READ_MESSAGES = (byte)0x02;
@@ -41,17 +41,16 @@ public interface DebugProtocol {
     byte CMD_LIB_ENABLE = (byte)0x03;
     /** Library command: disable debugging */
     byte CMD_LIB_DISABLE = (byte)0x04;
-    /** Library command: get last exception */
-    byte CMD_LIB_GET_EXCEPTION = (byte)0x10;
     /** Library command: get memory usage */
-    byte CMD_LIB_GET_MEMORY    = (byte)0x11;
+    byte CMD_LIB_MEM_USAGE = (byte)0x10;
     /** Library command: request garbage collection */
-    byte CMD_LIB_REQUEST_GC    = (byte)0x20;
+    byte CMD_LIB_MEM_COLLECT = (byte)0x12;
 
-    short MSG_APDU        = (short)0x01;
-    short MSG_EXCEPTION   = (short)0x02;
-    short MSG_MEMORY      = (short)0x03;
-    short MSG_LOG         = (short)0x04;
+    short MSG_APDU_COMMAND  = (short)0x01;
+    short MSG_APDU_RESPONSE = (short)0x02;
+    short MSG_EXCEPTION     = (short)0x03;
+    short MSG_MEMORY        = (short)0x04;
+    short MSG_MESSAGE       = (short)0x05;
 
     // Exceptions in java.lang
     short EXC_THROWABLE                     = (short)0x00;

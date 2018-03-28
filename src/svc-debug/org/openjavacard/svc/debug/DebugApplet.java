@@ -47,7 +47,7 @@ public final class DebugApplet extends Applet implements ISO7816, DebugProtocol 
 
     private short mSeq;
 
-    protected DebugApplet() {
+    private DebugApplet() {
         mBerWriter = new BERWriter((byte)32, (byte)4, JCSystem.CLEAR_ON_DESELECT);
         mLog = new DebugLog();
         mImpls = new DebugServiceImpl[16];
@@ -122,7 +122,7 @@ public final class DebugApplet extends Applet implements ISO7816, DebugProtocol 
     }
 
     public Shareable getShareableInterfaceObject(AID clientAID, byte parameter) {
-        if(parameter == SID_DEBUG) {
+        if(parameter == SHARE_DEBUG) {
             return findServiceImpl(clientAID, true);
         }
         return null;
