@@ -1,35 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="openjavacard-libraries"
-         default="build"
-         basedir=".">
+<project name="openjavacard-libraries" default="build">
 
-    <description>JavaCard implementation of an NDEF Type 4 tag</description>
+    <description>OpenJavaCard Libraries</description>
 
-    <!-- Point this to your JavaCard kit -->
-    <property name="jckit" value="ext/javacard-sdks/jc222_kit"/>
-    <!-- Point this to your Proguard kit -->
-    <property name="proguard" value="/opt/proguard"/>
+    <property name="ext.javacard" value="ext/ant-javacard"/>
 
-    <!-- Cleanup target -->
-    <target name="clean"
-            description="clean up">
+    <property name="sdk.jc222" value="ext/javacard-sdks/jc222_kit"/>
+
+    <target name="clean" description="Delete build output">
         <delete dir="build"/>
     </target>
 
-    <!-- Build-all target -->
-    <target name="build"
-            description="build everything"
+    <target name="build" description="Build code"
             depends="build-app-demo,build-svc-debug">
     </target>
 
-    <!-- Test target -->
-    <target name="test"
-            description="run tests">
-    </target>
-
-    <!-- Target for updating in-repository prebuilt files -->
-    <target name="prebuilt"
-            description="update prebuilt files"
+    <target name="prebuilt" description="Update prebuilt files"
             depends="build">
         <delete dir="prebuilt"/>
         <copy todir="prebuilt">
@@ -37,35 +23,41 @@
         </copy>
     </target>
 
-    <!-- Create directories for build output -->
+    <target name="ext-javacard">
+        <ant dir="${ext.javacard}"/>
+        <taskdef name="javacard"
+                 classpath="${ext.javacard}/ant-javacard.jar"
+                 classname="pro.javacard.ant.JavaCard"/>
+    </target>
+
     <target name="build-dirs">
         <mkdir dir="build/jar"/>
         <mkdir dir="build/javacard"/>
         <mkdir dir="build/classes"/>
         <mkdir dir="build/classes/app-demo"/>
+        <mkdir dir="build/classes/lib-auth"/>
         <mkdir dir="build/classes/lib-ber"/>
         <mkdir dir="build/classes/lib-debug"/>
         <mkdir dir="build/classes/lib-fortuna"/>
         <mkdir dir="build/classes/svc-debug"/>
     </target>
 
-    <!-- Ant extension for JavaCard -->
-    <target name="ext-javacard" depends="build-dirs">
-        <ant dir="ext/ant-javacard"/>
-        <taskdef name="javacard"
-                 classpath="ext/ant-javacard/ant-javacard.jar"
-                 classname="pro.javacard.ant.JavaCard"/>
+    <target name="build-lib-auth" depends="ext-javacard,build-dirs">
+        <javacard jckit="${sdk.jc222}">
+            <cap output="build/javacard/openjavacard-lib-auth.cap"
+                 jar="build/javacard/openjavacard-lib-auth.jar"
+                 classes="build/classes/lib-auth"
+                 export="build/classes/lib-auth"
+                 sources="src/lib-auth"
+                 aid="A00000FFFFA7"
+                 package="org.openjavacard.lib.auth"
+                 version="0.0">
+            </cap>
+        </javacard>
     </target>
 
-    <!-- Ant extensions for Proguard -->
-    <target name="ext-proguard" depends="build-dirs">
-        <taskdef classpath="${proguard}/lib/proguard.jar"
-                 resource="proguard/ant/task.properties"/>
-    </target>
-
-    <target name="build-lib-ber"
-            depends="ext-javacard">
-        <javacard jckit="${jckit}">
+    <target name="build-lib-ber" depends="ext-javacard,build-dirs">
+        <javacard jckit="${sdk.jc222}">
             <cap output="build/javacard/openjavacard-lib-ber.cap"
                  jar="build/javacard/openjavacard-lib-ber.jar"
                  classes="build/classes/lib-ber"
@@ -78,9 +70,8 @@
         </javacard>
     </target>
 
-    <target name="build-lib-fortuna"
-            depends="ext-javacard">
-        <javacard jckit="${jckit}">
+    <target name="build-lib-fortuna" depends="ext-javacard,build-dirs">
+        <javacard jckit="${sdk.jc222}">
             <cap output="build/javacard/openjavacard-lib-fortuna.cap"
                  jar="build/javacard/openjavacard-lib-fortuna.jar"
                  classes="build/classes/lib-fortuna"
@@ -93,9 +84,8 @@
         </javacard>
     </target>
 
-    <target name="build-lib-debug"
-            depends="ext-javacard">
-        <javacard jckit="${jckit}">
+    <target name="build-lib-debug" depends="ext-javacard,build-dirs">
+        <javacard jckit="${sdk.jc222}">
             <cap output="build/javacard/openjavacard-lib-debug.cap"
                  jar="build/javacard/openjavacard-lib-debug.jar"
                  classes="build/classes/lib-debug"
@@ -109,8 +99,8 @@
     </target>
 
     <target name="build-svc-debug"
-            depends="ext-javacard,build-lib-ber,build-lib-debug">
-        <javacard jckit="${jckit}">
+            depends="ext-javacard,build-dirs,build-lib-ber,build-lib-debug">
+        <javacard jckit="${sdk.jc222}">
             <cap output="build/javacard/openjavacard-svc-debug.cap"
                  jar="build/javacard/openjavacard-svc-debug.jar"
                  classes="build/classes/svc-debug"
@@ -130,8 +120,8 @@
     </target>
 
     <target name="build-app-demo"
-            depends="ext-javacard,build-lib-ber,build-lib-debug,build-lib-fortuna">
-        <javacard jckit="${jckit}">
+            depends="ext-javacard,build-dirs,build-lib-auth,build-lib-ber,build-lib-debug,build-lib-fortuna">
+        <javacard jckit="${sdk.jc222}">
             <cap output="build/javacard/openjavacard-app-demo.cap"
                  jar="build/javacard/openjavacard-app-demo.jar"
                  classes="build/classes/app-demo"
