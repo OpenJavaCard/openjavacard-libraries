@@ -142,4 +142,37 @@
         </javacard>
     </target>
 
+    <target name="javadoc">
+        <javadoc packagenames="org.openjavacard.lib.*"
+                 defaultexcludes="yes"
+                 destdir="build/javadoc"
+                 author="true"
+                 version="true"
+                 use="true"
+                 windowtitle="OpenJavaCard Libraries API">
+            <doctitle><![CDATA[<h1>OpenJavaCard Libraries API</h1>]]></doctitle>
+            <bottom><![CDATA[<i>Copyright &#169; 2018 Ingo Albrecht. All Rights Reserved.</i>]]></bottom>
+
+            <group title="BER TLV library">
+                <package name="org.openjavacard.lib.ber"/>
+            </group>
+            <group title="Debug library">
+                <package name="org.openjavacard.lib.debug"/>
+            </group>
+            <group title="Fortuna PRNG library">
+                <package name="org.openjavacard.lib.fortuna"/>
+            </group>
+
+            <sourcepath>
+                <pathelement path="src/lib-ber"/>
+                <pathelement path="src/lib-debug"/>
+                <pathelement path="src/lib-fortuna"/>
+            </sourcepath>
+
+            <classpath>
+                <pathelement path="${sdk.jc222}/lib/api.jar"/>
+            </classpath>
+        </javadoc>
+    </target>
+
 </project>
