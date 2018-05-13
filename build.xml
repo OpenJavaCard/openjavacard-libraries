@@ -23,6 +23,10 @@
         </copy>
     </target>
 
+    <target name="tests" description="Run tests"
+            depends="build">
+    </target>
+
     <target name="ext-javacard">
         <ant dir="${ext.javacard}"/>
         <taskdef name="javacard"
