@@ -23,7 +23,7 @@
         </copy>
     </target>
 
-    <target name="tests" description="Run tests"
+    <target name="test" description="Run tests"
             depends="build">
     </target>
 
