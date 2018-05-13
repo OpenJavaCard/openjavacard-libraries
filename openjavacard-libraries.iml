@@ -19,7 +19,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar:///opt/javacard-2.2.2/lib/api.jar!/" />
+          <root url="jar://$MODULE_DIR$/ext/javacard-sdks/jc222_kit/lib/api.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
