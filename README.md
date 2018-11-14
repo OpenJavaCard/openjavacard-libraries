@@ -6,6 +6,10 @@ CAUTION: All completely experimental at this point.
 
 [![Build Status](https://travis-ci.org/OpenJavaCard/openjavacard-libraries.svg?branch=master)](https://travis-ci.org/OpenJavaCard/openjavacard-libraries)
 
+### Project
+
+For more information about this overall project, see our [website](https://openjavacard.org/).
+
 ### Components
 
  * BER TLV library
