@@ -24,15 +24,37 @@ import javacard.framework.APDU;
 
 public class AuthMethodMedium extends AuthMethod {
 
-    private final byte mMediumRequired;
+    public static AuthMethodMedium getContactedInstance() {
+        return new AuthMethodMedium(APDU.PROTOCOL_MEDIA_DEFAULT);
+    }
 
-    public AuthMethodMedium(byte mediumRequired) {
-        mMediumRequired = mediumRequired;
+    public static AuthMethodMedium getContactlessInstance() {
+        return new AuthMethodMedium(APDU.PROTOCOL_MEDIA_CONTACTLESS_TYPE_A, APDU.PROTOCOL_MEDIA_CONTACTLESS_TYPE_B);
+    }
+
+    private final byte[] mAllowedMedia;
+
+    public AuthMethodMedium(byte allowedMedium) {
+        mAllowedMedia = new byte[] {allowedMedium};
+    }
+
+    public AuthMethodMedium(byte allowedMediumA, byte allowedMediumB) {
+        mAllowedMedia = new byte[] {allowedMediumA, allowedMediumB};
+    }
+
+    public AuthMethodMedium(byte allowedMediumA, byte allowedMediumB, byte allowedMediumC) {
+        mAllowedMedia = new byte[] {allowedMediumA, allowedMediumB, allowedMediumC};
     }
 
     public boolean verify() {
+        boolean result = false;
         byte medium = (byte)(APDU.getProtocol() & APDU.PROTOCOL_MEDIA_MASK);
-        return medium == mMediumRequired;
+        for(short idx = 0; idx < mAllowedMedia.length; idx++) {
+            if(medium == mAllowedMedia[idx]) {
+                result |= true;
+            }
+        }
+        return result;
     }
 
 }
