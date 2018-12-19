@@ -6,12 +6,6 @@ import org.openjavacard.lib.debug.DebugProtocol;
 import org.openjavacard.util.APDUUtil;
 import org.openjavacard.util.HexUtil;
 
-import javax.smartcardio.Card;
-import javax.smartcardio.CardChannel;
-import javax.smartcardio.CardException;
-import javax.smartcardio.CommandAPDU;
-import javax.smartcardio.ResponseAPDU;
-
 public class DebugClient {
 
     private final static byte[] AID_DEBUG = HexUtil.hexToBytes("a000000290fefe01");
