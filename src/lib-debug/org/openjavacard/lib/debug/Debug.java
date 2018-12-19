@@ -38,7 +38,6 @@ public final class Debug implements DebugProtocol {
     private Applet mApplet;
 
     private boolean mEnabled;
-    private boolean mActive;
 
     private short mExceptionType;
     private short mExceptionCode;
@@ -47,13 +46,15 @@ public final class Debug implements DebugProtocol {
 
     private byte[] mAIDBytes;
 
+    private boolean mActive;
+
     private Debug(Applet applet) {
         mApplet = applet;
         mEnabled = false;
-        mActive = false;
         mExceptionType = 0;
         mExceptionCode = 0;
         mService = null;
+        mActive = false;
     }
 
     public boolean isEnabled() {
