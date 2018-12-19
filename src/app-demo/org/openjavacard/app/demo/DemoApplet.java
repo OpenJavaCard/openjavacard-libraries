@@ -234,6 +234,7 @@ public final class DemoApplet extends Applet implements ISO7816 {
     private final void processDebugMemory(APDU apdu) {
         mDebug.logMemory();
     }
+
     private final void processDebugMessage(APDU apdu) {
         byte[] buffer = apdu.getBuffer();
         short code = Util.getShort(buffer, ISO7816.OFFSET_P1);
