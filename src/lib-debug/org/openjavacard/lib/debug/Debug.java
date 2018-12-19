@@ -167,7 +167,7 @@ public final class Debug implements DebugProtocol {
         // determine if we are attached
         boolean attached = isAttached();
 
-        // log the APDU
+        // log the C-APDU
         if(attached) {
             mService.logAPDUCommand(APDU.getProtocol(), apdu);
         }
@@ -185,6 +185,11 @@ public final class Debug implements DebugProtocol {
             caught = ex;
         } finally {
             mActive = false;
+        }
+
+        // log the R-APDU
+        if(attached) {
+            mService.logAPDUResponse(apdu);
         }
 
         // handle exceptions
