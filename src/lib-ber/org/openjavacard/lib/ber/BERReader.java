@@ -118,6 +118,11 @@ public final class BERReader {
         }
     }
 
+    /**
+     * Internal: parse one contiguous BER block recursively
+     * @param buf we are reading from
+     * @param handler to call for every element
+     */
     private void parseOne(byte[] buf, Handler handler) {
         /* read the tag */
         short t = readTag(buf);
@@ -166,10 +171,19 @@ public final class BERReader {
         mVars[VAR_POSN] = e;
     }
 
+    /**
+     * Internal: throw a parse error
+     *
+     * We always throw SW=[data invalid].
+     */
     private void parseError() {
         ISOException.throwIt(ISO7816.SW_DATA_INVALID);
     }
 
+    /**
+     * Internal: check number of available bytes
+     * @param length required in bytes
+     */
     private void checkLength(short length) {
         short newCur = (short)(mVars[VAR_POSN] + length);
         if(newCur < 0 || newCur > mVars[VAR_BUF_LEN]) {
@@ -177,6 +191,11 @@ public final class BERReader {
         }
     }
 
+    /**
+     * Internal: read one byte at the current position
+     * @param buf that we are reading from
+     * @return the byte
+     */
     private byte readByte(byte[] buf) {
         short newCur = (short)(mVars[VAR_POSN] + 1);
         if(newCur < 0 || newCur > mVars[VAR_BUF_LEN]) {
@@ -187,6 +206,11 @@ public final class BERReader {
         return result;
     }
 
+    /**
+     * Internal: read TLV tag at current position
+     * @param buf that we are reading from
+     * @return the tag
+     */
     private short readTag(byte[] buf) {
         byte b0 = readByte(buf);
         byte b1 = 0;
@@ -199,6 +223,11 @@ public final class BERReader {
         return (short)((b0 << 8) | b1);
     }
 
+    /**
+     * Internal: read TLV length at current position
+     * @param buf that we are reading from
+     * @return the length
+     */
     private short readLength(byte[] buf) {
         short result = -1;
 
@@ -226,9 +255,7 @@ public final class BERReader {
             }
         }
 
-        // if result is negative then length
-        // is beyond supported range or there
-        // is a bug in the above code.
+        // check for overflow
         if(result < 0) {
             parseError();
         }
