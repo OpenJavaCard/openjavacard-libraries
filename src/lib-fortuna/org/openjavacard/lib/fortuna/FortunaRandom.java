@@ -56,20 +56,20 @@ public class FortunaRandom extends RandomData {
     private static final short TMP_SIZE = 48;
 
     /** Bootstrap flag */
-    boolean mInitialized;
+    private boolean mInitialized;
 
     /** Cipher instance */
-    final Cipher mCipher;
+    private final Cipher mCipher;
     /** Hash instance */
-    final MessageDigest mHash;
+    private final MessageDigest mHash;
 
     /** Fortuna counter */
-    final LongNum mCounter;
+    private final LongNum mCounter;
     /** Fortuna key */
-    final AESKey mKey;
+    private final AESKey mKey;
 
     /** Temp buffer */
-    final byte[] mTmp;
+    private final byte[] mTmp;
 
     /**
      * Construct a persistent Fortuna PRNG
