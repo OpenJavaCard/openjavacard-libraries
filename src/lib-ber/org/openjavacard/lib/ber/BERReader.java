@@ -71,14 +71,6 @@ public final class BERReader {
     private final short[] mOffStk;
 
     /**
-     * Construct a clear-on-deselect BER reader
-     * @param maxDepth maximum depth of TLV structures
-     */
-    public BERReader(byte maxDepth) {
-        this(maxDepth, JCSystem.CLEAR_ON_DESELECT);
-    }
-
-    /**
      * Construct transient-state BER reader
      * @param maxDepth maximum depth of TLV structures
      */
