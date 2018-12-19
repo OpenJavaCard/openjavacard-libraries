@@ -108,7 +108,7 @@ public class FortunaRandom extends RandomData {
      * @param buf to generate into
      * @param off to generate at
      * @param len to generate
-     * @throws CryptoException
+     * @throws CryptoException on error
      */
     public void generateData(byte[] buf, short off, short len)
             throws CryptoException {
