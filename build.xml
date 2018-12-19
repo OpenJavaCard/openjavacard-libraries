@@ -186,22 +186,34 @@
                  use="true"
                  windowtitle="OpenJavaCard Libraries API">
             <doctitle><![CDATA[<h1>OpenJavaCard Libraries API</h1>]]></doctitle>
-            <bottom><![CDATA[<i>Copyright &#169; 2018 Ingo Albrecht. All Rights Reserved.</i>]]></bottom>
+            <bottom><![CDATA[<i>Copyright &#169; 2018 promovicz</i>]]></bottom>
 
-            <group title="BER TLV library">
+            <group title="BER processing">
                 <package name="org.openjavacard.lib.ber"/>
+            </group>
+            <group title="String processing">
+                <package name="org.openjavacard.lib.string"/>
+            </group>
+            <group title="Fortuna PRNG">
+                <package name="org.openjavacard.lib.fortuna"/>
+            </group>
+            <group title="RSA extensions">
+                <package name="org.openjavacard.lib.rsa"/>
             </group>
             <group title="Debug library">
                 <package name="org.openjavacard.lib.debug"/>
             </group>
-            <group title="Fortuna PRNG library">
-                <package name="org.openjavacard.lib.fortuna"/>
+            <group title="Auth library">
+                <package name="org.openjavacard.lib.auth"/>
             </group>
 
             <sourcepath>
                 <pathelement path="src/lib-ber"/>
-                <pathelement path="src/lib-debug"/>
+                <pathelement path="src/lib-string"/>
                 <pathelement path="src/lib-fortuna"/>
+                <pathelement path="src/lib-rsa"/>
+                <pathelement path="src/lib-debug"/>
+                <pathelement path="src/lib-auth"/>
             </sourcepath>
 
             <classpath>
