@@ -23,8 +23,7 @@
         </copy>
     </target>
 
-    <target name="test" description="Run tests"
-            depends="build">
+    <target name="test" description="Run tests">
     </target>
 
     <target name="ext-javacard">
