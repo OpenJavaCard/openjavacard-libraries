@@ -12,7 +12,7 @@
     </target>
 
     <target name="build" description="Build code"
-            depends="build-app-demo,build-svc-debug">
+            depends="build-lib-ber,build-lib-string,build-lib-fortuna,build-lib-rsa,build-lib-debug,build-lib-auth,build-app-demo,build-svc-debug">
     </target>
 
     <target name="prebuilt" description="Update prebuilt files"
@@ -38,26 +38,15 @@
         <mkdir dir="build/jar"/>
         <mkdir dir="build/javacard"/>
         <mkdir dir="build/classes"/>
-        <mkdir dir="build/classes/app-demo"/>
-        <mkdir dir="build/classes/lib-auth"/>
-        <mkdir dir="build/classes/lib-ber"/>
-        <mkdir dir="build/classes/lib-debug"/>
-        <mkdir dir="build/classes/lib-fortuna"/>
-        <mkdir dir="build/classes/svc-debug"/>
-    </target>
 
-    <target name="build-lib-auth" depends="ext-javacard,build-dirs">
-        <javacard jckit="${sdk.jc222}">
-            <cap output="build/javacard/openjavacard-lib-auth.cap"
-                 jar="build/javacard/openjavacard-lib-auth.jar"
-                 classes="build/classes/lib-auth"
-                 export="build/classes/lib-auth"
-                 sources="src/lib-auth"
-                 aid="A00000FFFFA7"
-                 package="org.openjavacard.lib.auth"
-                 version="0.0">
-            </cap>
-        </javacard>
+        <mkdir dir="build/classes/lib-ber"/>
+        <mkdir dir="build/classes/lib-string"/>
+        <mkdir dir="build/classes/lib-fortuna"/>
+        <mkdir dir="build/classes/lib-rsa"/>
+        <mkdir dir="build/classes/lib-debug"/>
+        <mkdir dir="build/classes/lib-auth"/>
+
+        <mkdir dir="build/classes/app-demo"/>
     </target>
 
     <target name="build-lib-ber" depends="ext-javacard,build-dirs">
@@ -67,8 +56,22 @@
                  classes="build/classes/lib-ber"
                  export="build/classes/lib-ber"
                  sources="src/lib-ber"
-                 aid="A00000FFFFA0"
+                 aid="D276000177100310010001"
                  package="org.openjavacard.lib.ber"
+                 version="0.0">
+            </cap>
+        </javacard>
+    </target>
+
+    <target name="build-lib-string" depends="ext-javacard,build-dirs">
+        <javacard jckit="${sdk.jc222}">
+            <cap output="build/javacard/openjavacard-lib-string.cap"
+                 jar="build/javacard/openjavacard-lib-string.jar"
+                 classes="build/classes/lib-string"
+                 export="build/classes/lib-string"
+                 sources="src/lib-string"
+                 aid="D276000177100310020001"
+                 package="org.openjavacard.lib.string"
                  version="0.0">
             </cap>
         </javacard>
@@ -81,8 +84,22 @@
                  classes="build/classes/lib-fortuna"
                  export="build/classes/lib-fortuna"
                  sources="src/lib-fortuna"
-                 aid="A00000FFFFA2"
+                 aid="D276000177100310030001"
                  package="org.openjavacard.lib.fortuna"
+                 version="0.0">
+            </cap>
+        </javacard>
+    </target>
+
+    <target name="build-lib-rsa" depends="ext-javacard,build-dirs">
+        <javacard jckit="${sdk.jc222}">
+            <cap output="build/javacard/openjavacard-lib-rsa.cap"
+                 jar="build/javacard/openjavacard-lib-rsa.jar"
+                 classes="build/classes/lib-rsa"
+                 export="build/classes/lib-rsa"
+                 sources="src/lib-rsa"
+                 aid="D276000177100310040001"
+                 package="org.openjavacard.lib.rsa"
                  version="0.0">
             </cap>
         </javacard>
@@ -95,9 +112,46 @@
                  classes="build/classes/lib-debug"
                  export="build/classes/lib-debug"
                  sources="src/lib-debug"
-                 aid="A00000FFFFA3"
+                 aid="D276000177100310050001"
                  package="org.openjavacard.lib.debug"
                  version="0.0">
+            </cap>
+        </javacard>
+    </target>
+
+    <target name="build-lib-auth" depends="ext-javacard,build-dirs">
+        <javacard jckit="${sdk.jc222}">
+            <cap output="build/javacard/openjavacard-lib-auth.cap"
+                 jar="build/javacard/openjavacard-lib-auth.jar"
+                 classes="build/classes/lib-auth"
+                 export="build/classes/lib-auth"
+                 sources="src/lib-auth"
+                 aid="D276000177100310060001"
+                 package="org.openjavacard.lib.auth"
+                 version="0.0">
+            </cap>
+        </javacard>
+    </target>
+
+    <target name="build-app-demo"
+            depends="ext-javacard,build-dirs,build-lib-ber,build-lib-debug,build-lib-fortuna">
+        <javacard jckit="${sdk.jc222}">
+            <cap output="build/javacard/openjavacard-app-demo.cap"
+                 jar="build/javacard/openjavacard-app-demo.jar"
+                 classes="build/classes/app-demo"
+                 export="build/classes/app-demo"
+                 sources="src/app-demo"
+                 aid="D276000177100210010001"
+                 package="org.openjavacard.app.demo"
+                 version="0.0">
+                <import jar="build/classes/lib-ber"
+                        exps="build/classes/lib-ber"/>
+                <import jar="build/classes/lib-debug"
+                        exps="build/classes/lib-debug"/>
+                <import jar="build/classes/lib-fortuna"
+                        exps="build/classes/lib-fortuna"/>
+                <applet aid="D27600017710021001000101"
+                        class="org.openjavacard.app.demo.DemoApplet"/>
             </cap>
         </javacard>
     </target>
@@ -110,38 +164,15 @@
                  classes="build/classes/svc-debug"
                  export="build/classes/svc-debug"
                  sources="src/svc-debug"
-                 aid="A00000FFFFA4"
+                 aid="D276000177100210200001"
                  package="org.openjavacard.svc.debug"
                  version="0.0">
                 <import jar="build/classes/lib-ber"
                         exps="build/classes/lib-ber"/>
                 <import jar="build/classes/lib-debug"
                         exps="build/classes/lib-debug"/>
-                <applet aid="A00000FFFFA401"
+                <applet aid="D27600017710021020000101"
                         class="org.openjavacard.svc.debug.DebugApplet"/>
-            </cap>
-        </javacard>
-    </target>
-
-    <target name="build-app-demo"
-            depends="ext-javacard,build-dirs,build-lib-auth,build-lib-ber,build-lib-debug,build-lib-fortuna">
-        <javacard jckit="${sdk.jc222}">
-            <cap output="build/javacard/openjavacard-app-demo.cap"
-                 jar="build/javacard/openjavacard-app-demo.jar"
-                 classes="build/classes/app-demo"
-                 export="build/classes/app-demo"
-                 sources="src/app-demo"
-                 aid="A00000FFFFF0"
-                 package="org.openjavacard.app.demo"
-                 version="0.0">
-                <import jar="build/classes/lib-ber"
-                        exps="build/classes/lib-ber"/>
-                <import jar="build/classes/lib-debug"
-                        exps="build/classes/lib-debug"/>
-                <import jar="build/classes/lib-fortuna"
-                        exps="build/classes/lib-fortuna"/>
-                <applet aid="A00000FFFFF001"
-                        class="org.openjavacard.app.demo.DemoApplet"/>
             </cap>
         </javacard>
     </target>
