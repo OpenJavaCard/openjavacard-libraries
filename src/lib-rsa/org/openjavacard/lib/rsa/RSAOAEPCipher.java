@@ -49,7 +49,7 @@ public class RSAOAEPCipher extends Cipher {
 
     private static final short short0 = (short)0;
 
-    private static final byte[] empty = new byte[0];
+    private final byte[] empty = new byte[0];
 
     /** Mask generator */
     private MGF1 mMGF = null;
@@ -220,7 +220,7 @@ public class RSAOAEPCipher extends Cipher {
             mBuffer = JCSystem.makeTransientByteArray((short)256, JCSystem.CLEAR_ON_DESELECT);
         }
         // check sufficient buffer remaining
-        if((mBufPtr + inLength) > mBufEnd) {
+        if(((short)(mBufPtr + inLength)) > mBufEnd) {
             CryptoException.throwIt(CryptoException.ILLEGAL_VALUE);
         }
         // copy data to the buffer
@@ -324,7 +324,7 @@ public class RSAOAEPCipher extends Cipher {
         // copy input message
         dbPosn = Util.arrayCopyNonAtomic(inBuf, inOff, mTemp, dbPosn, inLen);
         // sanity check
-        if(dbPosn != (dbOffset + dbLen)) {
+        if(dbPosn != ((short)(dbOffset + dbLen))) {
             ISOException.throwIt(ISO7816.SW_UNKNOWN);
         }
 

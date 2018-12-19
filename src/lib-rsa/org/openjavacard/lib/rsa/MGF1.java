@@ -127,7 +127,8 @@ public class MGF1 {
      * @return ceiled quotient
      */
     private static short shortCeil(short dividend, short divisor) {
-        return (short)((dividend+(divisor-1)) / divisor);
+        short i1 = (short)(dividend+(divisor-1));
+        return (short)(i1 / divisor);
     }
 
     /**
@@ -141,7 +142,9 @@ public class MGF1 {
      */
     private static void xorInPlace(byte[] out, short outOffset, byte[] in, short inOffset, short length) {
         for(short i = 0; i < length; i++) {
-            out[outOffset + i] ^= in[inOffset + i];
+            short inCur = (short)(inOffset + i);
+            short outCur = (short)(outOffset + i);
+            out[outCur] ^= in[inCur];
         }
     }
 
