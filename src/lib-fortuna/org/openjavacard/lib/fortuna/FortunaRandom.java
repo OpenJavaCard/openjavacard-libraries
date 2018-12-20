@@ -170,10 +170,10 @@ public class FortunaRandom extends RandomData {
             mHash.update(mTmp, (short) 0, (short) 32);
             // finish hash with new seed into tmp[0:31]
             mHash.doFinal(buf, off, len, mTmp, (short) 0);
-            // set the new key
-            mKey.setKey(mTmp, (short) 0);
             // increment counter
             incrementCounter();
+            // set the new key
+            mKey.setKey(mTmp, (short) 0);
             // once seeded we are initialized
             mInitialized = true;
         } finally {
