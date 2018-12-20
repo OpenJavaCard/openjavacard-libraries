@@ -21,71 +21,75 @@ package org.openjavacard.lib.string;
 
 public class ASCII {
 
-    public boolean isascii(byte c) {
+    public static boolean isnull(byte c) {
+        return c == 0;
+    }
+
+    public static boolean isascii(byte c) {
         return (c >= 0);
     }
 
-    public boolean isalnum(byte c) {
+    public static boolean isalnum(byte c) {
         return ((c >= 0x30) && (c <= 0x39))
                 || ((c >= 0x41) && (c <= 0x5A))
                 || ((c >= 0x61) && (c <= 0x7A));
     }
 
-    public boolean isalpha(byte c) {
+    public static boolean isalpha(byte c) {
         return ((c >= 0x41) && (c <= 0x5A))
                 || ((c >= 0x61) && (c <= 0x7A));
     }
 
-    public boolean isblank(byte c) {
+    public static boolean isblank(byte c) {
         return (c == 0x09) || (c == 0x20);
     }
 
-    public boolean iscntrl(byte c) {
+    public static boolean iscntrl(byte c) {
         return (c < 0x20) || (c == 0x7F);
     }
 
-    public boolean isdigit(byte c) {
+    public static boolean isdigit(byte c) {
         return (c >= 0x30) && (c <= 0x39);
     }
 
-    public boolean isgraph(byte c) {
+    public static boolean isgraph(byte c) {
         return (c >= 0x21) && (c <= 0x7E);
     }
 
-    public boolean islower(byte c) {
+    public static boolean islower(byte c) {
         return (c >= 0x61) && (c <= 0x7A);
     }
 
-    public boolean isprint(byte c) {
+    public static boolean isprint(byte c) {
         return (c >= 0x20) && (c <= 0x7F);
     }
 
-    public boolean ispunct(byte c) {
+    public static boolean ispunct(byte c) {
         return isgraph(c) && !isalnum(c);
     }
 
-    public boolean isspace(byte c) {
+    public static boolean isspace(byte c) {
         return (c == 0x20) || ((c >= 0x09) && (c <= 0x0D));
     }
 
-    public boolean isupper(byte c) {
+    public static boolean isupper(byte c) {
         return (c >= 0x41) && (c <= 0x5A);
     }
 
-    public boolean isxdigit(byte c) {
+    public static boolean isxdigit(byte c) {
         return ((c >= 0x30) && (c <= 0x39))
                 || ((c >= 0x41) && (c <= 0x46))
                 || ((c >= 0x61) && (c <= 0x66));
     }
 
-    public byte tolower(byte c) {
+    public static byte tolower(byte c) {
         if(isupper(c)) {
             return (byte)(c | 32);
         }
         return c;
     }
 
-    public byte toupper(byte c) {
+    public static byte toupper(byte c) {
         if(islower(c)) {
             return (byte)(c & 0x5F);
         }
