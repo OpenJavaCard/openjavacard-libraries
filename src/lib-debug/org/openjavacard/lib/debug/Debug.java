@@ -29,9 +29,8 @@ import javacard.framework.Util;
 
 public final class Debug implements DebugProtocol {
 
-    public final static Debug getInstance(Applet applet) {
-        Debug res = new Debug(applet);
-        return res;
+    public static Debug getInstance(Applet applet) {
+        return new Debug(applet);
     }
 
     /** Reference to containing applet */
