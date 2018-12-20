@@ -129,7 +129,7 @@ public final class Debug implements DebugProtocol {
         }
 
         // bail out if not enabled
-        if(!isEnabled()) {
+        if(!mEnabled) {
             return false;
         }
 
