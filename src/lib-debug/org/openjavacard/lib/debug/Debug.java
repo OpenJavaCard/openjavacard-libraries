@@ -34,31 +34,40 @@ public final class Debug implements DebugProtocol {
         return res;
     }
 
+    /** Reference to containing applet */
     private Applet mApplet;
 
+    /** Reference to service implementation (null if detached) */
+    private DebugService mService;
+
+    /** Binary representation of service AID */
+    private byte[] mServiceAID;
+
+    /** Internal flags (clear-on-reset) */
     private boolean[] mFlags;
     private static byte FLAG_ACTIVE = 0;
     private static byte NUM_FLAGS = 1;
 
+    /** True if debugging is enabled (persistent) */
     private boolean mEnabled;
-
+    /** Type of last exception (persistent) */
     private short mExceptionType;
+    /** Code of last exception (persistent */
     private short mExceptionCode;
 
-    private DebugService mService;
-
-    private byte[] mServiceAID;
-
     private Debug(Applet applet) {
+        // initialize fields
         mApplet = applet;
-        mEnabled = false;
-        mExceptionType = 0;
-        mExceptionCode = 0;
         mService = null;
         mServiceAID = new byte[] {
                 (byte) 0xa0, (byte) 0x00, (byte) 0x00, (byte) 0x02, (byte) 0x90, (byte) 0xfe, (byte) 0xfe, (byte) 0x01
         };
         mFlags = JCSystem.makeTransientBooleanArray(NUM_FLAGS, JCSystem.CLEAR_ON_RESET);
+        // we start disabled
+        mEnabled = false;
+        // no exception yet
+        mExceptionType = 0;
+        mExceptionCode = 0;
     }
 
     public boolean isActive() {
