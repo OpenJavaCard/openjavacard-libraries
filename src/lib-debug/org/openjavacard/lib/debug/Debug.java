@@ -124,32 +124,7 @@ public final class Debug implements DebugProtocol {
 
         // handle debugger commands
         if(cla == CLA_LIB_DEBUG && ins == INS_LIB_DEBUG) {
-            byte cmd = buffer[ISO7816.OFFSET_P1];
-            switch(cmd) {
-                case CMD_LIB_STATUS:
-                    processDbgStatus(apdu);
-                    break;
-                case CMD_LIB_ATTACH:
-                    processDbgAttach(apdu);
-                    break;
-                case CMD_LIB_DETACH:
-                    processDbgDetach(apdu);
-                    break;
-                case CMD_LIB_ENABLE:
-                    processDbgEnable(apdu);
-                    break;
-                case CMD_LIB_DISABLE:
-                    processDbgDisable(apdu);
-                    break;
-                case CMD_LIB_MEM_USAGE:
-                    processMemStatus(apdu);
-                    break;
-                case CMD_LIB_MEM_COLLECT:
-                    processMemCollect(apdu);
-                    break;
-                default:
-                    ISOException.throwIt(ISO7816.SW_INCORRECT_P1P2);
-            }
+            processDbgCommand(apdu);
             return true;
         }
 
@@ -209,6 +184,43 @@ public final class Debug implements DebugProtocol {
 
         // we have handled this APDU
         return true;
+    }
+
+    public boolean isDbgCommand(APDU apdu) {
+        byte[] buffer = apdu.getBuffer();
+        byte cla = buffer[ISO7816.OFFSET_CLA];
+        byte ins = buffer[ISO7816.OFFSET_INS];
+        return cla == CLA_LIB_DEBUG && ins == INS_LIB_DEBUG;
+    }
+
+    public void processDbgCommand(APDU apdu) {
+        byte[] buffer = apdu.getBuffer();
+        byte cmd = buffer[ISO7816.OFFSET_P1];
+        switch(cmd) {
+            case CMD_LIB_STATUS:
+                processDbgStatus(apdu);
+                break;
+            case CMD_LIB_ATTACH:
+                processDbgAttach(apdu);
+                break;
+            case CMD_LIB_DETACH:
+                processDbgDetach(apdu);
+                break;
+            case CMD_LIB_ENABLE:
+                processDbgEnable(apdu);
+                break;
+            case CMD_LIB_DISABLE:
+                processDbgDisable(apdu);
+                break;
+            case CMD_LIB_MEM_USAGE:
+                processMemStatus(apdu);
+                break;
+            case CMD_LIB_MEM_COLLECT:
+                processMemCollect(apdu);
+                break;
+            default:
+                ISOException.throwIt(ISO7816.SW_INCORRECT_P1P2);
+        }
     }
 
     private void processDbgStatus(APDU apdu) {
