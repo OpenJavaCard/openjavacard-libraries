@@ -36,6 +36,10 @@ public final class Debug implements DebugProtocol {
 
     private Applet mApplet;
 
+    private boolean[] mFlags;
+    private static byte FLAG_ACTIVE = 0;
+    private static byte NUM_FLAGS = 1;
+
     private boolean mEnabled;
 
     private short mExceptionType;
@@ -44,8 +48,6 @@ public final class Debug implements DebugProtocol {
     private DebugService mService;
 
     private byte[] mServiceAID;
-
-    private boolean mActive;
 
     private Debug(Applet applet) {
         mApplet = applet;
@@ -56,7 +58,11 @@ public final class Debug implements DebugProtocol {
         mServiceAID = new byte[] {
                 (byte) 0xa0, (byte) 0x00, (byte) 0x00, (byte) 0x02, (byte) 0x90, (byte) 0xfe, (byte) 0xfe, (byte) 0x01
         };
-        mActive = false;
+        mFlags = JCSystem.makeTransientBooleanArray(NUM_FLAGS, JCSystem.CLEAR_ON_RESET);
+    }
+
+    public boolean isActive() {
+        return mFlags[FLAG_ACTIVE];
     }
 
     public boolean isEnabled() {
@@ -118,7 +124,7 @@ public final class Debug implements DebugProtocol {
         byte ins = buffer[ISO7816.OFFSET_INS];
 
         // prevent recursion
-        if(mActive) {
+        if(mFlags[FLAG_ACTIVE]) {
             return false;
         }
 
@@ -148,7 +154,7 @@ public final class Debug implements DebugProtocol {
         // call user handler with exceptions caught
         Throwable caught = null;
         try {
-            mActive = true;
+            mFlags[FLAG_ACTIVE] = true;
             mApplet.process(apdu);
         } catch (RuntimeException ex) {
             caught = ex;
@@ -157,7 +163,7 @@ public final class Debug implements DebugProtocol {
         } catch (Throwable ex) {
             caught = ex;
         } finally {
-            mActive = false;
+            mFlags[FLAG_ACTIVE] = false;
         }
 
         // log the R-APDU
@@ -228,7 +234,7 @@ public final class Debug implements DebugProtocol {
         short val, off = 0;
         buffer[off++] = (byte)(isAttached() ? 1 : 0);
         buffer[off++] = (byte)(isEnabled() ? 1 : 0);
-        buffer[off++] = (byte)(mActive ? 1 : 0);
+        buffer[off++] = (byte)(isActive() ? 1 : 0);
         val = mExceptionType;
         off = Util.setShort(buffer, off, val);;
         val = mExceptionCode;
