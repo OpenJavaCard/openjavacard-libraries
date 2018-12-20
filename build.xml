@@ -12,7 +12,7 @@
     </target>
 
     <target name="build" description="Build code"
-            depends="build-lib-ber,build-lib-string,build-lib-fortuna,build-lib-rsa,build-lib-debug,build-lib-auth,build-app-demo,build-svc-debug">
+            depends="build-lib-ber,build-lib-string,build-lib-fortuna,build-lib-rsa,build-lib-debug,build-lib-auth,build-app-demo,build-svc-debug,build-svc-random">
     </target>
 
     <target name="prebuilt" description="Update prebuilt files"
@@ -172,6 +172,25 @@
                         exps="build/classes/lib-debug"/>
                 <applet aid="D27600017710021020000101"
                         class="org.openjavacard.svc.debug.DebugApplet"/>
+            </cap>
+        </javacard>
+    </target>
+
+    <target name="build-svc-random"
+            depends="ext-javacard,build-dirs,build-lib-fortuna">
+        <javacard jckit="${sdk.jc222}">
+            <cap output="build/javacard/openjavacard-svc-random.cap"
+                 jar="build/javacard/openjavacard-svc-random.jar"
+                 classes="build/classes/svc-random"
+                 export="build/classes/svc-random"
+                 sources="src/svc-random"
+                 aid="D276000177100210210001"
+                 package="org.openjavacard.svc.random"
+                 version="0.0">
+                <import jar="build/classes/lib-fortuna"
+                        exps="build/classes/lib-fortuna"/>
+                <applet aid="D27600017710021021000101"
+                        class="org.openjavacard.svc.random.RandomApplet"/>
             </cap>
         </javacard>
     </target>
