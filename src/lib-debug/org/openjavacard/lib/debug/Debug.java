@@ -69,26 +69,34 @@ public final class Debug implements DebugProtocol {
         mExceptionCode = 0;
     }
 
+    /** @return true if running in debugger */
     public boolean isActive() {
         return mFlags[FLAG_ACTIVE];
     }
 
+    /** @return true if debugging is enabled */
     public boolean isEnabled() {
         return mEnabled;
     }
 
+    /** @return true if the debug service is attached */
     public boolean isAttached() {
         return mService != null;
     }
 
+    /** Enable debugging */
     public void enable() {
         mEnabled = true;
     }
 
+    /** Disable debugging */
     public void disable() {
         mEnabled = false;
     }
 
+    /**
+     * Attach to debug service
+     */
     public void attach() {
         AID aid = JCSystem.lookupAID(mServiceAID, (short)0, (byte) mServiceAID.length);
         if(aid != null) {
@@ -99,10 +107,16 @@ public final class Debug implements DebugProtocol {
         }
     }
 
+    /**
+     * Detach from debug service
+     */
     public void detach() {
         mService = null;
     }
 
+    /**
+     * Log memory usage in debug log
+     */
     public void logMemory() {
         if(isAttached()) {
             short persistent = JCSystem.getAvailableMemory(JCSystem.MEMORY_TYPE_PERSISTENT);
@@ -112,16 +126,35 @@ public final class Debug implements DebugProtocol {
         }
     }
 
+    /**
+     * Log message in debug log
+     *
+     * @param code of message
+     * @param buf containing additional data
+     * @param off of data
+     * @param len of data
+     */
     public void logMessage(short code, byte[] buf, short off, byte len) {
         if(isAttached()) {
             mService.logMessage(code, buf, off, len);
         }
     }
 
+    /**
+     * Log message in debug log
+     *
+     * @param code of message
+     * @param buf containing additional data
+     */
     public void logMessage(short code, byte[] buf) {
         logMessage(code, null, (short)0, (byte)buf.length);
     }
 
+    /**
+     * Log message in debug log
+     *
+     * @param code of message
+     */
     public void logMessage(short code) {
         logMessage(code, null, (short)0, (byte)0);
     }
