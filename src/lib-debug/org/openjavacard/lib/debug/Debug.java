@@ -43,7 +43,7 @@ public final class Debug implements DebugProtocol {
 
     private DebugService mService;
 
-    private byte[] mAIDBytes;
+    private byte[] mServiceAID;
 
     private boolean mActive;
 
@@ -53,6 +53,9 @@ public final class Debug implements DebugProtocol {
         mExceptionType = 0;
         mExceptionCode = 0;
         mService = null;
+        mServiceAID = new byte[] {
+                (byte) 0xa0, (byte) 0x00, (byte) 0x00, (byte) 0x02, (byte) 0x90, (byte) 0xfe, (byte) 0xfe, (byte) 0x01
+        };
         mActive = false;
     }
 
@@ -73,12 +76,7 @@ public final class Debug implements DebugProtocol {
     }
 
     public void attach() {
-        if(mAIDBytes == null) {
-            mAIDBytes = new byte[]{
-                    (byte) 0xa0, (byte) 0x00, (byte) 0x00, (byte) 0x02, (byte) 0x90, (byte) 0xfe, (byte) 0xfe, (byte) 0x01
-            };
-        }
-        AID aid = JCSystem.lookupAID(mAIDBytes, (short)0, (byte)mAIDBytes.length);
+        AID aid = JCSystem.lookupAID(mServiceAID, (short)0, (byte) mServiceAID.length);
         if(aid != null) {
             Object obj = JCSystem.getAppletShareableInterfaceObject(aid, SHARE_DEBUG);
             if(obj instanceof DebugService) {
