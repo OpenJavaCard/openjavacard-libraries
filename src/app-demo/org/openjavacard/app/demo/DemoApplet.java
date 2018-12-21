@@ -31,6 +31,7 @@ import org.openjavacard.lib.ber.BERWriter;
 import org.openjavacard.lib.debug.Debug;
 import org.openjavacard.lib.fortuna.FortunaRandom;
 import org.openjavacard.lib.fortuna.LongNum;
+import org.openjavacard.lib.password.PasswordHash;
 import org.openjavacard.lib.string.StringStatistics;
 
 /**
@@ -90,6 +91,8 @@ public final class DemoApplet extends Applet implements ISO7816 {
 
     private final StringStatistics mStringStats;
 
+    private final PasswordHash mPasswordHash;
+
     /**
      * Main constructor
      */
@@ -103,6 +106,7 @@ public final class DemoApplet extends Applet implements ISO7816 {
         mWriter = new BERWriter((byte)32, (byte)4, JCSystem.CLEAR_ON_DESELECT);
         mParseHandler = new ParseHandler();
         mStringStats = new StringStatistics();
+        mPasswordHash = new PasswordHash((byte)12, (byte)32, (byte)3);
     }
 
     /**
