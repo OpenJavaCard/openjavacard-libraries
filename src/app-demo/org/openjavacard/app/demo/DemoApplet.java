@@ -263,7 +263,7 @@ public final class DemoApplet extends Applet implements ISO7816 {
 
     private final void processBerParse(APDU apdu) {
         byte[] buffer = apdu.getBuffer();
-        byte len = buffer[OFFSET_LC];
+        short len = (short)(buffer[OFFSET_LC] & 0xFF);
         mReader.parse(buffer, OFFSET_CDATA, len, mParseHandler);
         Util.arrayCopyNonAtomic(mBuffer.getBuffer(), (short)0, buffer, (short)0, mBuffer.getLength());
         apdu.setOutgoingAndSend((short)0, mBuffer.getLength());
