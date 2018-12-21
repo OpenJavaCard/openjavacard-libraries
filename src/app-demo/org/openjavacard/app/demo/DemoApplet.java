@@ -31,6 +31,7 @@ import org.openjavacard.lib.ber.BERWriter;
 import org.openjavacard.lib.debug.Debug;
 import org.openjavacard.lib.fortuna.FortunaRandom;
 import org.openjavacard.lib.fortuna.LongNum;
+import org.openjavacard.lib.string.StringStatistics;
 
 /**
  *
@@ -53,6 +54,8 @@ public final class DemoApplet extends Applet implements ISO7816 {
 
     private static final byte INS_DEBUG_MEMORY  = (byte)0x30;
     private static final byte INS_DEBUG_MESSAGE = (byte)0x32;
+
+    private static final byte INS_STRING_STATS  = (byte)0x40;
 
     /**
      * Installation method for the applet
@@ -85,6 +88,8 @@ public final class DemoApplet extends Applet implements ISO7816 {
     private final BERWriter mWriter;
     private final ParseHandler mParseHandler;
 
+    private final StringStatistics mStringStats;
+
     /**
      * Main constructor
      */
@@ -97,6 +102,7 @@ public final class DemoApplet extends Applet implements ISO7816 {
         mReader = new BERReader((byte)4, JCSystem.CLEAR_ON_DESELECT);
         mWriter = new BERWriter((byte)32, (byte)4, JCSystem.CLEAR_ON_DESELECT);
         mParseHandler = new ParseHandler();
+        mStringStats = new StringStatistics();
     }
 
     /**
@@ -176,6 +182,9 @@ public final class DemoApplet extends Applet implements ISO7816 {
                 case INS_DEBUG_MESSAGE:
                     processDebugMessage(apdu);
                     break;
+                case INS_STRING_STATS:
+                    processStringStats(apdu);
+                    break;
                 default:
                     ISOException.throwIt(SW_INS_NOT_SUPPORTED);
             }
@@ -239,6 +248,13 @@ public final class DemoApplet extends Applet implements ISO7816 {
         short code = Util.getShort(buffer, ISO7816.OFFSET_P1);
         short len = apdu.setIncomingAndReceive();
         mDebug.logMessage(code, buffer, ISO7816.OFFSET_CDATA, (byte)len);
+    }
+
+    private final void processStringStats(APDU apdu) {
+        byte[] buffer = apdu.getBuffer();
+        short len = apdu.setIncomingAndReceive();
+        mStringStats.reset();
+        mStringStats.update(buffer, ISO7816.OFFSET_CDATA, (byte)len);
     }
 
     private final void processBerParse(APDU apdu) {
