@@ -79,9 +79,9 @@ public final class DemoApplet extends Applet implements ISO7816 {
 
     private final TempBuffer mBuffer;
 
-    private byte[] mTmp;
+    private final byte[] mTmp;
 
-    private FortunaRandom mFortuna;
+    private final FortunaRandom mFortuna;
 
     private final LongNum mLongNum;
 
