@@ -1,10 +1,17 @@
 package org.openjavacard.debug;
 
+import javacard.framework.ISO7816;
 import org.openjavacard.iso.ISO7816;
 import org.openjavacard.iso.SWException;
 import org.openjavacard.lib.debug.DebugProtocol;
 import org.openjavacard.util.APDUUtil;
 import org.openjavacard.util.HexUtil;
+
+import javax.smartcardio.Card;
+import javax.smartcardio.CardChannel;
+import javax.smartcardio.CardException;
+import javax.smartcardio.CommandAPDU;
+import javax.smartcardio.ResponseAPDU;
 
 public class DebugClient {
 
