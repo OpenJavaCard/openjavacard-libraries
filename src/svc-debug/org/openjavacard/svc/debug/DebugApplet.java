@@ -34,10 +34,24 @@ import org.openjavacard.lib.debug.DebugProtocol;
 public final class DebugApplet extends Applet implements ISO7816, DebugProtocol {
 
     public static void install(byte[] buf, short off, byte len) {
+        short pos = off;
+        // find AID
+        byte  lenAID = buf[pos++];
+        short offAID = pos;
+        pos += lenAID;
+        // find control information (ignored)
+        byte  lenCI = buf[pos++];
+        short offCI = pos;
+        pos += lenCI;
+        // find applet data
+        byte  lenAD = buf[pos++];
+        short offAD = pos;
+        pos += lenAD;
+
         // instantiate and initialize the applet
         DebugApplet applet = new DebugApplet();
         // register the applet
-        applet.register();
+        applet.register(buf, offAID, lenAID);
     }
 
     private final BERWriter mBerWriter;
