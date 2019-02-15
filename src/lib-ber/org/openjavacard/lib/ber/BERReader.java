@@ -81,24 +81,13 @@ public final class BERReader {
     }
 
     /**
-     * Parsing handler interface
-     *
-     * The client should implement this interface and
-     * pass an instance to the parse method.
-     */
-    public interface Handler {
-        boolean handle(BERReader reader, byte depth, short tag,
-                       byte[] dataBuf, short dataOff, short dataLen);
-    }
-
-    /**
      * Parse a block of BER data
      * @param buf to parse from
      * @param off to start at
      * @param len of data
      * @param handler to call with results
      */
-    public final void parse(byte[] buf, short off, short len, Handler handler) {
+    public final void parse(byte[] buf, short off, short len, BERHandler handler) {
         mVars[VAR_BUF_OFF] = off;
         mVars[VAR_BUF_LEN] = len;
         mVars[VAR_POSN] = 0;
@@ -114,7 +103,7 @@ public final class BERReader {
      * @param buf we are reading from
      * @param handler to call for every element
      */
-    private void parseOne(byte[] buf, Handler handler) {
+    private void parseOne(byte[] buf, BERHandler handler) {
         /* read the tag */
         short t = readTag(buf);
         /* read the length */

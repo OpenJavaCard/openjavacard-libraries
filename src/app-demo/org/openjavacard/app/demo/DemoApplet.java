@@ -25,6 +25,7 @@ import javacard.framework.ISO7816;
 import javacard.framework.ISOException;
 import javacard.framework.JCSystem;
 import javacard.framework.Util;
+import org.openjavacard.lib.ber.BERHandler;
 import org.openjavacard.lib.ber.BERReader;
 import org.openjavacard.lib.ber.BERTag;
 import org.openjavacard.lib.ber.BERWriter;
@@ -296,7 +297,7 @@ public final class DemoApplet extends Applet implements ISO7816 {
         apdu.setOutgoingAndSend((short)0, len);
     }
 
-    private final class ParseHandler implements BERReader.Handler {
+    private final class ParseHandler implements BERHandler {
         public boolean handle(BERReader reader, byte depth, short tag,
                               byte[] dataBuf, short dataOff, short dataLen) {
             mBuffer.put((byte)0x53);
