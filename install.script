@@ -1,0 +1,24 @@
+# print card information
+gp-info
+
+# load everything in one go
+gp-load --reload \
+	build/javacard/openjavacard-lib-ber.cap \
+	build/javacard/openjavacard-lib-string.cap \
+	build/javacard/openjavacard-lib-fortuna.cap \
+	build/javacard/openjavacard-lib-password.cap \
+	build/javacard/openjavacard-lib-debug.cap \
+	build/javacard/openjavacard-svc-debug.cap \
+	build/javacard/openjavacard-svc-random.cap \
+	build/javacard/openjavacard-app-demo.cap
+
+# install debug service
+gp-install --reinstall --package D276000177100210200001 --module D27600017710021020000101 --aid D27600017710011020
+# install random service
+gp-install --reinstall --package D276000177100210210001 --module D27600017710021021000101 --aid D27600017710011021
+# install demo applet
+gp-install --reinstall --package D276000177100210010001 --module D27600017710021001000101 --aid D27600017710011001
+
+# list result
+gp-list
+
