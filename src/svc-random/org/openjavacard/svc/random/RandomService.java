@@ -25,7 +25,7 @@ import javacard.security.RandomData;
 
 public class RandomService extends RandomData implements Shareable {
 
-    private RandomData   mRandom;
+    private final RandomData mRandom;
 
     RandomService(RandomData random) {
         mRandom = random;
