@@ -160,12 +160,14 @@
                  version="0.0">
                 <import jar="build/classes/lib-ber"
                         exps="build/classes/lib-ber"/>
-                <import jar="build/classes/lib-debug"
-                        exps="build/classes/lib-debug"/>
+                <import jar="build/classes/lib-string"
+                        exps="build/classes/lib-string"/>
                 <import jar="build/classes/lib-fortuna"
                         exps="build/classes/lib-fortuna"/>
                 <import jar="build/classes/lib-password"
                         exps="build/classes/lib-password"/>
+                <import jar="build/classes/lib-debug"
+                        exps="build/classes/lib-debug"/>
                 <applet aid="D27600017710021001000101"
                         class="org.openjavacard.app.demo.DemoApplet"/>
             </cap>
