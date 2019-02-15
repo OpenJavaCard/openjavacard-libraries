@@ -23,7 +23,7 @@ import javacard.framework.APDU;
 
 public class AuthMethodMedium extends AuthMethod {
 
-    public static AuthMethodMedium getContactedInstance() {
+    public static AuthMethodMedium getContactInstance() {
         return new AuthMethodMedium(APDU.PROTOCOL_MEDIA_DEFAULT);
     }
 
@@ -39,10 +39,6 @@ public class AuthMethodMedium extends AuthMethod {
 
     public AuthMethodMedium(byte allowedMediumA, byte allowedMediumB) {
         mAllowedMedia = new byte[] {allowedMediumA, allowedMediumB};
-    }
-
-    public AuthMethodMedium(byte allowedMediumA, byte allowedMediumB, byte allowedMediumC) {
-        mAllowedMedia = new byte[] {allowedMediumA, allowedMediumB, allowedMediumC};
     }
 
     public boolean verify() {
