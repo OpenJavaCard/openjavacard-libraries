@@ -55,7 +55,7 @@
                  jar="build/javacard/openjavacard-lib-ber.jar"
                  classes="build/classes/lib-ber"
                  export="build/classes/lib-ber"
-                 sources="src/lib-ber"
+                 sources="library-ber/src/main/java"
                  aid="D276000177100310010001"
                  package="org.openjavacard.lib.ber"
                  version="0.0">
@@ -69,7 +69,7 @@
                  jar="build/javacard/openjavacard-lib-string.jar"
                  classes="build/classes/lib-string"
                  export="build/classes/lib-string"
-                 sources="src/lib-string"
+                 sources="library-string/src/main/java"
                  aid="D276000177100310020001"
                  package="org.openjavacard.lib.string"
                  version="0.0">
@@ -83,7 +83,7 @@
                  jar="build/javacard/openjavacard-lib-fortuna.jar"
                  classes="build/classes/lib-fortuna"
                  export="build/classes/lib-fortuna"
-                 sources="src/lib-fortuna"
+                 sources="library-fortuna/src/main/java"
                  aid="D276000177100310030001"
                  package="org.openjavacard.lib.fortuna"
                  version="0.0">
@@ -97,7 +97,7 @@
                  jar="build/javacard/openjavacard-lib-rsa.jar"
                  classes="build/classes/lib-rsa"
                  export="build/classes/lib-rsa"
-                 sources="src/lib-rsa"
+                 sources="library-rsa/src/main/java"
                  aid="D276000177100310040001"
                  package="org.openjavacard.lib.rsa"
                  version="0.0">
@@ -111,7 +111,7 @@
                  jar="build/javacard/openjavacard-lib-debug.jar"
                  classes="build/classes/lib-debug"
                  export="build/classes/lib-debug"
-                 sources="src/lib-debug"
+                 sources="library-debug/src/main/java"
                  aid="D276000177100310050001"
                  package="org.openjavacard.lib.debug"
                  version="0.0">
@@ -125,7 +125,7 @@
                  jar="build/javacard/openjavacard-lib-auth.jar"
                  classes="build/classes/lib-auth"
                  export="build/classes/lib-auth"
-                 sources="src/lib-auth"
+                 sources="library-auth/src/main/java"
                  aid="D276000177100310060001"
                  package="org.openjavacard.lib.auth"
                  version="0.0">
@@ -139,7 +139,7 @@
                  jar="build/javacard/openjavacard-lib-password.jar"
                  classes="build/classes/lib-password"
                  export="build/classes/lib-password"
-                 sources="src/lib-password"
+                 sources="library-password/src/main/java"
                  aid="D276000177100310070001"
                  package="org.openjavacard.lib.password"
                  version="0.0">
@@ -154,7 +154,7 @@
                  jar="build/javacard/openjavacard-app-demo.jar"
                  classes="build/classes/app-demo"
                  export="build/classes/app-demo"
-                 sources="src/app-demo"
+                 sources="applet-demo/src/main/java"
                  aid="D276000177100210010001"
                  package="org.openjavacard.app.demo"
                  version="0.0">
@@ -181,7 +181,7 @@
                  jar="build/javacard/openjavacard-svc-debug.jar"
                  classes="build/classes/svc-debug"
                  export="build/classes/svc-debug"
-                 sources="src/svc-debug"
+                 sources="service-debug/src/main/java"
                  aid="D276000177100210200001"
                  package="org.openjavacard.svc.debug"
                  version="0.0">
@@ -202,7 +202,7 @@
                  jar="build/javacard/openjavacard-svc-random.jar"
                  classes="build/classes/svc-random"
                  export="build/classes/svc-random"
-                 sources="src/svc-random"
+                 sources="service-random/src/main/java"
                  aid="D276000177100210210001"
                  package="org.openjavacard.svc.random"
                  version="0.0">
@@ -248,12 +248,14 @@
             </group>
 
             <sourcepath>
-                <pathelement path="src/lib-ber"/>
-                <pathelement path="src/lib-string"/>
-                <pathelement path="src/lib-fortuna"/>
-                <pathelement path="src/lib-rsa"/>
-                <pathelement path="src/lib-debug"/>
-                <pathelement path="src/lib-auth"/>
+                <pathelement path="library-auth/src/main/java"/>
+                <pathelement path="library-ber/src/main/java"/>
+                <pathelement path="library-debug/src/main/java"/>
+                <pathelement path="library-fortuna/src/main/java"/>
+                <pathelement path="library-isofs/src/main/java"/>
+                <pathelement path="library-password/src/main/java"/>
+                <pathelement path="library-rsa/src/main/java"/>
+                <pathelement path="library-string/src/main/java"/>
             </sourcepath>
 
             <classpath>
