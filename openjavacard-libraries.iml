@@ -13,6 +13,10 @@
       <sourceFolder url="file://$MODULE_DIR$/src/lib-rsa" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/svc-audit" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/svc-random" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/lib-ascii" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/lib-string" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/lib-password" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/lib-isofs" isTestSource="false" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
