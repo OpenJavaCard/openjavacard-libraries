@@ -63,23 +63,23 @@ public class RSAOAEPCipher extends Cipher {
     private byte[] mTemp = null;
 
     /** Underlying plain RSA cipher */
-    Cipher mRSA = null;
+    private Cipher mRSA = null;
 
     /** Indicates that we have seen init() */
-    boolean mInitialized = false;
+    private boolean mInitialized = false;
 
     /** Currently initialized mode (encrypt/decrypt) */
-    byte  mMode = 0;
+    private byte  mMode = 0;
 
     /** Size of our current RSA key */
-    short mBits = 0;
+    private short mBits = 0;
 
     /**
      * Cached hash of label
      *
      * Set up during cipher initialization.
      */
-    byte[] mLabelHash = null;
+    private byte[] mLabelHash;
 
     /**
      * Input buffer (CLEAR_ON_DESELECT)
@@ -88,13 +88,13 @@ public class RSAOAEPCipher extends Cipher {
      * fed incrementally using update(). Will not be allocated
      * or used when only doFinal() is being used.
      */
-    byte[] mBuffer = null;
+    private byte[] mBuffer = null;
 
     /** Fill pointer into mBuffer */
-    short mBufPtr = 0;
+    private short mBufPtr = 0;
 
     /** Fill limit in mBuffer */
-    short mBufEnd = 0;
+    private short mBufEnd = 0;
 
     /** Main constructor */
     public RSAOAEPCipher() {
