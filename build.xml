@@ -12,7 +12,7 @@
     </target>
 
     <target name="build" description="Build code"
-            depends="build-lib-ber,build-lib-string,build-lib-fortuna,build-lib-rsa,build-lib-debug,build-lib-auth,build-app-demo,build-svc-debug,build-svc-random">
+            depends="build-lib-ber,build-lib-string,build-lib-fortuna,build-lib-rsa,build-lib-debug,build-lib-auth,build-lib-password,build-app-demo,build-svc-debug,build-svc-random">
     </target>
 
     <target name="prebuilt" description="Update prebuilt files"
@@ -44,6 +44,7 @@
         <mkdir dir="build/classes/lib-rsa"/>
         <mkdir dir="build/classes/lib-debug"/>
         <mkdir dir="build/classes/lib-auth"/>
+        <mkdir dir="build/classes/lib-password"/>
 
         <mkdir dir="build/classes/app-demo"/>
     </target>
@@ -132,6 +133,20 @@
         </javacard>
     </target>
 
+    <target name="build-lib-password" depends="ext-javacard,build-dirs">
+        <javacard jckit="${sdk.jc222}">
+            <cap output="build/javacard/openjavacard-lib-password.cap"
+                 jar="build/javacard/openjavacard-lib-password.jar"
+                 classes="build/classes/lib-password"
+                 export="build/classes/lib-password"
+                 sources="src/lib-password"
+                 aid="D276000177100310070001"
+                 package="org.openjavacard.lib.password"
+                 version="0.0">
+            </cap>
+        </javacard>
+    </target>
+
     <target name="build-app-demo"
             depends="ext-javacard,build-dirs,build-lib-ber,build-lib-debug,build-lib-fortuna">
         <javacard jckit="${sdk.jc222}">
@@ -149,6 +164,8 @@
                         exps="build/classes/lib-debug"/>
                 <import jar="build/classes/lib-fortuna"
                         exps="build/classes/lib-fortuna"/>
+                <import jar="build/classes/lib-password"
+                        exps="build/classes/lib-password"/>
                 <applet aid="D27600017710021001000101"
                         class="org.openjavacard.app.demo.DemoApplet"/>
             </cap>
@@ -223,6 +240,9 @@
             </group>
             <group title="Auth library">
                 <package name="org.openjavacard.lib.auth"/>
+            </group>
+            <group title="Password functions">
+                <package name="org.openjavacard.lib.password"/>
             </group>
 
             <sourcepath>
