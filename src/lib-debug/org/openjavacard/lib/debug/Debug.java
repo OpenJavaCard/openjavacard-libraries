@@ -58,9 +58,7 @@ public final class Debug implements DebugProtocol {
         // initialize fields
         mApplet = applet;
         mService = null;
-        mServiceAID = new byte[] {
-                (byte) 0xa0, (byte) 0x00, (byte) 0x00, (byte) 0x02, (byte) 0x90, (byte) 0xfe, (byte) 0xfe, (byte) 0x01
-        };
+        mServiceAID = newServiceAID();
         mFlags = JCSystem.makeTransientBooleanArray(NUM_FLAGS, JCSystem.CLEAR_ON_RESET);
         // we start disabled
         mEnabled = false;
@@ -92,6 +90,21 @@ public final class Debug implements DebugProtocol {
     /** Disable debugging */
     public void disable() {
         mEnabled = false;
+    }
+
+    /**
+     * Return the debug service AID
+     *
+     * @return AID as byte array
+     */
+    private byte[] newServiceAID() {
+        // D276000177   - signal interrupt
+        //   10         - OpenJavaCard
+        //     011020   - OpenJavaCard Libraries (Debug service)
+        return new byte[] {
+                (byte)0xD2, (byte)0x76, (byte)0x00, (byte)0x01, (byte)0x77,
+                (byte)0x10, (byte)0x01, (byte)0x10, (byte)0x20,
+        };
     }
 
     /**
