@@ -1,6 +1,8 @@
 language: java
 jdk:
   - openjdk8
+install:
+  - true
 script:
   - ant clean
   - ant build
