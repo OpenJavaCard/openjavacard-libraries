@@ -126,7 +126,7 @@ public class BERWriter {
     public final void buildPrimitive(short tag, byte[] buf, short off, short len) {
         byte current = (byte)mVars[VAR_INDEX];
         byte depth = (byte)mVars[VAR_DEPTH];
-        short totalLength = (short)(1 + BERLength.lengthSize(len) + len);
+        short totalLength = (short)(BERTag.tagSize(tag) + BERLength.lengthSize(len) + len);
         // check limits
         if(current == mMaxTags) {
             error();

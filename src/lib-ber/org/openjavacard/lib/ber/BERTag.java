@@ -120,7 +120,7 @@ public final class BERTag {
         return (short)(tag & TYPE_MASK);
     }
 
-    /** Returns true of the tag requires two bytes */
+    /** Returns true if the tag requires two bytes */
     public static final boolean tagIsLong(short tag) {
         return (tag & TYPE_MASK_FIRST) == TYPE_LONG;
     }
