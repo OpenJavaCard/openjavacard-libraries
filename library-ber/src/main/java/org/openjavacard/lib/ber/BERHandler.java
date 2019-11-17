@@ -20,10 +20,7 @@
 package org.openjavacard.lib.ber;
 
 /**
- * Parsing handler interface
- *
- * The client should implement this interface and
- * pass an instance to the parse method.
+ * BER TLV handler interface
  */
 public interface BERHandler {
 

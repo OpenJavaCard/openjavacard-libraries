@@ -25,26 +25,27 @@ import javacard.framework.JCSystem;
 
 /**
  * Reader for data coded in SC-BER
- *
+ * <p/>
  * This is an intricately designed BER parser for JavaCard that
  * supports full non-strict parsing of some variant of BER.
- *
+ * <p/>
  * The interface is based on a callback interface, allowing a
  * client of this utility to parse a complete recursive TLV
- * structure with just one method and without any memory allocation.
- *
+ * structure without any memory allocation.
+ * <p/>
  * It is strongly recommended to keep instances of this class
  * permanently available by using a static reference, as with all
  * such stateful objects on JavaCard. Doing so prevents memory
  * allocation, which should improve card life and be safer from
  * a security standpoint.
- *
+ * <p/>
  * All buffer handling is performed via a stack-based reference to
  * the buffer. This allows parsing directly from the APDU buffer,
  * which can not be referenced even from transient arrays.
- *
+ * <p/>
  * All internal state is kept in transient variables to prevent state
  * leaks and to harden this code against memory-based DoS.
+ * <p/>
  */
 public final class BERReader {
 

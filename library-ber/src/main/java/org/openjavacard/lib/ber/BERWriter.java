@@ -89,25 +89,47 @@ public class BERWriter {
         mLenStk = JCSystem.makeTransientShortArray(maxTags, clearOn);
     }
 
+    /**
+     * Return accumulated length
+     *
+     * Only valid when at top level.
+     *
+     * @return number of bytes currently used
+     */
     public short getCurrentLength() {
         return mVars[VAR_LENGTH];
     }
 
+    /**
+     * Return remaining space
+     *
+     * Only valid when at top level.
+     *
+     * @return number of bytes remaining
+     */
     public short getCurrentSpace() {
         return (short)(mVars[VAR_MAX_LENGTH] - mVars[VAR_LENGTH]);
     }
 
+    /**
+     * Return current nesting depth
+     * @return tag nesting depth
+     */
     public byte getCurrentDepth() {
         return (byte)mVars[VAR_DEPTH];
     }
 
+    /**
+     * Return current tag count
+     * @return number of tags
+     */
     public byte getCurrentCount() {
         return (byte)mVars[VAR_INDEX];
     }
 
     /**
      * Begin constructing BER data
-     * @param maxLength
+     * @param maxLength maximum output length
      */
     public final void begin(short maxLength) {
         mVars[VAR_MAX_LENGTH] = maxLength;
