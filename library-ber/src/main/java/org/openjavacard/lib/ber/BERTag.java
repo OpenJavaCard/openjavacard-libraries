@@ -21,6 +21,9 @@ package org.openjavacard.lib.ber;
 
 import javacard.framework.Util;
 
+/**
+ * Helper functions related to BER tag values
+ */
 public final class BERTag {
 
     public static final short TYPE_MASK       = (short)0x1F7F;

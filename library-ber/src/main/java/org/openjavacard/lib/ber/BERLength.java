@@ -21,6 +21,9 @@ package org.openjavacard.lib.ber;
 
 import javacard.framework.Util;
 
+/**
+ * Helper functions related to BER length values
+ */
 public final class BERLength {
 
     private static final byte LENGTH_LONG_FLAG = (byte)0x80;
