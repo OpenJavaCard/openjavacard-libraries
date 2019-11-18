@@ -21,11 +21,13 @@ package org.openjavacard.lib.isofs;
 
 public class DF extends ISOFile {
 
+    private static final byte FDB = FDB_CATEGORY_SPECIAL|FDB_SPECIAL_DF;
+
     private final DF mParent;
     private final ISOFile[] mChildren;
 
     DF(short fid, DF parent, byte maxChildren) {
-        super(fid);
+        super(fid, FDB);
         mParent = parent;
         mChildren = new ISOFile[maxChildren];
     }
@@ -40,7 +42,7 @@ public class DF extends ISOFile {
     void removeChild(ISOFile child) {
     }
 
-    ISOFile findChildByFID(short fid) {
+    ISOFile findChildByFID(short fid, byte type) {
         ISOFile res = null;
         for(short i = 0; i < mChildren.length; i++) {
             ISOFile child = mChildren[i];

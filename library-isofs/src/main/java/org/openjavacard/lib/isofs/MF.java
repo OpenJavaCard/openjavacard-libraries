@@ -19,7 +19,7 @@
 
 package org.openjavacard.lib.isofs;
 
-public class MF extends DF {
+class MF extends DF {
 
     MF(short fid, byte maxChildren) {
         super(fid, null, maxChildren);

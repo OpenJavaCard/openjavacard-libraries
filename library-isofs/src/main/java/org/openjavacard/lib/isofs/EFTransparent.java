@@ -21,10 +21,12 @@ package org.openjavacard.lib.isofs;
 
 public class EFTransparent extends EF {
 
+    private static final byte FDB = FDB_CATEGORY_EF_WORKING|FDB_STRUCTURE_TRANSPARENT;
+
     private final byte[] mData;
 
     EFTransparent(short fid, short dataLength) {
-        super(fid);
+        super(fid, FDB);
         mData = new byte[dataLength];
     }
 

@@ -21,8 +21,8 @@ package org.openjavacard.lib.isofs;
 
 public class EF extends ISOFile {
 
-    EF(short fid) {
-        super(fid);
+    EF(short fid, byte fdb) {
+        super(fid, fdb);
     }
 
 }
