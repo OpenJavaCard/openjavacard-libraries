@@ -119,13 +119,20 @@ public final class BERReader {
         mTagStk[mVars[VAR_DEPTH]] = t;
         mOffStk[mVars[VAR_DEPTH]] = (short)(mVars[VAR_POSN] + l);
 
-        /* call the handler */
-        if(!handler.handle(this, (byte)mVars[VAR_DEPTH], t, buf, mVars[VAR_POSN], l)) {
-            parseError();
-        }
+        /* perform processing */
+        if(BERTag.isPrimitive(t)) {
+            /* call handler */
+            if(!handler.handlePrimitive(this, (byte)mVars[VAR_DEPTH], t,
+                                            buf, mVars[VAR_POSN], l)) {
+                parseError();
+            }
+        } else {
+            /* call begin handler */
+            if(!handler.handleBeginConstructed(this, (byte)mVars[VAR_DEPTH], t)) {
+                parseError();
+            }
 
-        /* parse children if constructed */
-        if(BERTag.isConstructed(t)) {
+            /* parse children */
             mVars[VAR_DEPTH]++;
 
             /* check for maximum depth */
@@ -141,7 +148,13 @@ public final class BERReader {
                 }
             }
 
+            /* done with children*/
             mVars[VAR_DEPTH]--;
+
+            /* call finish handler */
+            if(!handler.handleFinishConstructed(this, (byte)mVars[VAR_DEPTH], t)) {
+                parseError();
+            }
         }
 
         /* pop state */

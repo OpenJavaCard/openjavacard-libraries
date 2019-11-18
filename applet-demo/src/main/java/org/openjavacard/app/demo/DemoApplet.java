@@ -298,14 +298,27 @@ public final class DemoApplet extends Applet implements ISO7816 {
     }
 
     private final class ParseHandler implements BERHandler {
-        public boolean handle(BERReader reader, byte depth, short tag,
-                              byte[] dataBuf, short dataOff, short dataLen) {
+
+        public boolean handlePrimitive(BERReader reader, byte depth, short tag, byte[] dataBuf, short dataOff, short dataLen) {
             mBuffer.put((byte)0x53);
             mBuffer.put(depth);
             mBuffer.put(tag);
             mBuffer.put(dataLen);
             return true;
         }
+
+        public boolean handleBeginConstructed(BERReader reader, byte depth, short tag) {
+            mBuffer.put((byte)0x53);
+            mBuffer.put(depth);
+            mBuffer.put(tag);
+            mBuffer.put((byte)0);
+            return true;
+        }
+
+        public boolean handleFinishConstructed(BERReader reader, byte depth, short tag) {
+            return true;
+        }
+
     }
 
 }
