@@ -12,7 +12,7 @@
     </target>
 
     <target name="build" description="Build code"
-            depends="build-lib-ber,build-lib-string,build-lib-fortuna,build-lib-rsa,build-lib-debug,build-lib-auth,build-lib-password,build-app-demo,build-svc-debug,build-svc-random">
+            depends="build-lib-ber,build-lib-string,build-lib-fortuna,build-lib-rsa,build-lib-debug,build-lib-auth,build-lib-password,build-lib-isofs,build-app-demo,build-svc-debug,build-svc-random">
     </target>
 
     <target name="prebuilt" description="Update prebuilt files"
@@ -45,6 +45,7 @@
         <mkdir dir="build/classes/lib-debug"/>
         <mkdir dir="build/classes/lib-auth"/>
         <mkdir dir="build/classes/lib-password"/>
+        <mkdir dir="build/classes/lib-isofs"/>
 
         <mkdir dir="build/classes/app-demo"/>
     </target>
@@ -143,6 +144,22 @@
                  aid="D276000177100310070001"
                  package="org.openjavacard.lib.password"
                  version="0.0">
+            </cap>
+        </javacard>
+    </target>
+
+    <target name="build-lib-isofs" depends="ext-javacard,build-dirs,build-lib-ber">
+        <javacard jckit="${sdk.jc222}">
+            <cap output="build/javacard/openjavacard-lib-isofs.cap"
+                 jar="build/javacard/openjavacard-lib-isofs.jar"
+                 classes="build/classes/lib-isofs"
+                 export="build/classes/lib-isofs"
+                 sources="library-isofs/src/main/java"
+                 aid="D276000177100310090001"
+                 package="org.openjavacard.lib.isofs"
+                 version="0.0">
+                <import jar="build/classes/lib-ber"
+                        exps="build/classes/lib-ber"/>
             </cap>
         </javacard>
     </target>
