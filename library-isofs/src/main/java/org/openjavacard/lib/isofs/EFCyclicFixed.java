@@ -1,11 +1,9 @@
 package org.openjavacard.lib.isofs;
 
-public class EFCyclicFixed extends EF {
+public class EFCyclicFixed extends EFRecords {
 
-    private static final byte FDB = FDB_CATEGORY_EF_WORKING|FDB_STRUCTURE_CYCLIC_FIXED;
-
-    EFCyclicFixed(short fid) {
-        super(fid, FDB);
+    EFCyclicFixed(DF parent, byte fdb, short fid, byte sfi, short maxRecords, short maxSize) {
+        super(parent, fdb, fid, sfi, maxRecords, maxSize);
     }
 
 }

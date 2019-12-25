@@ -19,15 +19,61 @@
 
 package org.openjavacard.lib.isofs;
 
-public class EFTransparent extends EF {
+import javacard.framework.ISOException;
+import javacard.framework.Util;
 
-    private static final byte FDB = FDB_CATEGORY_EF_WORKING|FDB_STRUCTURE_TRANSPARENT;
+public class EFTransparent extends EF {
 
     private final byte[] mData;
 
-    EFTransparent(short fid, short dataLength) {
-        super(fid, FDB);
-        mData = new byte[dataLength];
+    EFTransparent(DF parent, byte fdb, short fid, byte sfi, short maxLength) {
+        super(parent, fdb, fid, sfi);
+        mData = new byte[maxLength];
+    }
+
+    public short getLength() {
+        return (short)mData.length;
+    }
+
+    public byte[] getData() {
+        return mData;
+    }
+
+    public void readData(short fileOff, byte[] dstBuf, short dstOff, short dstLen) {
+        Util.arrayCopy(mData, fileOff, dstBuf, dstOff, dstLen);
+    }
+
+    public void updateData(short fileOff, byte[] srcBuf, short srcOff, short srcLen) {
+        Util.arrayCopy(srcBuf, srcOff, mData, fileOff, srcLen);
+    }
+
+    public void writeData(short fileOff, byte[] srcBuf, short srcOff, short srcLen) {
+        byte write = (byte)(mDCB & DCB_WRITE_MASK);
+        short i;
+        switch(write) {
+            case DCB_WRITE_ONCE:
+                // XXX
+                break;
+            case DCB_WRITE_PROPRIETARY:
+                ISOException.throwIt(SW_COMMAND_NOT_ALLOWED);
+                break;
+            case DCB_WRITE_OR:
+                for(i = 0; i < srcLen; i++) {
+                    mData[(short)(fileOff+i)] |= srcBuf[(short)(srcOff+i)];
+                }
+                break;
+            case DCB_WRITE_AND:
+                for(i = 0; i < srcLen; i++) {
+                    mData[(short)(fileOff+i)] &= srcBuf[(short)(srcOff+i)];
+                }
+                break;
+        }
+    }
+
+    public void eraseData(short startOff, short endOff) {
+        for(short off = startOff; off < endOff; off++) {
+            mData[off] = 0;
+        }
     }
 
 }

@@ -27,9 +27,9 @@ import org.openjavacard.lib.ber.BERReader;
 import org.openjavacard.lib.ber.BERWriter;
 
 /**
- * ISO7816-4 file system implementation
+ * ISO7816 file system implementation
  */
-public class ISOFileSystem implements ISOExtensions {
+public class ISOFileSystem implements ISOConfig, ISOExtensions {
 
     /** The root directory */
     private final MF mMF;
@@ -40,72 +40,84 @@ public class ISOFileSystem implements ISOExtensions {
     private static final byte REF_SELECTED_EF = 1;
     private static final byte NUM_REFS = 2;
 
-    /** Temporary storage */
-    private final byte[] mTmp;
-    private static final short TMP_SIZE = (short)128;
+    /** Transient variables */
+    private final short[] mVars;
+    private static final byte VAR_CURRENT_RECORD = 0;
+    private static final byte VAR_CURRENT_OFFSET = 1;
+    private static final byte NUM_VARS = 2;
 
     /** BER reader for parsing */
     private final BERReader mReader;
 
     /** BER writer for generating */
     private final BERWriter mWriter;
-    private static final short BER_MAX_LENGTH = (short)128;
-    private static final byte BER_MAX_TAGS = (byte)16;
-    private static final byte BER_MAX_DEPTH = (byte)4;
 
     /** File creator */
     private final ISOFileCreator mFileCreator;
 
+    /**
+     * Main constructor
+     */
     public ISOFileSystem() {
-        mMF = new MF(FID_MF, (byte)16);
-        mRefs = JCSystem.makeTransientObjectArray(NUM_REFS, JCSystem.CLEAR_ON_RESET);
-        mTmp = JCSystem.makeTransientByteArray(TMP_SIZE, JCSystem.CLEAR_ON_RESET);
-        mReader = new BERReader(BER_MAX_DEPTH, JCSystem.CLEAR_ON_RESET);
-        mWriter = new BERWriter(BER_MAX_TAGS, BER_MAX_DEPTH, JCSystem.CLEAR_ON_RESET);
+        byte clearOn = JCSystem.CLEAR_ON_RESET;
+        mMF = new MF();
+        mRefs = JCSystem.makeTransientObjectArray(NUM_REFS, clearOn);
+        mVars = JCSystem.makeTransientShortArray(NUM_VARS, clearOn);
+        mReader = new BERReader(BER_MAX_DEPTH, clearOn);
+        mWriter = new BERWriter(BER_MAX_TAGS, BER_MAX_DEPTH, clearOn);
         mFileCreator = new ISOFileCreator();
     }
 
+    /** @return the MF */
     public MF getMF() {
         return mMF;
     }
 
+    /** @return current selected DF */
     public DF getSelectedDF() {
         return (DF) mRefs[REF_SELECTED_DF];
     }
 
+    /** @return current selected EF */
     public EF getSelectedEF() {
         return (EF) mRefs[REF_SELECTED_EF];
+    }
+
+    /**
+     * Select the given file
+     * @param file to select
+     */
+    private void selectFile(ISOFile file) {
+        mVars[VAR_CURRENT_OFFSET] = 0;
+        mVars[VAR_CURRENT_RECORD] = 0;
+        if(file instanceof DF) {
+            mRefs[REF_SELECTED_EF] = null;
+            mRefs[REF_SELECTED_DF] = file;
+        } else {
+            mRefs[REF_SELECTED_EF] = file;
+            mRefs[REF_SELECTED_DF] = file.getParent();
+        }
     }
 
     private void accessFile(ISOFile file, byte access) {
     }
 
-    private byte[] accessFileBinary(ISOFile file, byte access) {
+    private void accessDirectory(DF directory, byte access) {
+        accessFile(directory, access);
+    }
+
+    private EFTransparent accessFileBinary(EF file, byte access) {
+        EFTransparent eft = (EFTransparent)file;
         accessFile(file, access);
-        return null;
+        return eft;
     }
 
-    private void accessFileRecord(ISOFile file, byte access) {
+    private void accessFileRecord(EF file, byte access) {
         accessFile(file, access);
     }
 
-    byte TYPE_ANY = 0;
-    byte TYPE_DF = 1;
-    byte TYPE_EF = 2;
-
-    private ISOFile findByFID(short fid, byte ftype) {
+    private DF findByDFName(byte[] pathBuf, short pathOff, short pathLen) {
         return null;
-    }
-
-    private ISOFile findBySFI(short fid, byte ftype) {
-        return null;
-    }
-
-    private ISOFile findByDFName(byte[] pathBuf, short pathOff, short pathLen) {
-        return null;
-    }
-
-    private void selectFile(ISOFile file) {
     }
 
     private short checkLength(APDU apdu) {
@@ -127,6 +139,11 @@ public class ISOFileSystem implements ISOExtensions {
         byte[] buf = apdu.getBuffer();
         byte ins = buf[OFFSET_INS];
 
+        // must be an unwrapped APDU
+        if(apdu.isSecureMessagingCLA()) {
+            return false;
+        }
+
         // we only support interindustry commands
         if(!apdu.isISOInterindustryCLA()) {
             return false;
@@ -141,8 +158,20 @@ public class ISOFileSystem implements ISOExtensions {
             case INS_CREATE_FILE:
                 processCreateFile(apdu);
                 break;
-            case INS_DELETE_FILE:
-                processDeleteFile(apdu);
+            case INS_DELETE:
+                processDelete(apdu);
+                break;
+            case INS_ACTIVATE:
+                processActivate(apdu);
+                break;
+            case INS_DEACTIVATE:
+                processDeactivate(apdu);
+                break;
+            case INS_TERMINATE_DF:
+                processTerminate(apdu);
+                break;
+            case INS_TERMINATE_EF:
+                processTerminateEF(apdu);
                 break;
             case INS_READ_BINARY1:
             case INS_READ_BINARY2:
@@ -155,6 +184,10 @@ public class ISOFileSystem implements ISOExtensions {
             case INS_ERASE_BINARY1:
             case INS_ERASE_BINARY2:
                 handled = processBinary(apdu, ins);
+                break;
+            case INS_ACTIVATE_RECORD:
+                break;
+            case INS_DEACTIVATE_RECORD:
                 break;
             case INS_READ_RECORD1:
             case INS_READ_RECORD2:
@@ -171,6 +204,8 @@ public class ISOFileSystem implements ISOExtensions {
                 break;
             case INS_PUT_DATA:
                 processPutData(apdu);
+                break;
+            case INS_MANAGE_DATA:
                 break;
             default:
                 handled = false;
@@ -198,13 +233,18 @@ public class ISOFileSystem implements ISOExtensions {
         byte p2Return = (byte)(p2 & SELECT_P2_RETURN_MASK);
         byte p2Iterate = (byte)(p2 & SELECT_P2_ITERATE_MASK);
 
-        // check reserved part of P2
-        if((p2 & SELECT_P2_RESERVED_MASK) != SELECT_P2_RESERVED_OKAY) {
+        // only "first or only" is supported
+        if(p2Iterate != SELECT_P2_ITERATE_FIRST) {
             ISOException.throwIt(SW_INCORRECT_P1P2);
         }
 
         // proprietary response not supported
         if(p2Return == SELECT_P2_RETURN_PROPRIETARY) {
+            ISOException.throwIt(SW_INCORRECT_P1P2);
+        }
+
+        // check reserved part of P2
+        if((p2 & SELECT_P2_RESERVED_MASK) != SELECT_P2_RESERVED_OKAY) {
             ISOException.throwIt(SW_INCORRECT_P1P2);
         }
 
@@ -222,7 +262,12 @@ public class ISOFileSystem implements ISOExtensions {
                 } else if (lc == 2) {
                     // select by FID
                     fid = Util.getShort(buf, off);
-                    selected = findByFID(fid, TYPE_ANY);
+                    if(fid == FID_MF) {
+                        selected = mMF;
+                    } else {
+                        selected = currentDF.findChildByFID(fid, DF.FIND_TYPE_ANY);
+                        // XXX if not found search parent, if there is one
+                    }
                 } else {
                     ISOException.throwIt(SW_WRONG_LENGTH);
                 }
@@ -231,7 +276,7 @@ public class ISOFileSystem implements ISOExtensions {
                 // select child DF by FID
                 if (lc == 2) {
                     fid = Util.getShort(buf, off);
-                    selected = currentDF.findChildByFID(fid, TYPE_DF);
+                    selected = currentDF.findChildByFID(fid, DF.FIND_TYPE_DF);
                 } else {
                     ISOException.throwIt(SW_WRONG_LENGTH);
                 }
@@ -240,7 +285,7 @@ public class ISOFileSystem implements ISOExtensions {
                 // select child EF by FID
                 if (lc == 2) {
                     fid = Util.getShort(buf, off);
-                    selected = currentDF.findChildByFID(fid, TYPE_EF);
+                    selected = currentDF.findChildByFID(fid, DF.FIND_TYPE_EF);
                 } else {
                     ISOException.throwIt(SW_WRONG_LENGTH);
                 }
@@ -281,15 +326,15 @@ public class ISOFileSystem implements ISOExtensions {
         switch(p2Return) {
             case SELECT_P2_RETURN_FCI:
                 // return FCI
-                selected.writeFCI(mWriter, mTmp);
+                selected.writeFCI(mWriter);
                 break;
             case SELECT_P2_RETURN_FCP:
                 // return FCP
-                selected.writeFCP(mWriter, mTmp);
+                selected.writeFCP(mWriter);
                 break;
             case SELECT_P2_RETURN_FMD:
                 // return FMD
-                selected.writeFMD(mWriter, mTmp);
+                selected.writeFMD(mWriter);
                 break;
             default:
                 ISOException.throwIt(SW_INCORRECT_P1P2);
@@ -316,18 +361,22 @@ public class ISOFileSystem implements ISOExtensions {
         }
 
         DF currentDF = getSelectedDF();
-
+        // prepare file creation logic
         mFileCreator.prepare(currentDF);
-
+        // process provided FCP data
         mReader.parse(buf, OFFSET_CDATA, lc, mFileCreator);
+        // actually create the file
+        ISOFile newFile = mFileCreator.create();
+        // select the file
+        selectFile(newFile);
     }
 
     /**
-     * Process DELETE FILE
+     * Process DELETE
      *
      * @param apdu to process
      */
-    private void processDeleteFile(APDU apdu) {
+    private void processDelete(APDU apdu) {
         byte[] buf = apdu.getBuffer();
         byte p1 = buf[OFFSET_P1];
         byte p2 = buf[OFFSET_P2];
@@ -335,6 +384,38 @@ public class ISOFileSystem implements ISOExtensions {
         if(p1 != (byte)0 || p2 != (byte)0) {
             ISOException.throwIt(SW_INCORRECT_P1P2);
         }
+    }
+
+    /**
+     * Process ACTIVATE
+     *
+     * @param apdu to process
+     */
+    private void processActivate(APDU apdu) {
+    }
+
+    /**
+     * Process DEACTIVATE
+     *
+     * @param apdu to process
+     */
+    private void processDeactivate(APDU apdu) {
+    }
+
+    /**
+     * Process TERMINATE
+     *
+     * @param apdu to process
+     */
+    private void processTerminate(APDU apdu) {
+    }
+
+    /**
+     * Process TERMINATE EF
+     *
+     * @param apdu to process
+     */
+    private void processTerminateEF(APDU apdu) {
     }
 
     /**
@@ -350,26 +431,26 @@ public class ISOFileSystem implements ISOExtensions {
         short p12 = Util.getShort(buf, OFFSET_P1);
 
         // process parameters
-        ISOFile file = processBinaryFindFile(ins, p12);
+        EF file = processBinaryFindFile(ins, p12);
         short offset = processBinaryFindOffset(ins, p12);
 
         // perform the operation
         boolean handled = true;
-        switch(ins & 0x7F) {
+        switch(ins & (byte)0xFE) {
             case INS_READ_BINARY1:
-                processReadBinary(apdu, file, offset);
+                processReadBinary(apdu, ins, file, offset);
                 break;
             case INS_SEARCH_BINARY1:
-                processSearchBinary(apdu, file, offset);
+                processSearchBinary(apdu, ins, file, offset);
                 break;
             case INS_WRITE_BINARY1:
-                processWriteBinary(apdu, file, offset);
+                processWriteBinary(apdu, ins, file, offset);
                 break;
             case INS_UPDATE_BINARY1:
-                processUpdateBinary(apdu, file, offset);
+                processUpdateBinary(apdu, ins, file, offset);
                 break;
             case INS_ERASE_BINARY1:
-                processEraseBinary(apdu, file, offset);
+                processEraseBinary(apdu, ins, file, offset);
                 break;
             default:
                 handled = false;
@@ -387,14 +468,21 @@ public class ISOFileSystem implements ISOExtensions {
      * @param p12
      * @return
      */
-    private ISOFile processBinaryFindFile(byte ins, short p12) {
-        ISOFile file = getSelectedEF();
+    private EF processBinaryFindFile(byte ins, short p12) {
+        DF current = getSelectedDF();
+        EF selected = getSelectedEF();
+        EF file = selected;
         if((ins & 0x01) == 0) {
-            if((p12 & 0x8000) != 0) {
-                file = findBySFI((short)(p12 & 0x1F), TYPE_EF);
+            if((p12 & (short)0x8000) != 0) {
+                byte sfi = (byte)(p12 & 0x1F);
+                file = (EF)current.findChildBySFI(sfi, DF.FIND_TYPE_EF);
             }
         } else {
-            file = findByFID((short)(p12 & 0x7FFF), TYPE_EF);
+            short fid = (short)(p12 & (short)0x7FFF);
+            file = (EF)current.findChildByFID(fid, DF.FIND_TYPE_EF);
+        }
+        if(file != selected) {
+            selectFile(file);
         }
         return file;
     }
@@ -409,9 +497,11 @@ public class ISOFileSystem implements ISOExtensions {
     private short processBinaryFindOffset(byte ins, short p12) {
         short off = -1;
         if((ins & 0x01) == 0) {
-            if ((p12 & 0x8000) == 0) {
-                off = (short) (p12 & 0x7FFF);
+            if ((p12 & (short)0x8000) == 0) {
+                off = (short) (p12 & (short)0x7FFF);
             }
+        } else {
+            // process offset DO?
         }
         return off;
     }
@@ -421,9 +511,32 @@ public class ISOFileSystem implements ISOExtensions {
      *
      * @param apdu to process
      */
-    private void processReadBinary(APDU apdu, ISOFile file, short offset) {
-        byte[] buf = apdu.getBuffer();
-        byte[] data = accessFileBinary(file, ACCESS_EF_READ);
+    private void processReadBinary(APDU apdu, byte ins, EF file, short offset) {
+        // access the file
+        EFTransparent eft = accessFileBinary(file, ACCESS_EF_READ);
+        byte[] data = eft.getData();
+
+        // determine output length
+        short le = apdu.setOutgoingNoChaining();
+
+        // adjust for end of file
+        short limit = (short)(offset + le);
+        if(limit < 0) {
+            ISOException.throwIt(SW_WRONG_LENGTH);
+        }
+        if(limit >= data.length) {
+            le = (short)(data.length - offset);
+        }
+
+        // perform the operation
+        if((ins & 0x01) == 0) {
+            // send the response
+            apdu.setOutgoingLength(le);
+            apdu.sendBytesLong(data, offset, le);
+        } else {
+            // unsupported
+            ISOException.throwIt(SW_INS_NOT_SUPPORTED);
+        }
     }
 
     /**
@@ -431,9 +544,9 @@ public class ISOFileSystem implements ISOExtensions {
      *
      * @param apdu to process
      */
-    private void processSearchBinary(APDU apdu, ISOFile file, short offset) {
+    private void processSearchBinary(APDU apdu, byte ins, EF file, short offset) {
         byte[] buf = apdu.getBuffer();
-        byte[] data = accessFileBinary(file, ACCESS_EF_READ);
+        EFTransparent eft = accessFileBinary(file, ACCESS_EF_READ);
     }
 
     /**
@@ -441,9 +554,27 @@ public class ISOFileSystem implements ISOExtensions {
      *
      * @param apdu to process
      */
-    private void processWriteBinary(APDU apdu, ISOFile file, short offset) {
+    private void processWriteBinary(APDU apdu, byte ins, EF file, short offset) {
         byte[] buf = apdu.getBuffer();
-        byte[] data = accessFileBinary(file, ACCESS_EF_WRITE);
+        EFTransparent eft = accessFileBinary(file, ACCESS_EF_WRITE);
+
+        short lc = apdu.getIncomingLength();
+        short oc = apdu.getOffsetCdata();
+
+        // check for end of file
+        short limit = (short)(offset + lc);
+        if(limit < 0 || limit >= eft.getLength()) {
+            ISOException.throwIt(SW_WRONG_LENGTH);
+        }
+
+        // perform the operation
+        if((ins & 0x01) == 0) {
+            // perform the update
+            eft.writeData(offset, buf, oc, lc);
+        } else {
+            // unsupported
+            ISOException.throwIt(SW_INS_NOT_SUPPORTED);
+        }
     }
 
     /**
@@ -451,9 +582,27 @@ public class ISOFileSystem implements ISOExtensions {
      *
      * @param apdu to process
      */
-    private void processUpdateBinary(APDU apdu, ISOFile file, short offset) {
+    private void processUpdateBinary(APDU apdu, byte ins, EF file, short offset) {
         byte[] buf = apdu.getBuffer();
-        byte[] data = accessFileBinary(file, ACCESS_EF_UPDATE);
+        EFTransparent eft = accessFileBinary(file, ACCESS_EF_UPDATE);
+
+        short lc = apdu.getIncomingLength();
+        short oc = apdu.getOffsetCdata();
+
+        // check for end of file
+        short limit = (short)(offset + lc);
+        if(limit < 0 || limit >= eft.getLength()) {
+            ISOException.throwIt(SW_WRONG_LENGTH);
+        }
+
+        // perform the operation
+        if((ins & 0x01) == 0) {
+            // perform the update
+            eft.updateData(offset, buf, oc, lc);
+        } else {
+            // unsupported
+            ISOException.throwIt(SW_INS_NOT_SUPPORTED);
+        }
     }
 
     /**
@@ -461,35 +610,52 @@ public class ISOFileSystem implements ISOExtensions {
      *
      * @param apdu to process
      */
-    private void processEraseBinary(APDU apdu, ISOFile file, short offset) {
+    private void processEraseBinary(APDU apdu, byte ins, EF file, short offset) {
         byte[] buf = apdu.getBuffer();
-        byte[] data = accessFileBinary(file, ACCESS_EF_UPDATE);
+        EFTransparent eft = accessFileBinary(file, ACCESS_EF_UPDATE);
+
+        short endOffset = -1;
+        if(endOffset == -1) {
+            endOffset = eft.getLength();
+        }
+
+        eft.eraseData(offset, endOffset);
     }
 
+    /**
+     * Process a RECORD command
+     *
+     * All RECORD commands have a common coding for their
+     * parameters in parts of P2, so they share implementation.
+     *
+     * @param apdu to process
+     */
     private boolean processRecord(APDU apdu, short ins) {
         byte[] buf = apdu.getBuffer();
         byte p1 = buf[OFFSET_P1];
         byte p2 = buf[OFFSET_P2];
 
+        EF file = processRecordFindFile(apdu, p2);
+
         boolean handled = true;
-        switch (ins & 0x7f) {
+        switch (ins & (byte)0xFE) {
             case INS_READ_RECORD1:
-                processReadRecord(apdu);
+                processReadRecord(apdu, file, p1, p2);
                 break;
             case INS_SEARCH_RECORD:
-                processSearchRecord(apdu);
+                processSearchRecord(apdu, file, p1, p2);
                 break;
             case INS_UPDATE_RECORD1:
-                processUpdateRecord(apdu);
+                processUpdateRecord(apdu, file, p1, p2);
                 break;
             case INS_WRITE_RECORD:
-                processWriteRecord(apdu);
+                processWriteRecord(apdu, file, p1, p2);
                 break;
             case INS_APPEND_RECORD:
-                processAppendRecord(apdu);
+                processAppendRecord(apdu, file, p1, p2);
                 break;
             case INS_ERASE_RECORD:
-                processEraseRecord(apdu);
+                processEraseRecord(apdu, file, p1, p2);
                 break;
             default:
                 handled = false;
@@ -499,27 +665,37 @@ public class ISOFileSystem implements ISOExtensions {
         return handled;
     }
 
-    private void processReadRecord(APDU apdu) {
+    private EF processRecordFindFile(APDU apdu, byte p2) {
+        DF current = getSelectedDF();
+        EF file = getSelectedEF();
+        byte sfi = (byte)(((byte)(p2 & 0xF8)) >> 3);
+        if(sfi != 0 && sfi != 0x1f) {
+            file = (EF)current.findChildBySFI(sfi, DF.FIND_TYPE_EF);
+        }
+        return file;
+    }
+
+    private void processReadRecord(APDU apdu, EF file, byte p1, byte p2) {
         byte[] buf = apdu.getBuffer();
     }
 
-    private void processSearchRecord(APDU apdu) {
+    private void processSearchRecord(APDU apdu, EF file, byte p1, byte p2) {
         byte[] buf = apdu.getBuffer();
     }
 
-    private void processWriteRecord(APDU apdu) {
+    private void processWriteRecord(APDU apdu, EF file, byte p1, byte p2) {
         byte[] buf = apdu.getBuffer();
     }
 
-    private void processUpdateRecord(APDU apdu) {
+    private void processUpdateRecord(APDU apdu, EF file, byte p1, byte p2) {
         byte[] buf = apdu.getBuffer();
     }
 
-    private void processAppendRecord(APDU apdu) {
+    private void processAppendRecord(APDU apdu, EF file, byte p1, byte p2) {
         byte[] buf = apdu.getBuffer();
     }
 
-    private void processEraseRecord(APDU apdu) {
+    private void processEraseRecord(APDU apdu, EF file, byte p1, byte p2) {
         byte[] buf = apdu.getBuffer();
     }
 

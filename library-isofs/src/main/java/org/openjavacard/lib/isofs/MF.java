@@ -19,10 +19,12 @@
 
 package org.openjavacard.lib.isofs;
 
-class MF extends DF {
+public class MF extends DF {
 
-    MF(short fid, byte maxChildren) {
-        super(fid, null, maxChildren);
+    private static final byte FDB = FDB_CATEGORY_SPECIAL|FDB_SPECIAL_DF;
+
+    MF() {
+        super(null, FDB, FID_MF);
     }
 
 }

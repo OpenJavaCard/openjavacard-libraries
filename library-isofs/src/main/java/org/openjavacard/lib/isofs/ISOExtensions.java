@@ -2,7 +2,7 @@ package org.openjavacard.lib.isofs;
 
 import javacard.framework.ISO7816;
 
-interface ISOExtensions extends ISO7816 {
+public interface ISOExtensions extends ISO7816 {
 
     /* INS - Instruction bytes */
 
@@ -29,7 +29,7 @@ interface ISOExtensions extends ISO7816 {
     byte SELECT_P2_ITERATE_PREVIOUS = (byte)0x03;
 
     byte INS_CREATE_FILE = (byte)0xE0;
-    byte INS_DELETE_FILE = (byte)0xE4;
+    byte INS_DELETE = (byte)0xE4;
     byte INS_READ_BINARY1 = (byte)0xB0;
     byte INS_READ_BINARY2 = (byte)0xB1;
     byte INS_UPDATE_BINARY1 = (byte)0xD6;
@@ -48,8 +48,19 @@ interface ISOExtensions extends ISO7816 {
     byte INS_APPEND_RECORD = (byte)0xE2;
     byte INS_SEARCH_RECORD = (byte)0xA2;
     byte INS_ERASE_RECORD = (byte)0x0C;
+    byte INS_CREATE = (byte)0xE1;
     byte INS_GET_DATA = (byte)0xCA;
     byte INS_PUT_DATA = (byte)0xDA;
+    byte INS_MANAGE_DATA = (byte)0xCF;
+    byte INS_ACTIVATE = (byte)0x44;
+    byte INS_DEACTIVATE = (byte)0x04;
+    byte INS_ACTIVATE_RECORD = (byte)0x08;
+    byte INS_DEACTIVATE_RECORD = (byte)0x06;
+    byte INS_TERMINATE_DF = (byte)0xE6;
+    byte INS_TERMINATE_EF = (byte)0xE8;
+    byte INS_TERMINATE_CARD_USAGE = (byte)0xFE;
+    byte INS_IMPORT_CARD_SECRET = (byte)0x48;
+    byte INS_COMPARE = (byte)0x33;
 
     /* FID - File identifiers */
 
@@ -108,13 +119,29 @@ interface ISOExtensions extends ISO7816 {
     byte FDB_STRUCTURE_CYCLIC_FIXED     = (byte)0x06;
     byte FDB_STRUCTURE_CYCLIC_FIXED_TLV = (byte)0x07;
 
+    /* DCB Data coding byte */
+
+    byte DCB_BERSUPPORT_FLAG = (byte)0x80;
+
+    byte DCB_WRITE_MASK = (byte)0x60;
+    byte DCB_WRITE_ONCE = (byte)0x00;
+    byte DCB_WRITE_PROPRIETARY = (byte)0x20;
+    byte DCB_WRITE_OR = (byte)0x40;
+    byte DCB_WRITE_AND = (byte)0x60;
+
+    byte DCB_TLVFF_MASK = (byte)0x10;
+    byte DCB_TLVFF_INVALID = (byte)0x00;
+    byte DCB_TLVFF_VALID = (byte)0x10;
+
+    byte DCB_DUSIZE_MASK = (byte)0x0F;
+
     /* LCS - Life cycle state */
 
     byte LCS_UNKNOWN = (byte)0x00;
     byte LCS_CREATION = (byte)0x01;
     byte LCS_INITIALIZATION = (byte)0x03;
-    byte LCS_OPERATIONAL_ACTIVATED = (byte)0x05;
     byte LCS_OPERATIONAL_DEACTIVATED = (byte)0x04;
+    byte LCS_OPERATIONAL_ACTIVATED = (byte)0x05;
     byte LCS_TERMINATED = (byte)0x0C;
 
     /* CSA - Channel security attribute */
@@ -125,11 +152,32 @@ interface ISOExtensions extends ISO7816 {
     byte CSA_SECURED       = (byte)0x02;
     byte CSA_AUTHENTICATED = (byte)0x01;
 
+    /* SCB - Security condition byte */
 
-    byte ACCESS_DF_DELETE = 6;
+    byte SCB_ALWAYS = (byte)0x00;
+    byte SCB_NEVER = (byte)0xFF;
+
+    byte SCB_MODE_MASK = (byte)0x80;
+    byte SCB_MODE_OR = (byte)0x00;
+    byte SCB_MODE_AND  = (byte)0x80;
+
+    byte SCB_CHECK_MASK = (byte)0x70;
+    byte SCB_CHECK_SM   = (byte)0x40;
+    byte SCB_CHECK_EA   = (byte)0x20;
+    byte SCB_CHECK_UA   = (byte)0x10;
+
+    byte SCB_ENVIRONMENT_MASK = (byte)0x0F;
+    byte SCB_ENVIRONMENT_NONE = (byte)0x00;
+
+
+
+
+
+
+    byte ACCESS_DF_DELETE_SELF = 6;
     byte ACCESS_DF_TERMINATE = 5;
-    byte ACCESS_DF_ACTIVATE = 4;
-    byte ACCESS_DF_DEACTIVATE = 3;
+    byte ACCESS_DF_ACTIVATE_FILE = 4;
+    byte ACCESS_DF_DEACTIVATE_FILE = 3;
     byte ACCESS_DF_CREATE_DF = 2;
     byte ACCESS_DF_CREATE_EF = 1;
     byte ACCESS_DF_DELETE_CHILD = 0;
@@ -145,20 +193,4 @@ interface ISOExtensions extends ISO7816 {
     byte ACCESS_DO_MANAGE = 2;
     byte ACCESS_DO_PUT_DATA = 1;
     byte ACCESS_DO_GET_DATA = 0;
-
-    byte SECURITY_ALWAYS = (byte)0x00;
-    byte SECURITY_NEVER  = (byte)0xFF;
-
-    byte SECURITY_MODE_MASK = (byte)0x80;
-    byte SECURITY_MODE_OR   = (byte)0x00;
-    byte SECURITY_MODE_AND  = (byte)0x80;
-
-    byte SECURITY_CHECK_MASK = (byte)0x70;
-    byte SECURITY_CHECK_SM   = (byte)0x40;
-    byte SECURITY_CHECK_EA   = (byte)0x20;
-    byte SECURITY_CHECK_UA   = (byte)0x10;
-
-    byte SECURITY_ENVIRONMENT_MASK = (byte)0x0F;
-    byte SECURITY_ENVIRONMENT_NONE = (byte)0x00;
-    
 }

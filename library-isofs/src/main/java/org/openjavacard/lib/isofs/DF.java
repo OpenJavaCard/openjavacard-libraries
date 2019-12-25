@@ -19,30 +19,74 @@
 
 package org.openjavacard.lib.isofs;
 
+import javacard.framework.ISOException;
+
 public class DF extends ISOFile {
 
-    private static final byte FDB = FDB_CATEGORY_SPECIAL|FDB_SPECIAL_DF;
+    public static final byte FIND_TYPE_ANY = 0;
+    public static final byte FIND_TYPE_DF = 1;
+    public static final byte FIND_TYPE_EF = 2;
 
-    private final DF mParent;
     private final ISOFile[] mChildren;
 
-    DF(short fid, DF parent, byte maxChildren) {
-        super(fid, FDB);
-        mParent = parent;
-        mChildren = new ISOFile[maxChildren];
+    DF(DF parent, byte fdb, short fid) {
+        super(parent, fdb, fid, (byte)0);
+        mChildren = new ISOFile[DF_SIZE];
     }
 
-    DF getParent() {
-        return mParent;
+    short getChildCount() {
+        short result = 0;
+        for(short i = 0; i < mChildren.length; i++) {
+            if(mChildren[i] != null) {
+                result++;
+            }
+        }
+        return result;
     }
 
-    void addChild(ISOFile child) {
+    void addChild(ISOFile file) {
+        // callers must hold this rule
+        if(file.getParent() != this) {
+            ISOException.throwIt(SW_UNKNOWN);
+        }
+        // check all child slots
+        short slot = -1;
+        boolean conflict = false;
+        for(short i = 0; i < mChildren.length; i++) {
+            ISOFile child = mChildren[i];
+            if(child == null) {
+                if(slot < 0) {
+                    // found an empty slot
+                    slot = i;
+                }
+            } else {
+                if (child.mFID == file.mFID) {
+                    // found a name conflict
+                    conflict = true;
+                }
+            }
+        }
+        // throw due exceptions
+        if(conflict) {
+            ISOException.throwIt(SW_FILE_INVALID);
+        }
+        if(slot < 0) {
+            ISOException.throwIt(SW_FILE_FULL);
+        }
+        // actually add the file
+        mChildren[slot] = file;
     }
 
-    void removeChild(ISOFile child) {
+    void removeChild(ISOFile file) {
+        for(short i = 0; i < mChildren.length; i++) {
+            ISOFile child = mChildren[i];
+            if(child == file) {
+                mChildren[i] = null;
+            }
+        }
     }
 
-    ISOFile findChildByFID(short fid, byte type) {
+    public ISOFile findChildByFID(short fid, byte type) {
         ISOFile res = null;
         for(short i = 0; i < mChildren.length; i++) {
             ISOFile child = mChildren[i];
@@ -53,18 +97,18 @@ public class DF extends ISOFile {
         return res;
     }
 
-    ISOFile findChildBySFI(short fid) {
+    public ISOFile findChildBySFI(byte sfi, byte type) {
         ISOFile res = null;
         for(short i = 0; i < mChildren.length; i++) {
             ISOFile child = mChildren[i];
-            if(child.mFID == fid) {
+            if(child.mSFI == sfi) {
                 res = child;
             }
         }
         return res;
     }
 
-    ISOFile findChildByPath(byte[] pathBuf, short pathOff, short pathLen) {
+    public ISOFile findChildByPath(byte[] pathBuf, short pathOff, short pathLen) {
         return null;
     }
 

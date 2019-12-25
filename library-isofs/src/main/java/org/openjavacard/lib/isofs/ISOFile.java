@@ -19,18 +19,15 @@
 
 package org.openjavacard.lib.isofs;
 
-import javacard.framework.Util;
 import org.openjavacard.lib.ber.BERWriter;
 
-public abstract class ISOFile implements ISOExtensions {
+public abstract class ISOFile implements ISOConfig, ISOExtensions {
 
-    /** File ID */
-    public final short mFID;
-    /** FDB byte - file descriptor byte */
-    private final byte mFDB;
-    /** LCS byte - life cycle status */
+    final DF mParent;
+    final short mFID;
+    final byte  mSFI;
+    final byte  mFDB;
     private byte mLCS;
-    /** CSA byte - channel security attribute */
     private byte mCSA;
 
     /**
@@ -38,82 +35,134 @@ public abstract class ISOFile implements ISOExtensions {
      * @param fid for the file
      * @param fdb for the file
      */
-    ISOFile(short fid, byte fdb) {
+    ISOFile(DF parent, byte fdb, short fid, byte sfi) {
+        mParent = parent;
         mFID = fid;
+        mSFI = sfi;
         mFDB = fdb;
         mLCS = LCS_CREATION;
+    }
+
+    /** @return parent DF of this file */
+    public DF getParent() {
+        return mParent;
+    }
+
+    /** @return file ID of this file */
+    public short getFID() {
+        return mFID;
+    }
+
+    /** @return short EF identifier */
+    public byte getSFI() {
+        return mSFI;
+    }
+
+    /** @return channel security attribute */
+    public byte getCSA() {
+        return mCSA;
+    }
+
+    /** @return assigned life cycle state */
+    public byte getAssignedLCS() {
+        return mLCS;
+    }
+
+    /** @return effective life cycle state */
+    public byte getEffectiveLCS() {
+        // start with the assigned LCS
+        byte effective = mLCS;
+        // termination is always effective
+        if(effective != LCS_TERMINATED) {
+            // skip processing if no parent (MF)
+            if(mParent != null) {
+                // get parent LCS
+                byte parent = mParent.getEffectiveLCS();
+                // if parent is deactivated then so are we
+                if (parent == LCS_OPERATIONAL_DEACTIVATED) {
+                    effective = LCS_OPERATIONAL_DEACTIVATED;
+                }
+                // if parent is terminated then so are we
+                if (parent == LCS_TERMINATED) {
+                    effective = LCS_TERMINATED;
+                }
+            }
+        }
+        // return result
+        return effective;
+    }
+
+    /**
+     * Activate the file
+     */
+    public void activate() {
+    }
+
+    /**
+     * Deactivate the file
+     */
+    public void deactivate() {
+    }
+
+    /**
+     * Terminate the file
+     */
+    public void terminate() {
     }
 
     /**
      * Write FCI into the given writer
      * @param ber
-     * @param tmp
      */
-    public void writeFCI(BERWriter ber, byte[] tmp) {
-        short off = (short)0;
+    public void writeFCI(BERWriter ber) {
         ber.beginConstructed(TAG_FCI);
-        off = tagsFCP(ber, tmp, off);
-        off = tagsFMD(ber, tmp, off);
+        tagsFCP(ber);
+        tagsFMD(ber);
         ber.endConstructed();
     }
 
     /**
      * Write FCP into the given writer
      * @param ber
-     * @param tmp
      */
-    public void writeFCP(BERWriter ber, byte[] tmp) {
+    public void writeFCP(BERWriter ber) {
         ber.beginConstructed(TAG_FCP);
-        tagsFCP(ber, tmp, (short)0);
+        tagsFCP(ber);
         ber.endConstructed();
     }
 
     /**
      * Write FMD into the given writer
      * @param ber
-     * @param tmp
      */
-    public void writeFMD(BERWriter ber, byte[] tmp) {
+    public void writeFMD(BERWriter ber) {
         ber.beginConstructed(TAG_FMD);
-        tagsFMD(ber, tmp, (short)0);
+        tagsFMD(ber);
         ber.endConstructed();
     }
 
     /**
      * Produce FCP tags
      * @param ber
-     * @param tmp
      */
-    private short tagsFCP(BERWriter ber, byte[] tmp, short off) {
+    protected void tagsFCP(BERWriter ber) {
         // 82 - File descriptor
-        tmp[off] = mFDB;
-        ber.buildPrimitive(TAG_FCI_FDB, tmp, off, (short)1);
-        off++;
+        ber.primitiveByte(TAG_FCI_FDB, mFDB);
         // 83 - File identifier
-        Util.setShort(tmp, off, mFID);
-        ber.buildPrimitive(TAG_FCI_FILEID, tmp, off, (short)2);
-        off += 2;
+        ber.primitiveShort(TAG_FCI_FILEID, mFID);
         // 8A - Life cycle status
-        tmp[off] = mLCS;
-        ber.buildPrimitive(TAG_FCI_LCS, tmp, off, (short)1);
-        off++;
+        ber.primitiveByte(TAG_FCI_LCS, mLCS);
         // 8E - Channel security attribute
         if(mCSA != 0) {
-            tmp[off] = mCSA;
-            ber.buildPrimitive(TAG_FCI_CSA, tmp, off, (short)1);
-            off++;
+            ber.primitiveByte(TAG_FCI_CSA, mCSA);
         }
-        // return new offset
-        return off;
     }
 
     /**
      * Produce FMD tags
      * @param ber
-     * @param tmp
      */
-    private short tagsFMD(BERWriter ber, byte[] tmp, short off) {
-        return off;
+    protected void tagsFMD(BERWriter ber) {
     }
 
 }

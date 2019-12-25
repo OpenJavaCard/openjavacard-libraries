@@ -19,10 +19,16 @@
 
 package org.openjavacard.lib.isofs;
 
-public class EF extends ISOFile {
+public abstract class EF extends ISOFile {
 
-    EF(short fid, byte fdb) {
-        super(fid, fdb);
+    protected byte mDCB;
+
+    EF(DF parent, byte fdb, short fid, byte sfi) {
+        super(parent, fdb, fid, sfi);
+    }
+
+    public byte getDCB() {
+        return mDCB;
     }
 
 }
