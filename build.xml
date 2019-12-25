@@ -12,7 +12,7 @@
     </target>
 
     <target name="build" description="Build code"
-            depends="build-lib-ber,build-lib-string,build-lib-fortuna,build-lib-rsa,build-lib-debug,build-lib-auth,build-lib-password,build-lib-isofs,build-app-demo,build-svc-debug,build-svc-random">
+            depends="build-lib-ber,build-lib-string,build-lib-fortuna,build-lib-rsa,build-lib-debug,build-lib-auth,build-lib-password,build-lib-isofs,build-lib-ctlv,build-app-demo,build-svc-debug,build-svc-random">
     </target>
 
     <target name="prebuilt" description="Update prebuilt files"
@@ -46,6 +46,7 @@
         <mkdir dir="build/classes/lib-auth"/>
         <mkdir dir="build/classes/lib-password"/>
         <mkdir dir="build/classes/lib-isofs"/>
+        <mkdir dir="build/classes/lib-ctlv"/>
 
         <mkdir dir="build/classes/app-demo"/>
     </target>
@@ -164,6 +165,20 @@
         </javacard>
     </target>
 
+    <target name="build-lib-ctlv" depends="ext-javacard,build-dirs">
+        <javacard jckit="${sdk.jc222}">
+            <cap output="build/javacard/openjavacard-lib-ctlv.cap"
+                 jar="build/javacard/openjavacard-lib-ctlv.jar"
+                 classes="build/classes/lib-ctlv"
+                 export="build/classes/lib-ctlv"
+                 sources="library-ctlv/src/main/java"
+                 aid="D276000177100310100001"
+                 package="org.openjavacard.lib.ctlv"
+                 version="0.0">
+            </cap>
+        </javacard>
+    </target>
+
     <target name="build-app-demo"
             depends="ext-javacard,build-dirs,build-lib-ber,build-lib-debug,build-lib-fortuna">
         <javacard jckit="${sdk.jc222}">
@@ -263,6 +278,9 @@
             <group title="Password functions">
                 <package name="org.openjavacard.lib.password"/>
             </group>
+            <group title="Compact-TLV processing">
+                <package name="org.openjavacard.lib.ctlv"/>
+            </group>
 
             <sourcepath>
                 <pathelement path="library-auth/src/main/java"/>
@@ -273,6 +291,7 @@
                 <pathelement path="library-password/src/main/java"/>
                 <pathelement path="library-rsa/src/main/java"/>
                 <pathelement path="library-string/src/main/java"/>
+                <pathelement path="library-ctlv/src/main/java"/>
             </sourcepath>
 
             <classpath>
