@@ -35,7 +35,7 @@ public class BERWriter {
     /** Transient: state variables */
     private final short[]  mVars;
     /** Number of transient variables */
-    private static final byte NUM_VAR = 4;
+    private static final byte NUM_VAR = 5;
     /** Variable: maximum allowed length */
     private static final byte VAR_MAX_LENGTH = 0;
     /** Variable: current running length */
@@ -44,6 +44,8 @@ public class BERWriter {
     private static final byte VAR_DEPTH      = 2;
     /** Variable: current index */
     private static final byte VAR_INDEX      = 3;
+    /** Variable: current temp offset */
+    private static final byte VAR_TMP        = 4;
 
     /** Transient: stack for tags */
     private final short[]  mTagStk;
@@ -55,6 +57,8 @@ public class BERWriter {
     private final short[]  mOffStk;
     /** Transient: stack for tag buffer lengths */
     private final short[]  mLenStk;
+    /** Transient: temporary storage */
+    private final byte[]   mTmp;
 
     /**
      * Construct a persistent-state BER writer
@@ -70,6 +74,7 @@ public class BERWriter {
         mBufStk = new Object[maxTags];
         mOffStk = new short[maxTags];
         mLenStk = new short[maxTags];
+        mTmp = new byte[128];
     }
 
     /**
@@ -87,6 +92,7 @@ public class BERWriter {
         mBufStk = JCSystem.makeTransientObjectArray(maxTags, clearOn);
         mOffStk = JCSystem.makeTransientShortArray(maxTags, clearOn);
         mLenStk = JCSystem.makeTransientShortArray(maxTags, clearOn);
+        mTmp = JCSystem.makeTransientByteArray((short)128, clearOn);
     }
 
     /**
@@ -166,6 +172,53 @@ public class BERWriter {
         // increment counters
         mVars[VAR_LENGTH] += totalLength;
         mVars[VAR_INDEX]++;
+    }
+
+    private short putTemp(short count) {
+        short offset = mVars[VAR_TMP];
+        short after = (short)(offset + count);
+        if(after > mTmp.length) {
+            error();
+        }
+        mVars[VAR_TMP] = after;
+        return offset;
+    }
+
+    /**
+     * Build a primitive BER tag with a byte value
+     * @param tag
+     * @param value
+     */
+    public final void primitiveByte(short tag, byte value) {
+        short len = (short)1;
+        short tmpOff = putTemp(len);
+        mTmp[tmpOff] = value;
+        buildPrimitive(tag, mTmp, tmpOff, len);
+    }
+
+    /**
+     * Build a primitive BER tag with a short value
+     * @param tag
+     * @param value
+     */
+    public final void primitiveShort(short tag, short value) {
+        short len = (short)2;
+        short tmpOff = putTemp(len);
+        Util.setShort(mTmp, tmpOff, value);
+        buildPrimitive(tag, mTmp, tmpOff, len);
+    }
+
+    /**
+     * Build a primitive BER tag with given value
+     * @param tag
+     * @param buf
+     * @param off
+     * @param len
+     */
+    public final void primitiveBytes(short tag, byte[] buf, short off, short len) {
+        short tmpOff = putTemp(len);
+        Util.arrayCopyNonAtomic(buf, off, mTmp, tmpOff, len);
+        buildPrimitive(tag, mTmp, tmpOff, len);
     }
 
     /**
