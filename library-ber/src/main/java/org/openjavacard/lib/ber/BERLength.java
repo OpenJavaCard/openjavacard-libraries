@@ -64,7 +64,7 @@ public final class BERLength {
             buf[off++] = (byte)length;
         } else {
             buf[off++] = (byte)0x82;
-            off = Util.setShort(buf, (short)(off + 1), length);
+            off = Util.setShort(buf, off, length);
         }
         return off;
     }
