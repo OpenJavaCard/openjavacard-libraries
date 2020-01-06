@@ -191,7 +191,7 @@ public class RSAOAEPCipher extends Cipher {
     /**
      * Push message data into the cipher for processing.
      *
-     * This never generates any output as we always operate on while messages internally.
+     * This never generates any output as we always operate on whole messages internally.
      *
      * Using this function will have a significant memory cost, so it is better to
      * avoid it and operate on the whole message using doFinal().
