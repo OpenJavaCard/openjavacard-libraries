@@ -86,6 +86,16 @@ public class DF extends ISOFile {
         }
     }
 
+    public ISOFile findUpwardsByFID(short fid, byte type) {
+        ISOFile res = null;
+        DF current = this;
+        while(res == null && current != null) {
+            res = current.findChildByFID(fid, type);
+            current = current.getParent();
+        }
+        return res;
+    }
+
     public ISOFile findChildByFID(short fid, byte type) {
         ISOFile res = null;
         for(short i = 0; i < mChildren.length; i++) {

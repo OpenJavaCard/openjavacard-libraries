@@ -265,8 +265,7 @@ public class ISOFileSystem implements ISOConfig, ISOExtensions {
                     if(fid == FID_MF) {
                         selected = mMF;
                     } else {
-                        selected = currentDF.findChildByFID(fid, DF.FIND_TYPE_ANY);
-                        // XXX if not found search parent, if there is one
+                        selected = currentDF.findUpwardsByFID(fid, DF.FIND_TYPE_ANY);
                     }
                 } else {
                     ISOException.throwIt(SW_WRONG_LENGTH);
