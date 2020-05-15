@@ -24,10 +24,13 @@ import javacard.framework.Util;
 
 public class EFTransparent extends EF {
 
+    protected final short mMaxLength;
+
     private final byte[] mData;
 
     EFTransparent(DF parent, byte fdb, short fid, byte sfi, short maxLength) {
         super(parent, fdb, fid, sfi);
+        mMaxLength = maxLength;
         mData = new byte[maxLength];
     }
 
