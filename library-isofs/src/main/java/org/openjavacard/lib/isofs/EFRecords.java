@@ -1,6 +1,6 @@
 package org.openjavacard.lib.isofs;
 
-public class EFRecords extends EF {
+public abstract class EFRecords extends EF {
 
     protected final short mMaxRecords;
     protected final short mMaxSize;
