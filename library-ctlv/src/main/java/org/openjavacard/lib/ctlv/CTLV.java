@@ -6,7 +6,7 @@ import javacard.framework.Util;
 
 public class CTLV {
 
-    /** Category indicator: historical bytes coded non-TLV format */
+    /** Category indicator: historical bytes coded in non-TLV format */
     public static final byte CATEGORY_NON_TLV = (byte)0x00;
     /** Category indicator: historical bytes are a DIR data reference */
     public static final byte CATEGORY_DIR_DATA_REFERENCE = (byte)0x10;
