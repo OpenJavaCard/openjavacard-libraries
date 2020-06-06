@@ -28,64 +28,77 @@ public class TempBuffer {
 
     private final byte[] mBuffer;
 
-    private short mOffset;
+    private final short[] mVars;
+    private final static short VAR_FILL = 0;
+    private final static short NUM_VARS = 1;
 
     public TempBuffer(short size) {
         mBuffer = new byte[size];
-        mOffset = 0;
+        mVars = new short[NUM_VARS];
     }
 
     public TempBuffer(short size, byte clearOn) {
         mBuffer = JCSystem.makeTransientByteArray(size, clearOn);
-        mOffset = 0;
+        mVars = JCSystem.makeTransientShortArray(NUM_VARS, clearOn);
     }
 
     private void fault() {
         ISOException.throwIt(ISO7816.SW_UNKNOWN);
     }
 
-    private void checkSize(short request) {
-        short newOffset = (short)(mOffset + request);
+    private short checkSpace(short request) {
+        short fill = mVars[VAR_FILL];
+        short newOffset = (short)(fill + request);
         if(newOffset < 0) {
             fault();
         }
         if(newOffset > mBuffer.length) {
             fault();
         }
+        return fill;
     }
 
     public byte[] getBuffer() {
         return mBuffer;
     }
 
-    public short getLength() {
-        return mOffset;
+    public short getFill() {
+        return mVars[VAR_FILL];
+    }
+
+    public short getSpace() {
+        return (short)(mBuffer.length - mVars[VAR_FILL]);
     }
 
     public void clear() {
         Util.arrayFillNonAtomic(mBuffer, (short)0, (short)mBuffer.length, (byte)0);
-        mOffset = 0;
+        mVars[VAR_FILL] = 0;
     }
 
-    public void put(byte b) {
-        checkSize((short)1);
-        mBuffer[mOffset++] = b;
+    public short put(byte b) {
+        short fill = checkSpace((short)1);
+        mBuffer[fill++] = b;
+        mVars[VAR_FILL] = fill;
+        return fill;
     }
 
-    public void put(short b) {
-        checkSize((short)2);
-        Util.setShort(mBuffer, mOffset, b);
-        mOffset += 2;
+    public short put(short b) {
+        short fill = checkSpace((short)2);
+        fill = Util.setShort(mBuffer, fill, b);
+        mVars[VAR_FILL] = fill;
+        return fill;
     }
 
-    public void put(byte[] buf, short off, short len) {
-        checkSize(len);
-        Util.arrayCopyNonAtomic(buf, off, mBuffer, mOffset, len);
-        mOffset += len;
+    public short put(byte[] buf, short off, short len) {
+        short fill = checkSpace(len);
+        Util.arrayCopyNonAtomic(buf, off, mBuffer, fill, len);
+        fill += len;
+        mVars[VAR_FILL] = fill;
+        return fill;
     }
 
-    public void put(byte[] buf) {
-        put(buf, (short)0, (short)buf.length);
+    public short put(byte[] buf) {
+        return put(buf, (short)0, (short)buf.length);
     }
 
 }
