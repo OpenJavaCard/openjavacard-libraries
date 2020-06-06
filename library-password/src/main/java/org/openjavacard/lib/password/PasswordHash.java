@@ -49,23 +49,6 @@ public class PasswordHash implements PIN, ISO7816 {
     private static final byte FLAG_VALIDATED = 0;
     private static final byte NUM_FLAGS = 1;
 
-    public static MessageDigest getDefaultDigestInstance() {
-        MessageDigest res = null;
-        if(res == null) {
-            res = MessageDigest.getInstance(MessageDigest.ALG_SHA_512, false);
-        }
-        if(res == null) {
-            res = MessageDigest.getInstance(MessageDigest.ALG_SHA_256, false);
-        }
-        if(res == null) {
-            res = MessageDigest.getInstance(MessageDigest.ALG_SHA, false);
-        }
-        if(res == null) {
-            res = MessageDigest.getInstance(MessageDigest.ALG_MD5, false);
-        }
-        return res;
-    }
-
     public PasswordHash(byte minLength, byte maxLength, byte maxTries,
                         RandomData random, MessageDigest digest) {
         byte hashLen = digest.getLength();
@@ -201,6 +184,23 @@ public class PasswordHash implements PIN, ISO7816 {
         }
         code |= remaining;
         ISOException.throwIt(code);
+    }
+
+    private static MessageDigest getDefaultDigestInstance() {
+        MessageDigest res = null;
+        if(res == null) {
+            res = MessageDigest.getInstance(MessageDigest.ALG_SHA_512, false);
+        }
+        if(res == null) {
+            res = MessageDigest.getInstance(MessageDigest.ALG_SHA_256, false);
+        }
+        if(res == null) {
+            res = MessageDigest.getInstance(MessageDigest.ALG_SHA, false);
+        }
+        if(res == null) {
+            res = MessageDigest.getInstance(MessageDigest.ALG_MD5, false);
+        }
+        return res;
     }
 
 }
