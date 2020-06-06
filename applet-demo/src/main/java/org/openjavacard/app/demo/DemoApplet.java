@@ -27,6 +27,7 @@ import javacard.framework.JCSystem;
 import javacard.framework.Util;
 import org.openjavacard.lib.ber.BERHandler;
 import org.openjavacard.lib.ber.BERReader;
+import org.openjavacard.lib.ber.BERSource;
 import org.openjavacard.lib.ber.BERTag;
 import org.openjavacard.lib.ber.BERWriter;
 import org.openjavacard.lib.debug.Debug;
@@ -104,7 +105,7 @@ public final class DemoApplet extends Applet implements ISO7816 {
         mFortuna = new FortunaRandom();
         mLongNum = new LongNum((byte)8);
         mReader = new BERReader((byte)4, JCSystem.CLEAR_ON_DESELECT);
-        mWriter = new BERWriter((byte)32, (byte)4, JCSystem.CLEAR_ON_DESELECT);
+        mWriter = new BERWriter((byte)32, (byte)4, (short)128, JCSystem.CLEAR_ON_DESELECT);
         mParseHandler = new ParseHandler();
         mStringStats = new StringStatistics();
         mPasswordHash = new PasswordHash((byte)12, (byte)32, (byte)3);
@@ -299,7 +300,7 @@ public final class DemoApplet extends Applet implements ISO7816 {
 
     private final class ParseHandler implements BERHandler {
 
-        public boolean handlePrimitive(BERReader reader, byte depth, short tag, byte[] dataBuf, short dataOff, short dataLen) {
+        public boolean handlePrimitive(BERSource source, byte depth, short tag, byte[] dataBuf, short dataOff, short dataLen) {
             mBuffer.put((byte)0x53);
             mBuffer.put(depth);
             mBuffer.put(tag);
@@ -307,7 +308,7 @@ public final class DemoApplet extends Applet implements ISO7816 {
             return true;
         }
 
-        public boolean handleBeginConstructed(BERReader reader, byte depth, short tag) {
+        public boolean handleBeginConstructed(BERSource source, byte depth, short tag) {
             mBuffer.put((byte)0x53);
             mBuffer.put(depth);
             mBuffer.put(tag);
@@ -315,7 +316,7 @@ public final class DemoApplet extends Applet implements ISO7816 {
             return true;
         }
 
-        public boolean handleFinishConstructed(BERReader reader, byte depth, short tag) {
+        public boolean handleFinishConstructed(BERSource source, byte depth, short tag) {
             return true;
         }
 
