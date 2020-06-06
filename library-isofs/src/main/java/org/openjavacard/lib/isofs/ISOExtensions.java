@@ -40,27 +40,75 @@ public interface ISOExtensions extends ISO7816 {
     byte INS_SEARCH_BINARY2 = (byte)0xA1;
     byte INS_ERASE_BINARY1 = (byte)0x0E;
     byte INS_ERASE_BINARY2 = (byte)0x0F;
+
     byte INS_READ_RECORD1 = (byte)0xB2;
     byte INS_READ_RECORD2 = (byte)0xB3;
+    byte READ_RECORD_P2_SELECT_MASK = 0x07;
+    byte READ_RECORD_P2_SELECT_RID_FIRST = 0x00;
+    byte READ_RECORD_P2_SELECT_RID_LAST = 0x01;
+    byte READ_RECORD_P2_SELECT_RID_NEXT = 0x02;
+    byte READ_RECORD_P2_SELECT_RID_PREV = 0x03;
+    byte READ_RECORD_P2_SELECT_NUMBER = 0x04;
+    byte READ_RECORD_P2_SELECT_NUMBER_DOWN = 0x05;
+    byte READ_RECORD_P2_SELECT_NUMBER_UP = 0x06;
+
     byte INS_UPDATE_RECORD1 = (byte)0xDC;
     byte INS_UPDATE_RECORD2 = (byte)0xDD;
+    byte UPDATE_RECORD_P2_WRITE_MASK = 0x07;
+    byte UPDATE_RECORD_P2_WRITE_REPLACE = 0x04;
+    byte UPDATE_RECORD_P2_WRITE_LOGICAL_AND = 0x05;
+    byte UPDATE_RECORD_P2_WRITE_LOGICAL_OR = 0x06;
+    byte UPDATE_RECORD_P2_WRITE_LOGICAL_XOR = 0x07;
+
     byte INS_WRITE_RECORD = (byte)0xD2;
+    byte WRITE_RECORD_P2_SELECT_MASK = 0x07;
+    byte WRITE_RECORD_P2_SELECT_FIRST = 0x00;
+    byte WRITE_RECORD_P2_SELECT_LAST = 0x01;
+    byte WRITE_RECORD_P2_SELECT_NEXT = 0x02;
+    byte WRITE_RECORD_P2_SELECT_PREV = 0x03;
+    byte WRITE_RECORD_P2_SELECT_NUMBER = 0x04;
+
     byte INS_APPEND_RECORD = (byte)0xE2;
+
     byte INS_SEARCH_RECORD = (byte)0xA2;
+
     byte INS_ERASE_RECORD = (byte)0x0C;
+    byte ERASE_RECORD_P2_SELECT_MASK = 0x07;
+    byte ERASE_RECORD_P2_SELECT_NUMBER = 0x04;
+    byte ERASE_RECORD_P2_SELECT_NUMBER_UP = 0x05;
+
     byte INS_CREATE = (byte)0xE1;
     byte INS_GET_DATA = (byte)0xCA;
     byte INS_PUT_DATA = (byte)0xDA;
     byte INS_MANAGE_DATA = (byte)0xCF;
     byte INS_ACTIVATE = (byte)0x44;
     byte INS_DEACTIVATE = (byte)0x04;
+
     byte INS_ACTIVATE_RECORD = (byte)0x08;
     byte INS_DEACTIVATE_RECORD = (byte)0x06;
-    byte INS_TERMINATE_DF = (byte)0xE6;
+    byte ACTIVATE_RECORD_SELECT_MASK = 0x07;
+    byte ACTIVATE_RECORD_P2_SELECT_NUMBER = 0x04;
+    byte ACTIVATE_RECORD_P2_SELECT_NUMBER_UP = 0x05;
+
+    byte INS_TERMINATE = (byte)0xE6;
     byte INS_TERMINATE_EF = (byte)0xE8;
+
     byte INS_TERMINATE_CARD_USAGE = (byte)0xFE;
     byte INS_IMPORT_CARD_SECRET = (byte)0x48;
     byte INS_COMPARE = (byte)0x33;
+
+    byte LIFECYCLE_P1_TYPE_MASK = (byte)0xF0;
+    byte LIFECYCLE_P1_TYPE_FILE = (byte)0x00;
+    byte LIFECYCLE_P1_TYPE_PASSWORD = (byte)0x10;
+    byte LIFECYCLE_P1_TYPE_KEY = (byte)0x20;
+    byte LIFECYCLE_P1_TYPE_OTHER = (byte)0x30;
+    byte LIFECYCLE_P1_SELECT_MASK = (byte)0x0F;
+    byte LIFECYCLE_P1_SELECT_FILE_SELECTED = (byte)0x00;
+    byte LIFECYCLE_P1_SELECT_FILE_CHILD_DF = (byte)0x01;
+    byte LIFECYCLE_P1_SELECT_FILE_CHILD_EF = (byte)0x02;
+    byte LIFECYCLE_P1_SELECT_FILE_DFNAME = (byte)0x04;
+    byte LIFECYCLE_P1_SELECT_FILE_PATH_MF = (byte)0x08;
+    byte LIFECYCLE_P1_SELECT_FILE_PATH_DF = (byte)0x09;
 
     /* FID - File identifiers */
 

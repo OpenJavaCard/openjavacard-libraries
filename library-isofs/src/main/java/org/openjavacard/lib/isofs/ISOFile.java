@@ -96,18 +96,30 @@ public abstract class ISOFile implements ISOConfig, ISOExtensions {
      * Activate the file
      */
     public void activate() {
+        byte effectiveLCS = getEffectiveLCS();
+        if(effectiveLCS != LCS_TERMINATED) {
+            mLCS = LCS_OPERATIONAL_ACTIVATED;
+        }
     }
 
     /**
      * Deactivate the file
      */
     public void deactivate() {
+        byte effectiveLCS = getEffectiveLCS();
+        if(effectiveLCS != LCS_TERMINATED) {
+            mLCS = LCS_OPERATIONAL_DEACTIVATED;
+        }
     }
 
     /**
      * Terminate the file
      */
     public void terminate() {
+        byte effectiveLCS = getEffectiveLCS();
+        if(effectiveLCS != LCS_TERMINATED) {
+            mLCS = LCS_TERMINATED;
+        }
     }
 
     /**

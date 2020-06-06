@@ -21,7 +21,10 @@ public class ISOFileCreator implements BERHandler, ISOExtensions {
     private static final short VAR_LCS = 3;
     private static final short VAR_CSA = 4;
     private static final short VAR_SFI = 5;
-    private static final short NUM_VARS = 6;
+    private static final short VAR_MAX_CONTENT = 6;
+    private static final short VAR_MAX_RECORD_COUNT = 7;
+    private static final short VAR_MAX_RECORD_SIZE = 8;
+    private static final short NUM_VARS = 9;
 
     ISOFileCreator() {
         mRefs = JCSystem.makeTransientObjectArray(NUM_REFS, JCSystem.CLEAR_ON_RESET);
@@ -52,7 +55,13 @@ public class ISOFileCreator implements BERHandler, ISOExtensions {
                     case FDB_SPECIAL_TLV_SIMPLE:
                         file = createDO(fdb);
                         break;
+                    default:
+                        // XXX error
+                        break;
                 }
+                break;
+            default:
+                // XXX error
                 break;
         }
 
@@ -69,7 +78,7 @@ public class ISOFileCreator implements BERHandler, ISOExtensions {
 
         switch(fdb & FDB_STRUCTURE_MASK) {
             case FDB_STRUCTURE_TRANSPARENT:
-                ef = new EFTransparent(parent, fdb, fid, sfi, (short)128);
+                ef = new EFTransparent(parent, fdb, fid, sfi, mVars[VAR_MAX_CONTENT]);
                 break;
             case FDB_STRUCTURE_LINEAR_FIXED:
             case FDB_STRUCTURE_LINEAR_FIXED_TLV:
@@ -82,6 +91,9 @@ public class ISOFileCreator implements BERHandler, ISOExtensions {
             case FDB_STRUCTURE_CYCLIC_FIXED:
             case FDB_STRUCTURE_CYCLIC_FIXED_TLV:
                 ef = new EFCyclicFixed(parent, fdb, fid, sfi, (short)0, (short)0);
+                break;
+            default:
+                // XXX error
                 break;
         }
 
@@ -96,19 +108,45 @@ public class ISOFileCreator implements BERHandler, ISOExtensions {
     }
 
     private EF createDO(byte fdb) {
-        DF parent = (DF) mRefs[REF_PARENT];
-        short fid = mVars[VAR_FID];
         return null;
     }
 
     public boolean handlePrimitive(BERReader reader, byte depth, short tag,
                                    byte[] dataBuf, short dataOff, short dataLen) {
         if(depth == 1) {
+            if(tag == TAG_FCI_SIZE_CONTENT) {
+                if(dataLen == 1) {
+                    mVars[VAR_MAX_CONTENT] = (short)(dataBuf[dataOff] & 0xFF);
+                    return true;
+                }
+                if(dataLen == 2) {
+                    mVars[VAR_MAX_CONTENT] = Util.getShort(dataBuf, dataOff);
+                    return true;
+                }
+            }
             if(tag == TAG_FCI_FDB) {
-                if(dataLen >= 1 && dataLen <= 5) {
+                if(dataLen >= 1 && dataLen <= 6) {
+                    // first byte is FCB
                     mVars[VAR_FDB] = dataBuf[dataOff++];
                     if(dataLen > 1) {
+                        // second byte is DCB
                         mVars[VAR_DCB] = dataBuf[dataOff++];
+                        // now decode the max record size
+                        if(dataLen == 3) {
+                            mVars[VAR_MAX_RECORD_SIZE] = (short)(dataBuf[dataOff++] & 0xFF);
+                        }
+                        if(dataLen >= 4) {
+                            mVars[VAR_MAX_RECORD_SIZE] = Util.getShort(dataBuf, dataOff);
+                            dataOff += 2;
+                            // there might also be a max record count
+                            if(dataLen == 5) {
+                                mVars[VAR_MAX_RECORD_COUNT] = (short)(dataBuf[dataOff++] & 0xFF);
+                            }
+                            if(dataLen == 6) {
+                                mVars[VAR_MAX_RECORD_COUNT] = Util.getShort(dataBuf, dataOff);
+                                dataOff += 2;
+                            }
+                        }
                     }
                     return true;
                 }

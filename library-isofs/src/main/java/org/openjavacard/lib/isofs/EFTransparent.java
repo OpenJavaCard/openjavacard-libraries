@@ -21,6 +21,7 @@ package org.openjavacard.lib.isofs;
 
 import javacard.framework.ISOException;
 import javacard.framework.Util;
+import org.openjavacard.lib.ber.BERWriter;
 
 public class EFTransparent extends EF {
 
@@ -40,6 +41,12 @@ public class EFTransparent extends EF {
 
     public byte[] getData() {
         return mData;
+    }
+
+    @Override
+    protected void tagsFCP(BERWriter ber) {
+        ber.primitiveShort(TAG_FCI_SIZE_CONTENT, mMaxLength);
+        super.tagsFCP(ber);
     }
 
     public void readData(short fileOff, byte[] dstBuf, short dstOff, short dstLen) {
