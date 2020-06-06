@@ -65,7 +65,7 @@ public class BERWriter {
      * @param maxTags
      * @param maxDepth
      */
-    public BERWriter(byte maxTags, byte maxDepth) {
+    public BERWriter(byte maxTags, byte maxDepth, short tmpSize) {
         mMaxTags = maxTags;
         mMaxDepth = maxDepth;
         mVars = new short[NUM_VAR];
@@ -74,7 +74,7 @@ public class BERWriter {
         mBufStk = new Object[maxTags];
         mOffStk = new short[maxTags];
         mLenStk = new short[maxTags];
-        mTmp = new byte[128];
+        mTmp = new byte[tmpSize];
     }
 
     /**
@@ -83,7 +83,7 @@ public class BERWriter {
      * @param maxDepth
      * @param clearOn
      */
-    public BERWriter(byte maxTags, byte maxDepth, byte clearOn) {
+    public BERWriter(byte maxTags, byte maxDepth, short tmpSize, byte clearOn) {
         mMaxTags = maxTags;
         mMaxDepth = maxDepth;
         mVars = JCSystem.makeTransientShortArray(NUM_VAR, clearOn);
@@ -92,7 +92,7 @@ public class BERWriter {
         mBufStk = JCSystem.makeTransientObjectArray(maxTags, clearOn);
         mOffStk = JCSystem.makeTransientShortArray(maxTags, clearOn);
         mLenStk = JCSystem.makeTransientShortArray(maxTags, clearOn);
-        mTmp = JCSystem.makeTransientByteArray((short)128, clearOn);
+        mTmp = JCSystem.makeTransientByteArray(tmpSize, clearOn);
     }
 
     /**
