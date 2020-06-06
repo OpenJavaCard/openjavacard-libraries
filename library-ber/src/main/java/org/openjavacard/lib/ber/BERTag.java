@@ -84,62 +84,62 @@ public final class BERTag {
     }
 
     /** True of the tag is of the universal class */
-    public static final boolean isUniversal(short tag) {
+    public static boolean isUniversal(short tag) {
         return tagClass(tag) == CLASS_UNIVERSAL;
     }
 
     /** True of the tag is of the application-specific class */
-    public static final boolean isApplication(short tag) {
+    public static boolean isApplication(short tag) {
         return tagClass(tag) == CLASS_APPLICATION;
     }
 
     /** True of the tag is of the context-specific class */
-    public static final boolean isContext(short tag) {
+    public static boolean isContext(short tag) {
         return tagClass(tag) == CLASS_CONTEXT;
     }
 
     /** True of the tag is of the private class */
-    public static final boolean isPrivate(short tag) {
+    public static boolean isPrivate(short tag) {
         return tagClass(tag) == CLASS_PRIVATE;
     }
 
     /** True of the tag is primitive */
-    public static final boolean isPrimitive(short tag) {
+    public static boolean isPrimitive(short tag) {
         return (tag & CONSTRUCTED_FLAG) == 0;
     }
 
     /** True of the tag is constructed */
-    public static final boolean isConstructed(short tag) {
+    public static boolean isConstructed(short tag) {
         return (tag & CONSTRUCTED_FLAG) != 0;
     }
 
     /** Returns the class of the tag */
-    public static final short tagClass(short tag) {
+    public static short tagClass(short tag) {
         return (short)(tag & CLASS_MASK);
     }
 
     /** Returns the type of the tag */
-    public static final short tagType(short tag) {
+    public static short tagType(short tag) {
         return (short)(tag & TYPE_MASK);
     }
 
     /** Returns true if the tag requires two bytes */
-    public static final boolean tagIsLong(short tag) {
+    public static boolean tagIsLong(short tag) {
         return (tag & TYPE_MASK_FIRST) == TYPE_LONG;
     }
 
     /** Coerce a tag to be constructed */
-    public static final short tagAsConstructed(short tag) {
+    public static short tagAsConstructed(short tag) {
         return (short)(tag & CONSTRUCTED_FLAG);
     }
 
     /** Coerce a tag to be of the given class */
-    public static final short tagAsClass(short tag, short cls) {
+    public static short tagAsClass(short tag, short cls) {
         return (short)((tag & ~CLASS_MASK) | (cls & CLASS_MASK));
     }
 
     /** Get the encoded size of a tag */
-    public static final short tagSize(short tag) {
+    public static short tagSize(short tag) {
         if(tagIsLong(tag)) {
             return 2;
         } else {
@@ -148,7 +148,7 @@ public final class BERTag {
     }
 
     /** Put a tag into the given buffer */
-    public static final short putTag(byte[] buf, short off, short tag) {
+    public static short putTag(byte[] buf, short off, short tag) {
         if(tagIsLong(tag)) {
             off = Util.setShort(buf, off, tag);
         } else {

@@ -30,27 +30,27 @@ public final class BERLength {
     private static final byte LENGTH_SIZE_MASK = (byte)0x7F;
 
     /** @return true if the given first byte indicates short form */
-    public static final boolean isShortForm(byte firstByte) {
+    public static boolean isShortForm(byte firstByte) {
         return (firstByte & LENGTH_LONG_FLAG) == 0;
     }
 
     /** @return true if the given first byte indicates long form */
-    public static final boolean isLongForm(byte firstByte) {
+    public static boolean isLongForm(byte firstByte) {
         return (firstByte & LENGTH_LONG_FLAG) != 0;
     }
 
     /** @return length represented by the given short-form first byte */
-    public static final byte shortFormLength(byte firstByte) {
+    public static byte shortFormLength(byte firstByte) {
         return (byte)(firstByte & LENGTH_SIZE_MASK);
     }
 
     /** @return length of long-form length indicated by given first byte */
-    public static final byte longFormBytes(byte firstByte) {
+    public static byte longFormBytes(byte firstByte) {
         return (byte)(firstByte & LENGTH_SIZE_MASK);
     }
 
     /** @return number of bytes required to represent given length */
-    public static final byte lengthSize(short length) {
+    public static byte lengthSize(short length) {
         if(length <= 127) {
             return 1;
         } else {
@@ -59,7 +59,7 @@ public final class BERLength {
     }
 
     /** Put a length into the given buffer */
-    public static final short putLength(byte[] buf, short off, short length) {
+    public static short putLength(byte[] buf, short off, short length) {
         if(length <= 127) {
             buf[off++] = (byte)length;
         } else {
