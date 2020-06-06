@@ -22,7 +22,7 @@ package org.openjavacard.lib.ber;
 import javacard.framework.Util;
 
 /**
- * Helper functions related to BER tag values
+ * Constants and functions related to BER tag values
  */
 public final class BERTag {
 

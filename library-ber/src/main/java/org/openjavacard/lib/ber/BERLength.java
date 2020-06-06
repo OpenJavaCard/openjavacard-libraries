@@ -22,11 +22,13 @@ package org.openjavacard.lib.ber;
 import javacard.framework.Util;
 
 /**
- * Helper functions related to BER length values
+ * Constants and functions related to BER length values
  */
 public final class BERLength {
 
+    /* Length byte flag that indicates a long length */
     private static final byte LENGTH_LONG_FLAG = (byte)0x80;
+    /* Length byte mask for long-case length */
     private static final byte LENGTH_SIZE_MASK = (byte)0x7F;
 
     /** @return true if the given first byte indicates short form */

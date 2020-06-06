@@ -20,7 +20,7 @@
 package org.openjavacard.lib.ber;
 
 /**
- * TLV handler interface
+ * Interface for BER-TLV processing handlers
  */
 public interface BERHandler {
 

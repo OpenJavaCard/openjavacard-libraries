@@ -24,7 +24,7 @@ import javacard.framework.ISOException;
 import javacard.framework.JCSystem;
 
 /**
- * Reader for data coded in SC-BER
+ * Reader for BER-TLV data
  * <p/>
  * This is an intricately designed BER parser for JavaCard that
  * supports full non-strict parsing of some variant of BER.
@@ -132,7 +132,7 @@ public final class BERReader implements BERSource {
                 parseError();
             }
 
-            /* parse children */
+            /* now at next level of depth */
             mVars[VAR_DEPTH]++;
 
             /* check for maximum depth */
@@ -148,7 +148,7 @@ public final class BERReader implements BERSource {
                 }
             }
 
-            /* done with children*/
+            /* done with this level of depth */
             mVars[VAR_DEPTH]--;
 
             /* call finish handler */
