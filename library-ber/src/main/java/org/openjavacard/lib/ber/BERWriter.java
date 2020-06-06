@@ -142,6 +142,7 @@ public class BERWriter {
         mVars[VAR_LENGTH]  = 0;
         mVars[VAR_DEPTH]   = 0;
         mVars[VAR_INDEX]   = 0;
+        mVars[VAR_TMP]     = 0;
     }
 
     /**
