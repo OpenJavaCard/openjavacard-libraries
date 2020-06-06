@@ -56,23 +56,30 @@ public class PasswordHash implements PIN {
     private static final byte FLAG_VALIDATED = 0;
     private static final byte NUM_FLAGS = 1;
 
-    public PasswordHash(byte minLength, byte maxLength, byte maxTries,
+    public PasswordHash(byte minLength, byte maxLength, byte maxTries, byte clearOn,
                         RandomData random, MessageDigest digest) {
         byte hashLen = digest.getLength();
+        // crypto instances
         mRandom = random;
         mDigest = digest;
+        // configuration constants
         mMinLength = minLength;
         mMaxLength = maxLength;
         mMaxTries = maxTries;
+        // state
         mTries = 0;
+        mPolicy = null;
+        // variables
+        mFlags = JCSystem.makeTransientBooleanArray(NUM_FLAGS, clearOn);
+        // password data
         mSalt = new byte[hashLen];
         mHash = new byte[hashLen];
-        mTemp = JCSystem.makeTransientByteArray((short)(2 * hashLen), JCSystem.CLEAR_ON_DESELECT);
-        mFlags = JCSystem.makeTransientBooleanArray(NUM_FLAGS, JCSystem.CLEAR_ON_RESET);
+        // temporary buffer
+        mTemp = JCSystem.makeTransientByteArray((short)(2 * hashLen), clearOn);
     }
 
-    public PasswordHash(byte minLength, byte maxLength, byte maxTries) {
-        this(minLength, maxLength, maxTries,
+    public PasswordHash(byte minLength, byte maxLength, byte maxTries, byte clearOn) {
+        this(minLength, maxLength, maxTries, clearOn,
                 RandomData.getInstance(RandomData.ALG_SECURE_RANDOM),
                 getDefaultDigestInstance());
     }
