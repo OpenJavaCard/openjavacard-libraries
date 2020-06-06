@@ -134,6 +134,18 @@ public class BERWriter {
     }
 
     /**
+     * Clear internal state for security purposes
+     */
+    public void clear() {
+        clearObjectArray(mBufStk);
+        clearShortArray(mVars);
+        clearShortArray(mTagStk);
+        clearShortArray(mLenStk);
+        clearByteArray(mDepStk);
+        clearByteArray(mTmp);
+    }
+
+    /**
      * Begin constructing BER data
      * @param maxLength maximum output length
      */
@@ -374,6 +386,28 @@ public class BERWriter {
 
     private void error() {
         ISOException.throwIt(ISO7816.SW_UNKNOWN);
+    }
+
+
+    private void clearByteArray(byte[] array) {
+        short len = (short)array.length;
+        for(short off = 0; off < len; off++) {
+            array[off] = 0;
+        }
+    }
+
+    private void clearShortArray(short[] array) {
+        short len = (short)array.length;
+        for(short off = 0; off < len; off++) {
+            array[off] = 0;
+        }
+    }
+
+    private void clearObjectArray(Object[] array) {
+        short len = (short)array.length;
+        for(short off = 0; off < len; off++) {
+            array[off] = null;
+        }
     }
 
 }
