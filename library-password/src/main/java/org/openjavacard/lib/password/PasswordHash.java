@@ -159,7 +159,7 @@ public class PasswordHash implements PIN, ISO7816 {
         short offHash = (short)0;
         short offSalt = hashLen;
         // check validated status
-        if(mFlags[FLAG_VALIDATED]) {
+        if(!mFlags[FLAG_VALIDATED]) {
             ISOException.throwIt(SW_SECURITY_STATUS_NOT_SATISFIED);
         }
         // check length restrictions
