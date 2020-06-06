@@ -32,6 +32,11 @@ public class PasswordHash implements PIN {
 
     private static final short SW_PIN_TRIES_REMAINING = (short)0x63C0;
 
+    private static final boolean USE_SHA512 = true;
+    private static final boolean USE_SHA256 = true;
+    private static final boolean USE_SHA160 = true;
+    private static final boolean USE_MD5    = true;
+
     private final RandomData mRandom;
     private final MessageDigest mDigest;
 
@@ -202,16 +207,16 @@ public class PasswordHash implements PIN {
 
     private static MessageDigest getDefaultDigestInstance() {
         MessageDigest res = null;
-        if(res == null) {
+        if(USE_SHA512 && res == null) {
             res = MessageDigest.getInstance(MessageDigest.ALG_SHA_512, false);
         }
-        if(res == null) {
+        if(USE_SHA256 && res == null) {
             res = MessageDigest.getInstance(MessageDigest.ALG_SHA_256, false);
         }
-        if(res == null) {
+        if(USE_SHA160 && res == null) {
             res = MessageDigest.getInstance(MessageDigest.ALG_SHA, false);
         }
-        if(res == null) {
+        if(USE_MD5 && res == null) {
             res = MessageDigest.getInstance(MessageDigest.ALG_MD5, false);
         }
         return res;
