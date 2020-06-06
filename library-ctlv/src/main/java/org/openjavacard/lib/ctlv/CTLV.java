@@ -4,6 +4,15 @@ import javacard.framework.ISO7816;
 import javacard.framework.ISOException;
 import javacard.framework.Util;
 
+/**
+ * Compact-TLV processing functions
+ *
+ * ISO7816 defines C-TLV for use in ATR historical bytes.
+ *
+ * This class provides static functions for processing and producing C-TLV data.
+ *
+ * It also includes definitions for constructing ATR historical bytes.
+ */
 public class CTLV {
 
     /** Category indicator: historical bytes coded in non-TLV format */
