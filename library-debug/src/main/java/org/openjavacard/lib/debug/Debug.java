@@ -34,18 +34,18 @@ public final class Debug implements DebugProtocol {
     }
 
     /** Reference to containing applet */
-    private Applet mApplet;
+    private final Applet mApplet;
 
     /** Reference to service implementation (null if detached) */
     private DebugService mService;
 
     /** Binary representation of service AID */
-    private byte[] mServiceAID;
+    private final byte[] mServiceAID;
 
     /** Internal flags (clear-on-reset) */
-    private boolean[] mFlags;
-    private static byte FLAG_ACTIVE = 0;
-    private static byte NUM_FLAGS = 1;
+    private final boolean[] mFlags;
+    private final static byte FLAG_ACTIVE = 0;
+    private final static byte NUM_FLAGS = 1;
 
     /** True if debugging is enabled (persistent) */
     private boolean mEnabled;
