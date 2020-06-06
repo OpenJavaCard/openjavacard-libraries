@@ -25,7 +25,7 @@ import javacard.framework.ISOException;
 import javacard.framework.JCSystem;
 import javacard.framework.Util;
 
-public class BERWriter {
+public class BERWriter implements BERHandler {
 
     /** Fixed: maximum number of tags */
     private final byte mMaxTags;
@@ -369,6 +369,45 @@ public class BERWriter {
         short len = finish(buf, (short)0, (short)buf.length);
         apdu.setOutgoingAndSend((short)0, len);
         return len;
+    }
+
+    /**
+     * Handler implementation: re-emit a primitive tag
+     * @param source feeding the tag
+     * @param depth of occurrence
+     * @param tag that occurred
+     * @param dataBuf containing tag data
+     * @param dataOff of data in dataBuf
+     * @param dataLen of data in dataBuf
+     * @return always true
+     */
+    public final boolean handlePrimitive(BERSource source, byte depth, short tag, byte[] dataBuf, short dataOff, short dataLen) {
+        buildPrimitive(tag, dataBuf, dataOff, dataLen);
+        return true;
+    }
+
+    /**
+     * Handler implementation: begin re-emitting a constructed tag
+     * @param source feeding the tag
+     * @param depth of occurrence
+     * @param tag that occurred
+     * @return always true
+     */
+    public final boolean handleBeginConstructed(BERSource source, byte depth, short tag) {
+        beginConstructed(tag);
+        return true;
+    }
+
+    /**
+     * Handler implementation: finish re-emitting a constructed tag
+     * @param source feeding the tag
+     * @param depth of occurrence
+     * @param tag that occurred
+     * @return always true
+     */
+    public final boolean handleFinishConstructed(BERSource source, byte depth, short tag) {
+        endConstructed();
+        return true;
     }
 
     private void checkSingleToplevel() {
