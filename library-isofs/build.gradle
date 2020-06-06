@@ -14,8 +14,8 @@ javacard {
         cap {
             aid = '0xD2:0x76:0x00:0x01:0x77:0x10:0x03:0x12:0x01:0x00:0x01'
             version = '1.0'
-            packageName = 'org.openjavacard.coap.core'
-            output = 'openjavacard-coap-core.cap'
+            packageName = 'org.openjavacard.lib.isofs'
+            output = 'openjavacard-lib-isofs.cap'
         }
     }
 }
