@@ -41,6 +41,8 @@ public class PasswordHash implements PIN {
 
     private byte mTries;
 
+    private PasswordPolicy mPolicy;
+
     private final byte[] mSalt;
     private final byte[] mHash;
     private final byte[] mTemp;
@@ -68,6 +70,14 @@ public class PasswordHash implements PIN {
         this(minLength, maxLength, maxTries,
                 RandomData.getInstance(RandomData.ALG_SECURE_RANDOM),
                 getDefaultDigestInstance());
+    }
+
+    public PasswordPolicy getPasswordPolicy() {
+        return mPolicy;
+    }
+
+    public void setPasswordPolicy(PasswordPolicy policy) {
+        mPolicy = policy;
     }
 
     public byte getTriesRemaining() {
@@ -147,6 +157,10 @@ public class PasswordHash implements PIN {
         }
         // check length restrictions
         if(len < mMinLength || len > mMaxLength) {
+            ISOException.throwIt(ISO7816.SW_WRONG_DATA);
+        }
+        // check password policy
+        if(mPolicy != null && !mPolicy.validate(buf, off, len)) {
             ISOException.throwIt(ISO7816.SW_WRONG_DATA);
         }
         // pre-wipe temp buffer
