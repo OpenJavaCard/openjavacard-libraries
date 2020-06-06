@@ -48,51 +48,48 @@ public class RSAOAEPCipher extends Cipher {
 
     private static final short short0 = (short)0;
 
+    /** Empty byte[] used as dummy for an empty label */
     private final byte[] empty = new byte[0];
 
-    /** Mask generator */
-    private MGF1 mMGF = null;
-
     /** RNG for the seed */
-    private RandomData mRandom = null;
+    private final RandomData mRandom;
 
     /** Hash for both MGF and label */
-    private MessageDigest mHash = null;
+    private final MessageDigest mHash;
 
-    /** Temporary buffer (CLEAR_ON_DESELECT) */
-    private byte[] mTemp = null;
+    /** Mask generator */
+    private final MGF1 mMGF;
 
     /** Underlying plain RSA cipher */
-    private Cipher mRSA = null;
-
-    /** Indicates that we have seen init() */
-    private boolean mInitialized = false;
-
-    /** Currently initialized mode (encrypt/decrypt) */
-    private byte  mMode = 0;
-
-    /** Size of our current RSA key */
-    private short mBits = 0;
+    private final Cipher mRSA;
 
     /**
-     * Cached hash of label
-     *
-     * Set up during cipher initialization.
+     * Temporary buffer
      */
-    private byte[] mLabelHash;
+    private final byte[] mTemp;
 
     /**
-     * Input buffer (CLEAR_ON_DESELECT)
+     * Label hash buffer
+     */
+    private final byte[] mLabelHash;
+
+    /**
+     * Input buffer
      *
-     * Used as an input buffer whenever a message is being
-     * fed incrementally using update(). Will not be allocated
-     * or used when only doFinal() is being used.
+     * Used as an input buffer whenever a message is being fed incrementally using update().
+     *
+     * Will not be allocated or used when only doFinal() is being used.
      */
     private byte[] mBuffer = null;
 
+    /** Indicates that we have seen init() */
+    private boolean mInitialized = false;
+    /** Currently initialized mode (encrypt/decrypt) */
+    private byte  mMode = 0;
+    /** Size of our current RSA key */
+    private short mBits = 0;
     /** Fill pointer into mBuffer */
     private short mBufPtr = 0;
-
     /** Fill limit in mBuffer */
     private short mBufEnd = 0;
 
