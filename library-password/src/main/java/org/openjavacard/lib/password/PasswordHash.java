@@ -28,7 +28,7 @@ import javacard.framework.Util;
 import javacard.security.MessageDigest;
 import javacard.security.RandomData;
 
-public class PasswordHash implements PIN, ISO7816 {
+public class PasswordHash implements PIN {
 
     private static final short SW_PIN_TRIES_REMAINING = (short)0x63C0;
 
@@ -143,11 +143,11 @@ public class PasswordHash implements PIN, ISO7816 {
         short offSalt = hashLen;
         // check validated status
         if(!mFlags[FLAG_VALIDATED]) {
-            ISOException.throwIt(SW_SECURITY_STATUS_NOT_SATISFIED);
+            ISOException.throwIt(ISO7816.SW_SECURITY_STATUS_NOT_SATISFIED);
         }
         // check length restrictions
         if(len < mMinLength || len > mMaxLength) {
-            ISOException.throwIt(SW_WRONG_DATA);
+            ISOException.throwIt(ISO7816.SW_WRONG_DATA);
         }
         // pre-wipe temp buffer
         wipeTemp();
