@@ -43,7 +43,6 @@ public class EFTransparent extends EF {
         return mData;
     }
 
-    @Override
     protected void tagsFCP(BERWriter ber) {
         ber.primitiveShort(TAG_FCI_SIZE_CONTENT, mMaxLength);
         super.tagsFCP(ber);
