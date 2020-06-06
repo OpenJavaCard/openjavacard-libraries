@@ -175,7 +175,12 @@ public class BERWriter {
         mVars[VAR_INDEX]++;
     }
 
-    private short putTemp(short count) {
+    /**
+     * Internal: consume temp buffer space
+     * @param count number of bytes to consume
+     * @return offset of reserved region
+     */
+    private short allocateTemp(short count) {
         short offset = mVars[VAR_TMP];
         short after = (short)(offset + count);
         if(after > mTmp.length) {
@@ -192,7 +197,7 @@ public class BERWriter {
      */
     public final void primitiveByte(short tag, byte value) {
         short len = (short)1;
-        short tmpOff = putTemp(len);
+        short tmpOff = allocateTemp(len);
         mTmp[tmpOff] = value;
         buildPrimitive(tag, mTmp, tmpOff, len);
     }
@@ -204,7 +209,7 @@ public class BERWriter {
      */
     public final void primitiveShort(short tag, short value) {
         short len = (short)2;
-        short tmpOff = putTemp(len);
+        short tmpOff = allocateTemp(len);
         Util.setShort(mTmp, tmpOff, value);
         buildPrimitive(tag, mTmp, tmpOff, len);
     }
@@ -217,7 +222,7 @@ public class BERWriter {
      * @param len
      */
     public final void primitiveBytes(short tag, byte[] buf, short off, short len) {
-        short tmpOff = putTemp(len);
+        short tmpOff = allocateTemp(len);
         Util.arrayCopyNonAtomic(buf, off, mTmp, tmpOff, len);
         buildPrimitive(tag, mTmp, tmpOff, len);
     }
