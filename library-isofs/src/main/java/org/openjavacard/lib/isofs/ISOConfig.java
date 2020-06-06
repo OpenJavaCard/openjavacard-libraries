@@ -22,4 +22,9 @@ public interface ISOConfig {
      */
     byte  BER_MAX_DEPTH = (byte)4;
 
+    /**
+     * Maximum number of temp bytes for TLV output
+     */
+    short BER_MAX_TEMP = 128;
+
 }

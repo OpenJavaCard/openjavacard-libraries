@@ -64,7 +64,7 @@ public class ISOFileSystem implements ISOConfig, ISOExtensions {
         mRefs = JCSystem.makeTransientObjectArray(NUM_REFS, clearOn);
         mVars = JCSystem.makeTransientShortArray(NUM_VARS, clearOn);
         mReader = new BERReader(BER_MAX_DEPTH, clearOn);
-        mWriter = new BERWriter(BER_MAX_TAGS, BER_MAX_DEPTH, clearOn);
+        mWriter = new BERWriter(BER_MAX_TAGS, BER_MAX_DEPTH, BER_MAX_TEMP, clearOn);
         mFileCreator = new ISOFileCreator();
     }
 
