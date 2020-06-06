@@ -248,7 +248,7 @@ public class BERWriter implements BERHandler {
      * @param off of data
      * @param len of data
      */
-    public final void primitiveBytes(short tag, byte[] buf, short off, short len) {
+    public final void primitiveBuffered(short tag, byte[] buf, short off, short len) {
         short tmpOff = allocateTemp(len);
         Util.arrayCopyNonAtomic(buf, off, mTmp, tmpOff, len);
         buildPrimitive(tag, mTmp, tmpOff, len);
