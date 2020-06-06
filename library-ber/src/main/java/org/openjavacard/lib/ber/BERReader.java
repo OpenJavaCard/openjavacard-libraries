@@ -34,7 +34,7 @@ import javacard.framework.JCSystem;
  * structure without any memory allocation.
  * <p/>
  * It is strongly recommended to keep instances of this class
- * permanently available by using a static reference, as with all
+ * permanently available by using a global reference, as with all
  * such stateful objects on JavaCard. Doing so prevents memory
  * allocation, which should improve card life and be safer from
  * a security standpoint.
