@@ -95,12 +95,12 @@ public class RSAOAEPCipher extends Cipher {
 
     /** Main constructor */
     public RSAOAEPCipher() {
+        mRandom = RandomData.getInstance(RandomData.ALG_SECURE_RANDOM);
         mHash = MessageDigest.getInstance(MessageDigest.ALG_SHA, false);
         mMGF = new MGF1(mHash);
-        mRandom = RandomData.getInstance(RandomData.ALG_SECURE_RANDOM);
+        mRSA = Cipher.getInstance(Cipher.ALG_RSA_NOPAD, false);
         mTemp = JCSystem.makeTransientByteArray(MAX_MESSAGE_LENGTH, JCSystem.CLEAR_ON_DESELECT);
         mLabelHash = new byte[MAX_HASH_LENGTH];
-        mRSA = Cipher.getInstance(Cipher.ALG_RSA_NOPAD, false);
     }
 
     /**
