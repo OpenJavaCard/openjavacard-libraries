@@ -25,6 +25,21 @@ import javacard.framework.ISOException;
 import javacard.framework.JCSystem;
 import javacard.framework.Util;
 
+/**
+ * Writer for BER-TLV data
+ * <p/>
+ * This is a flexible but compact class for dynamic generation of BER data.
+ * Tag values are limited to 2 bytes due to JavaCard platform limitations.
+ * <p/>
+ * A TLV data structure consisting of primitive and constructed objects can be built using method calls.
+ * Data will either be referenced from user-provided buffers or saved to an internal temporary buffer.
+ * <p/>
+ * Binary data can be emitted non-incrementally. APDU sending utilities are provided for your convenience.
+ * <p/>
+ * This class implements the BERHandler interface so that processing chains can be constructed.
+ * <p/>
+ * @see org.openjavacard.lib.ber.BERHandler
+ */
 public class BERWriter implements BERHandler {
 
     /** Fixed: maximum number of tags */
@@ -158,11 +173,11 @@ public class BERWriter implements BERHandler {
     }
 
     /**
-     * Build a primitive BER tag
-     * @param tag
-     * @param buf
-     * @param off
-     * @param len
+     * Build a primitive BER object
+     * @param tag for the object
+     * @param buf containing data
+     * @param off of data
+     * @param len of data
      */
     public final void buildPrimitive(short tag, byte[] buf, short off, short len) {
         byte current = (byte)mVars[VAR_INDEX];
@@ -203,9 +218,9 @@ public class BERWriter implements BERHandler {
     }
 
     /**
-     * Build a primitive BER tag with a byte value
-     * @param tag
-     * @param value
+     * Build a primitive BER object with a byte value
+     * @param tag of the object
+     * @param value to be used as data
      */
     public final void primitiveByte(short tag, byte value) {
         short len = (short)1;
@@ -215,9 +230,9 @@ public class BERWriter implements BERHandler {
     }
 
     /**
-     * Build a primitive BER tag with a short value
-     * @param tag
-     * @param value
+     * Build a primitive BER object with a short value
+     * @param tag of the object
+     * @param value to be used as data
      */
     public final void primitiveShort(short tag, short value) {
         short len = (short)2;
@@ -227,11 +242,11 @@ public class BERWriter implements BERHandler {
     }
 
     /**
-     * Build a primitive BER tag with given value
-     * @param tag
-     * @param buf
-     * @param off
-     * @param len
+     * Build a primitive BER object with given value
+     * @param tag of the object
+     * @param buf containing data
+     * @param off of data
+     * @param len of data
      */
     public final void primitiveBytes(short tag, byte[] buf, short off, short len) {
         short tmpOff = allocateTemp(len);
@@ -240,8 +255,8 @@ public class BERWriter implements BERHandler {
     }
 
     /**
-     * Begin building a constructed BER tag
-     * @param tag
+     * Begin building a constructed BER object
+     * @param tag of the object
      */
     public final void beginConstructed(short tag) {
         byte current = (byte)mVars[VAR_INDEX];

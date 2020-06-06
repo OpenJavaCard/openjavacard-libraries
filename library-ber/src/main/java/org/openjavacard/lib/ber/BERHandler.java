@@ -25,32 +25,32 @@ package org.openjavacard.lib.ber;
 public interface BERHandler {
 
     /**
-     * Handle a primitive tag
+     * Handle a primitive object
      * @param source feeding the tag
      * @param depth of occurrence
-     * @param tag that occurred
-     * @param dataBuf containing tag data
-     * @param dataOff of data in dataBuf
-     * @param dataLen of data in dataBuf
+     * @param tag of object
+     * @param dataBuf containing value
+     * @param dataOff of value in dataBuf
+     * @param dataLen of value in dataBuf
      * @return true if accepted
      */
     boolean handlePrimitive(BERSource source, byte depth, short tag,
                             byte[] dataBuf, short dataOff, short dataLen);
 
     /**
-     * Handle start of a constructed tag
+     * Handle start of a constructed object
      * @param source feeding the tag
      * @param depth of occurrence
-     * @param tag that occurred
+     * @param tag of object
      * @return true if accepted
      */
     boolean handleBeginConstructed(BERSource source, byte depth, short tag);
 
     /**
-     * Handle end of a constructed tag
+     * Handle end of a constructed object
      * @param source feeding the tag
      * @param depth of occurrence
-     * @param tag that occurred
+     * @param tag of object
      * @return true if accepted
      */
     boolean handleFinishConstructed(BERSource source, byte depth, short tag);
