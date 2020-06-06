@@ -4,6 +4,7 @@ import javacard.framework.JCSystem;
 import javacard.framework.Util;
 import org.openjavacard.lib.ber.BERHandler;
 import org.openjavacard.lib.ber.BERReader;
+import org.openjavacard.lib.ber.BERSource;
 
 /**
  * ISO7816 file creator
@@ -111,7 +112,7 @@ public class ISOFileCreator implements BERHandler, ISOExtensions {
         return null;
     }
 
-    public boolean handlePrimitive(BERReader reader, byte depth, short tag,
+    public boolean handlePrimitive(BERSource source, byte depth, short tag,
                                    byte[] dataBuf, short dataOff, short dataLen) {
         if(depth == 1) {
             if(tag == TAG_FCI_SIZE_CONTENT) {
@@ -171,7 +172,7 @@ public class ISOFileCreator implements BERHandler, ISOExtensions {
         return false;
     }
 
-    public boolean handleBeginConstructed(BERReader reader, byte depth, short tag) {
+    public boolean handleBeginConstructed(BERSource source, byte depth, short tag) {
         if(depth == 0 && tag == TAG_FCI) {
             return true;
         }
@@ -181,7 +182,7 @@ public class ISOFileCreator implements BERHandler, ISOExtensions {
         return false;
     }
 
-    public boolean handleFinishConstructed(BERReader reader, byte depth, short tag) {
+    public boolean handleFinishConstructed(BERSource source, byte depth, short tag) {
         if(depth == 0 && tag == TAG_FCI) {
             return true;
         }
