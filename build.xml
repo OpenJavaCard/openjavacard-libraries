@@ -11,47 +11,113 @@
         <delete dir="build"/>
     </target>
 
-    <target name="build" description="Build code"
-            depends="build-lib-ber,build-lib-string,build-lib-fortuna,build-lib-rsa,build-lib-debug,build-lib-auth,build-lib-password,build-lib-isofs,build-lib-ctlv,build-app-demo,build-svc-debug,build-svc-random">
+    <target name="prepare" description="Prepare build environment">
+        <ant dir="${ext.javacard}"/>
+        <mkdir dir="build/jar"/>
+        <mkdir dir="build/javacard"/>
+        <mkdir dir="build/classes"/>
     </target>
 
-    <target name="prebuilt" description="Update prebuilt files"
-            depends="build">
+    <target name="build" description="Build everything" depends="prepare">
+        <antcall target="build-lib-ber"/>
+        <antcall target="build-lib-string"/>
+        <antcall target="build-lib-fortuna"/>
+        <antcall target="build-lib-rsa"/>
+        <antcall target="build-lib-ctlv"/>
+        <antcall target="build-lib-cvmpin"/>
+        <antcall target="build-lib-debug"/>
+        <antcall target="build-lib-auth"/>
+        <antcall target="build-lib-password"/>
+        <antcall target="build-lib-isofs"/>
+        <antcall target="build-svc-debug"/>
+        <antcall target="build-svc-random"/>
+        <antcall target="build-app-demo"/>
+    </target>
+
+    <target name="test" description="Run tests" depends="build">
+    </target>
+
+    <target name="prebuilt" description="Update prebuilt files" depends="build">
         <delete dir="prebuilt"/>
         <copy todir="prebuilt">
+            <fileset dir="build/jar"/>
             <fileset dir="build/javacard"/>
         </copy>
     </target>
 
-    <target name="test" description="Run tests">
-    </target>
-
-    <target name="ext-javacard">
-        <ant dir="${ext.javacard}"/>
+    <target name="ant-javacard">
         <taskdef name="javacard"
                  classpath="${ext.javacard}/ant-javacard.jar"
                  classname="pro.javacard.ant.JavaCard"/>
     </target>
 
-    <target name="build-dirs">
-        <mkdir dir="build/jar"/>
-        <mkdir dir="build/javacard"/>
-        <mkdir dir="build/classes"/>
+    <target name="javadoc">
+        <javadoc packagenames="org.openjavacard.lib.*"
+                 defaultexcludes="yes"
+                 destdir="build/javadoc"
+                 author="true"
+                 version="true"
+                 use="true"
+                 windowtitle="OpenJavaCard Libraries API">
+            <doctitle><![CDATA[<h1>OpenJavaCard Libraries API</h1>]]></doctitle>
+            <bottom><![CDATA[<i>Copyright &#169; 2018 promovicz</i>]]></bottom>
 
-        <mkdir dir="build/classes/lib-ber"/>
-        <mkdir dir="build/classes/lib-string"/>
-        <mkdir dir="build/classes/lib-fortuna"/>
-        <mkdir dir="build/classes/lib-rsa"/>
-        <mkdir dir="build/classes/lib-debug"/>
-        <mkdir dir="build/classes/lib-auth"/>
-        <mkdir dir="build/classes/lib-password"/>
-        <mkdir dir="build/classes/lib-isofs"/>
-        <mkdir dir="build/classes/lib-ctlv"/>
+            <group title="BER-TLV processing">
+                <package name="org.openjavacard.lib.ber"/>
+            </group>
+            <group title="String processing">
+                <package name="org.openjavacard.lib.string"/>
+            </group>
+            <group title="Fortuna PRNG">
+                <package name="org.openjavacard.lib.fortuna"/>
+            </group>
+            <group title="RSA extensions">
+                <package name="org.openjavacard.lib.rsa"/>
+            </group>
+            <group title="Debug library">
+                <package name="org.openjavacard.lib.debug"/>
+            </group>
+            <group title="Auth library">
+                <package name="org.openjavacard.lib.auth"/>
+            </group>
+            <group title="Password functions">
+                <package name="org.openjavacard.lib.password"/>
+            </group>
+            <group title="CBOR processing">
+                <package name="org.openjavacard.lib.cbor"/>
+            </group>
+            <group title="ISO7816 file system">
+                <package name="org.openjavacard.lib.isofs"/>
+            </group>
+            <group title="Compact-TLV processing">
+                <package name="org.openjavacard.lib.ctlv"/>
+            </group>
+            <group title="CVM PIN wrapper">
+                <package name="org.openjavacard.lib.cvmpin"/>
+            </group>
 
-        <mkdir dir="build/classes/app-demo"/>
+            <sourcepath>
+                <pathelement path="library-auth/src/main/java"/>
+                <pathelement path="library-ber/src/main/java"/>
+                <pathelement path="library-ctlv/src/main/java"/>
+                <pathelement path="library-debug/src/main/java"/>
+                <pathelement path="library-fortuna/src/main/java"/>
+                <pathelement path="library-isofs/src/main/java"/>
+                <pathelement path="library-password/src/main/java"/>
+                <pathelement path="library-rsa/src/main/java"/>
+                <pathelement path="library-string/src/main/java"/>
+                <pathelement path="library-ctlv/src/main/java"/>
+                <pathelement path="library-cvmpin/src/main/java"/>
+            </sourcepath>
+
+            <classpath>
+                <pathelement path="${sdk.jc222}/lib/api.jar"/>
+                <pathelement path="ext/globalplatform-exports/org.globalplatform-1.7/gpapi-globalplatform.jar"/>
+            </classpath>
+        </javadoc>
     </target>
 
-    <target name="build-lib-ber" depends="ext-javacard,build-dirs">
+    <target name="build-lib-ber" depends="ant-javacard">
         <javacard jckit="${sdk.jc222}">
             <cap output="build/javacard/openjavacard-lib-ber.cap"
                  jar="build/javacard/openjavacard-lib-ber.jar"
@@ -65,7 +131,7 @@
         </javacard>
     </target>
 
-    <target name="build-lib-string" depends="ext-javacard,build-dirs">
+    <target name="build-lib-string" depends="ant-javacard">
         <javacard jckit="${sdk.jc222}">
             <cap output="build/javacard/openjavacard-lib-string.cap"
                  jar="build/javacard/openjavacard-lib-string.jar"
@@ -79,7 +145,7 @@
         </javacard>
     </target>
 
-    <target name="build-lib-fortuna" depends="ext-javacard,build-dirs">
+    <target name="build-lib-fortuna" depends="ant-javacard">
         <javacard jckit="${sdk.jc222}">
             <cap output="build/javacard/openjavacard-lib-fortuna.cap"
                  jar="build/javacard/openjavacard-lib-fortuna.jar"
@@ -93,7 +159,7 @@
         </javacard>
     </target>
 
-    <target name="build-lib-rsa" depends="ext-javacard,build-dirs">
+    <target name="build-lib-rsa" depends="ant-javacard">
         <javacard jckit="${sdk.jc222}">
             <cap output="build/javacard/openjavacard-lib-rsa.cap"
                  jar="build/javacard/openjavacard-lib-rsa.jar"
@@ -107,7 +173,7 @@
         </javacard>
     </target>
 
-    <target name="build-lib-debug" depends="ext-javacard,build-dirs">
+    <target name="build-lib-debug" depends="ant-javacard">
         <javacard jckit="${sdk.jc222}">
             <cap output="build/javacard/openjavacard-lib-debug.cap"
                  jar="build/javacard/openjavacard-lib-debug.jar"
@@ -121,7 +187,7 @@
         </javacard>
     </target>
 
-    <target name="build-lib-auth" depends="ext-javacard,build-dirs">
+    <target name="build-lib-auth" depends="ant-javacard">
         <javacard jckit="${sdk.jc222}">
             <cap output="build/javacard/openjavacard-lib-auth.cap"
                  jar="build/javacard/openjavacard-lib-auth.jar"
@@ -135,7 +201,7 @@
         </javacard>
     </target>
 
-    <target name="build-lib-password" depends="ext-javacard,build-dirs">
+    <target name="build-lib-password" depends="ant-javacard">
         <javacard jckit="${sdk.jc222}">
             <cap output="build/javacard/openjavacard-lib-password.cap"
                  jar="build/javacard/openjavacard-lib-password.jar"
@@ -149,7 +215,23 @@
         </javacard>
     </target>
 
-    <target name="build-lib-isofs" depends="ext-javacard,build-dirs,build-lib-ber">
+    <target name="build-lib-cbor" depends="ant-javacard">
+        <javacard jckit="${sdk.jc222}">
+            <cap output="build/javacard/openjavacard-lib-cbor.cap"
+                 jar="build/javacard/openjavacard-lib-cbor.jar"
+                 classes="build/classes/lib-cbor"
+                 export="build/classes/lib-cbor"
+                 sources="library-cbor/src/main/java"
+                 aid="D276000177100310080001"
+                 package="org.openjavacard.lib.cbor"
+                 version="0.0">
+                <import jar="build/classes/lib-cbor"
+                        exps="build/classes/lib-cbor"/>
+            </cap>
+        </javacard>
+    </target>
+
+    <target name="build-lib-isofs" depends="ant-javacard">
         <javacard jckit="${sdk.jc222}">
             <cap output="build/javacard/openjavacard-lib-isofs.cap"
                  jar="build/javacard/openjavacard-lib-isofs.jar"
@@ -165,22 +247,37 @@
         </javacard>
     </target>
 
-    <target name="build-lib-ctlv" depends="ext-javacard,build-dirs">
+    <target name="build-lib-ctlv" depends="ant-javacard">
         <javacard jckit="${sdk.jc222}">
             <cap output="build/javacard/openjavacard-lib-ctlv.cap"
                  jar="build/javacard/openjavacard-lib-ctlv.jar"
                  classes="build/classes/lib-ctlv"
                  export="build/classes/lib-ctlv"
                  sources="library-ctlv/src/main/java"
-                 aid="D276000177100310100001"
+                 aid="D2760001771003100A0001"
                  package="org.openjavacard.lib.ctlv"
                  version="0.0">
             </cap>
         </javacard>
     </target>
 
-    <target name="build-app-demo"
-            depends="ext-javacard,build-dirs,build-lib-ber,build-lib-debug,build-lib-fortuna">
+    <target name="build-lib-cvmpin" depends="ant-javacard">
+        <javacard jckit="${sdk.jc222}">
+            <cap output="build/javacard/openjavacard-lib-cvmpin.cap"
+                 jar="build/javacard/openjavacard-lib-cvmpin.jar"
+                 classes="build/classes/lib-cvmpin"
+                 export="build/classes/lib-cvmpin"
+                 sources="library-cvmpin/src/main/java"
+                 aid="D2760001771003100B0001"
+                 package="org.openjavacard.lib.cvmpin"
+                 version="0.0">
+                <import jar="ext/globalplatform-exports/org.globalplatform-1.1/gpapi-globalplatform.jar"
+                        exps="ext/globalplatform-exports/org.globalplatform-1.1/exports"/>
+            </cap>
+        </javacard>
+    </target>
+
+    <target name="build-app-demo" depends="ant-javacard">
         <javacard jckit="${sdk.jc222}">
             <cap output="build/javacard/openjavacard-app-demo.cap"
                  jar="build/javacard/openjavacard-app-demo.jar"
@@ -206,8 +303,7 @@
         </javacard>
     </target>
 
-    <target name="build-svc-debug"
-            depends="ext-javacard,build-dirs,build-lib-ber,build-lib-debug">
+    <target name="build-svc-debug" depends="ant-javacard">
         <javacard jckit="${sdk.jc222}">
             <cap output="build/javacard/openjavacard-svc-debug.cap"
                  jar="build/javacard/openjavacard-svc-debug.jar"
@@ -227,8 +323,7 @@
         </javacard>
     </target>
 
-    <target name="build-svc-random"
-            depends="ext-javacard,build-dirs,build-lib-fortuna">
+    <target name="build-svc-random" depends="ant-javacard">
         <javacard jckit="${sdk.jc222}">
             <cap output="build/javacard/openjavacard-svc-random.cap"
                  jar="build/javacard/openjavacard-svc-random.jar"
@@ -244,60 +339,6 @@
                         class="org.openjavacard.svc.random.RandomApplet"/>
             </cap>
         </javacard>
-    </target>
-
-    <target name="javadoc">
-        <javadoc packagenames="org.openjavacard.lib.*"
-                 defaultexcludes="yes"
-                 destdir="build/javadoc"
-                 author="true"
-                 version="true"
-                 use="true"
-                 windowtitle="OpenJavaCard Libraries API">
-            <doctitle><![CDATA[<h1>OpenJavaCard Libraries API</h1>]]></doctitle>
-            <bottom><![CDATA[<i>Copyright &#169; 2018 promovicz</i>]]></bottom>
-
-            <group title="BER processing">
-                <package name="org.openjavacard.lib.ber"/>
-            </group>
-            <group title="String processing">
-                <package name="org.openjavacard.lib.string"/>
-            </group>
-            <group title="Fortuna PRNG">
-                <package name="org.openjavacard.lib.fortuna"/>
-            </group>
-            <group title="RSA extensions">
-                <package name="org.openjavacard.lib.rsa"/>
-            </group>
-            <group title="Debug library">
-                <package name="org.openjavacard.lib.debug"/>
-            </group>
-            <group title="Auth library">
-                <package name="org.openjavacard.lib.auth"/>
-            </group>
-            <group title="Password functions">
-                <package name="org.openjavacard.lib.password"/>
-            </group>
-            <group title="Compact-TLV processing">
-                <package name="org.openjavacard.lib.ctlv"/>
-            </group>
-
-            <sourcepath>
-                <pathelement path="library-auth/src/main/java"/>
-                <pathelement path="library-ber/src/main/java"/>
-                <pathelement path="library-debug/src/main/java"/>
-                <pathelement path="library-fortuna/src/main/java"/>
-                <pathelement path="library-isofs/src/main/java"/>
-                <pathelement path="library-password/src/main/java"/>
-                <pathelement path="library-rsa/src/main/java"/>
-                <pathelement path="library-string/src/main/java"/>
-                <pathelement path="library-ctlv/src/main/java"/>
-            </sourcepath>
-
-            <classpath>
-                <pathelement path="${sdk.jc222}/lib/api.jar"/>
-            </classpath>
-        </javadoc>
     </target>
 
 </project>
