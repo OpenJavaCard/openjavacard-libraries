@@ -61,7 +61,7 @@ public final class DebugApplet extends Applet implements ISO7816, DebugProtocol 
     private short mSeq;
 
     private DebugApplet() {
-        mBerWriter = new BERWriter((byte)32, (byte)4, JCSystem.CLEAR_ON_DESELECT);
+        mBerWriter = new BERWriter((byte)32, (byte)4, (short)32, JCSystem.CLEAR_ON_DESELECT);
         mLog = new DebugLog();
         mImpls = new DebugServiceImpl[16];
         mSeq = 0;
