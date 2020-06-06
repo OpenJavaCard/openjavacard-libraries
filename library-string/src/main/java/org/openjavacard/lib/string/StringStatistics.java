@@ -40,7 +40,7 @@ public class StringStatistics {
     public static final byte STAT_UPPER  = 12;
     public static final byte STAT_XDIGIT = 13;
 
-    private short[] mStatistics;
+    private final short[] mStatistics;
 
     public StringStatistics() {
         mStatistics = JCSystem.makeTransientShortArray(NUM_STATS, JCSystem.CLEAR_ON_DESELECT);
