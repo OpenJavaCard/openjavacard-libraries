@@ -1,4 +1,4 @@
-package org.openjavacard.lib.cvm;
+package org.openjavacard.lib.cvmpin;
 
 import javacard.framework.PIN;
 import javacard.framework.Shareable;
