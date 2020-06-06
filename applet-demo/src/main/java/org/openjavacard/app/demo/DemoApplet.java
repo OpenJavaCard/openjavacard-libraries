@@ -108,7 +108,7 @@ public final class DemoApplet extends Applet implements ISO7816 {
         mWriter = new BERWriter((byte)32, (byte)4, (short)128, JCSystem.CLEAR_ON_DESELECT);
         mParseHandler = new ParseHandler();
         mStringStats = new StringStatistics();
-        mPasswordHash = new PasswordHash((byte)12, (byte)32, (byte)3);
+        mPasswordHash = new PasswordHash((byte)12, (byte)32, (byte)3, JCSystem.CLEAR_ON_DESELECT);
     }
 
     /**
