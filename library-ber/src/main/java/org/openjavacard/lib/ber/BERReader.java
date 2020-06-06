@@ -47,7 +47,7 @@ import javacard.framework.JCSystem;
  * leaks and to harden this code against memory-based DoS.
  * <p/>
  */
-public final class BERReader {
+public final class BERReader implements BERSource {
 
     /* Fixed: maximum depth allowed */
     private final byte mMaxDepth;

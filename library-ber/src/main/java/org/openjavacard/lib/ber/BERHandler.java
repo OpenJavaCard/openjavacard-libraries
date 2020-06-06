@@ -26,7 +26,7 @@ public interface BERHandler {
 
     /**
      * Handle a primitive tag
-     * @param reader reading the tag
+     * @param source feeding the tag
      * @param depth of occurrence
      * @param tag that occurred
      * @param dataBuf containing tag data
@@ -34,25 +34,25 @@ public interface BERHandler {
      * @param dataLen of data in dataBuf
      * @return true if accepted
      */
-    boolean handlePrimitive(BERReader reader, byte depth, short tag,
+    boolean handlePrimitive(BERSource source, byte depth, short tag,
                             byte[] dataBuf, short dataOff, short dataLen);
 
     /**
      * Handle start of a constructed tag
-     * @param reader reading the tag
+     * @param source feeding the tag
      * @param depth of occurrence
      * @param tag that occurred
      * @return true if accepted
      */
-    boolean handleBeginConstructed(BERReader reader, byte depth, short tag);
+    boolean handleBeginConstructed(BERSource source, byte depth, short tag);
 
     /**
      * Handle end of a constructed tag
-     * @param reader reading the tag
+     * @param source feeding the tag
      * @param depth of occurrence
      * @param tag that occurred
      * @return true if accepted
      */
-    boolean handleFinishConstructed(BERReader reader, byte depth, short tag);
+    boolean handleFinishConstructed(BERSource source, byte depth, short tag);
 
 }
