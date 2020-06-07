@@ -3,16 +3,32 @@
 
     <description>OpenJavaCard Libraries</description>
 
-    <property name="ext.javacard" value="ext/ant-javacard"/>
+    <property name="ext.ant-javacard" value="ext/ant-javacard"/>
 
     <property name="sdk.jc222" value="ext/javacard-sdks/jc222_kit"/>
+    <property name="sdk.globalplatform" value="ext/globalplatform-exports"/>
+
+    <property name="version.lib.ber" value="0.0"/>
+    <property name="version.lib.string" value="0.0"/>
+    <property name="version.lib.fortuna" value="0.0"/>
+    <property name="version.lib.rsa" value="0.0"/>
+    <property name="version.lib.ctlv" value="0.0"/>
+    <property name="version.lib.cvmpin" value="0.0"/>
+    <property name="version.lib.debug" value="0.0"/>
+    <property name="version.lib.cbor" value="0.0"/>
+    <property name="version.lib.auth" value="0.0"/>
+    <property name="version.lib.password" value="0.0"/>
+    <property name="version.lib.isofs" value="0.0"/>
+    <property name="version.svc.debug" value="0.0"/>
+    <property name="version.svc.random" value="0.0"/>
+    <property name="version.app.demo" value="0.0"/>
 
     <target name="clean" description="Delete build output">
         <delete dir="build"/>
     </target>
 
     <target name="prepare" description="Prepare build environment">
-        <ant dir="${ext.javacard}"/>
+        <ant dir="${ext.ant-javacard}"/>
         <mkdir dir="build/jar"/>
         <mkdir dir="build/javacard"/>
         <mkdir dir="build/classes"/>
@@ -47,7 +63,7 @@
 
     <target name="ant-javacard">
         <taskdef name="javacard"
-                 classpath="${ext.javacard}/ant-javacard.jar"
+                 classpath="${ext.ant-javacard}/ant-javacard.jar"
                  classname="pro.javacard.ant.JavaCard"/>
     </target>
 
@@ -60,7 +76,7 @@
                  use="true"
                  windowtitle="OpenJavaCard Libraries API">
             <doctitle><![CDATA[<h1>OpenJavaCard Libraries API</h1>]]></doctitle>
-            <bottom><![CDATA[<i>Copyright &#169; 2018 promovicz</i>]]></bottom>
+            <bottom><![CDATA[<i>Copyright &#169; 2018-2020 promovicz</i>]]></bottom>
 
             <group title="BER-TLV processing">
                 <package name="org.openjavacard.lib.ber"/>
@@ -112,119 +128,119 @@
 
             <classpath>
                 <pathelement path="${sdk.jc222}/lib/api.jar"/>
-                <pathelement path="ext/globalplatform-exports/org.globalplatform-1.7/gpapi-globalplatform.jar"/>
+                <pathelement path="${sdk.globalplatform}/org.globalplatform-1.7/gpapi-globalplatform.jar"/>
             </classpath>
         </javadoc>
     </target>
 
     <target name="build-lib-ber" depends="ant-javacard">
         <javacard jckit="${sdk.jc222}">
-            <cap output="build/javacard/openjavacard-lib-ber.cap"
-                 jar="build/javacard/openjavacard-lib-ber.jar"
+            <cap output="build/javacard/openjavacard-lib-ber-${version.lib.ber}.cap"
+                 jar="build/javacard/openjavacard-lib-ber-${version.lib.ber}.jar"
                  classes="build/classes/lib-ber"
                  export="build/classes/lib-ber"
                  sources="library-ber/src/main/java"
                  aid="D276000177100310010001"
                  package="org.openjavacard.lib.ber"
-                 version="0.0">
+                 version="${version.lib.ber}">
             </cap>
         </javacard>
     </target>
 
     <target name="build-lib-string" depends="ant-javacard">
         <javacard jckit="${sdk.jc222}">
-            <cap output="build/javacard/openjavacard-lib-string.cap"
-                 jar="build/javacard/openjavacard-lib-string.jar"
+            <cap output="build/javacard/openjavacard-lib-string-${version.lib.string}.cap"
+                 jar="build/javacard/openjavacard-lib-string-${version.lib.string}.jar"
                  classes="build/classes/lib-string"
                  export="build/classes/lib-string"
                  sources="library-string/src/main/java"
                  aid="D276000177100310020001"
                  package="org.openjavacard.lib.string"
-                 version="0.0">
+                 version="${version.lib.string}">
             </cap>
         </javacard>
     </target>
 
     <target name="build-lib-fortuna" depends="ant-javacard">
         <javacard jckit="${sdk.jc222}">
-            <cap output="build/javacard/openjavacard-lib-fortuna.cap"
-                 jar="build/javacard/openjavacard-lib-fortuna.jar"
+            <cap output="build/javacard/openjavacard-lib-fortuna-${version.lib.fortuna}.cap"
+                 jar="build/javacard/openjavacard-lib-fortuna-${version.lib.fortuna}.jar"
                  classes="build/classes/lib-fortuna"
                  export="build/classes/lib-fortuna"
                  sources="library-fortuna/src/main/java"
                  aid="D276000177100310030001"
                  package="org.openjavacard.lib.fortuna"
-                 version="0.0">
+                 version="${version.lib.fortuna}">
             </cap>
         </javacard>
     </target>
 
     <target name="build-lib-rsa" depends="ant-javacard">
         <javacard jckit="${sdk.jc222}">
-            <cap output="build/javacard/openjavacard-lib-rsa.cap"
-                 jar="build/javacard/openjavacard-lib-rsa.jar"
+            <cap output="build/javacard/openjavacard-lib-rsa-${version.lib.rsa}.cap"
+                 jar="build/javacard/openjavacard-lib-rsa-${version.lib.rsa}.jar"
                  classes="build/classes/lib-rsa"
                  export="build/classes/lib-rsa"
                  sources="library-rsa/src/main/java"
                  aid="D276000177100310040001"
                  package="org.openjavacard.lib.rsa"
-                 version="0.0">
+                 version="${version.lib.rsa}">
             </cap>
         </javacard>
     </target>
 
     <target name="build-lib-debug" depends="ant-javacard">
         <javacard jckit="${sdk.jc222}">
-            <cap output="build/javacard/openjavacard-lib-debug.cap"
-                 jar="build/javacard/openjavacard-lib-debug.jar"
+            <cap output="build/javacard/openjavacard-lib-debug-${version.lib.debug}.cap"
+                 jar="build/javacard/openjavacard-lib-debug-${version.lib.debug}.jar"
                  classes="build/classes/lib-debug"
                  export="build/classes/lib-debug"
                  sources="library-debug/src/main/java"
                  aid="D276000177100310050001"
                  package="org.openjavacard.lib.debug"
-                 version="0.0">
+                 version="${version.lib.debug}">
             </cap>
         </javacard>
     </target>
 
     <target name="build-lib-auth" depends="ant-javacard">
         <javacard jckit="${sdk.jc222}">
-            <cap output="build/javacard/openjavacard-lib-auth.cap"
-                 jar="build/javacard/openjavacard-lib-auth.jar"
+            <cap output="build/javacard/openjavacard-lib-auth-${version.lib.auth}.cap"
+                 jar="build/javacard/openjavacard-lib-auth-${version.lib.auth}.jar"
                  classes="build/classes/lib-auth"
                  export="build/classes/lib-auth"
                  sources="library-auth/src/main/java"
                  aid="D276000177100310060001"
                  package="org.openjavacard.lib.auth"
-                 version="0.0">
+                 version="${version.lib.auth}">
             </cap>
         </javacard>
     </target>
 
     <target name="build-lib-password" depends="ant-javacard">
         <javacard jckit="${sdk.jc222}">
-            <cap output="build/javacard/openjavacard-lib-password.cap"
-                 jar="build/javacard/openjavacard-lib-password.jar"
+            <cap output="build/javacard/openjavacard-lib-password-${version.lib.password}.cap"
+                 jar="build/javacard/openjavacard-lib-password-${version.lib.password}.jar"
                  classes="build/classes/lib-password"
                  export="build/classes/lib-password"
                  sources="library-password/src/main/java"
                  aid="D276000177100310070001"
                  package="org.openjavacard.lib.password"
-                 version="0.0">
+                 version="${version.lib.password}">
             </cap>
         </javacard>
     </target>
 
     <target name="build-lib-cbor" depends="ant-javacard">
         <javacard jckit="${sdk.jc222}">
-            <cap output="build/javacard/openjavacard-lib-cbor.cap"
-                 jar="build/javacard/openjavacard-lib-cbor.jar"
+            <cap output="build/javacard/openjavacard-lib-cbor-${version.lib.cbor}.cap"
+                 jar="build/javacard/openjavacard-lib-cbor-${version.lib.cbor}.jar"
                  classes="build/classes/lib-cbor"
                  export="build/classes/lib-cbor"
                  sources="library-cbor/src/main/java"
                  aid="D276000177100310080001"
                  package="org.openjavacard.lib.cbor"
-                 version="0.0">
+                 version="${version.lib.cbor}">
                 <import jar="build/classes/lib-cbor"
                         exps="build/classes/lib-cbor"/>
             </cap>
@@ -233,14 +249,14 @@
 
     <target name="build-lib-isofs" depends="ant-javacard">
         <javacard jckit="${sdk.jc222}">
-            <cap output="build/javacard/openjavacard-lib-isofs.cap"
-                 jar="build/javacard/openjavacard-lib-isofs.jar"
+            <cap output="build/javacard/openjavacard-lib-isofs-${version.lib.isofs}.cap"
+                 jar="build/javacard/openjavacard-lib-isofs-${version.lib.isofs}.jar"
                  classes="build/classes/lib-isofs"
                  export="build/classes/lib-isofs"
                  sources="library-isofs/src/main/java"
                  aid="D276000177100310090001"
                  package="org.openjavacard.lib.isofs"
-                 version="0.0">
+                 version="${version.lib.isofs}">
                 <import jar="build/classes/lib-ber"
                         exps="build/classes/lib-ber"/>
             </cap>
@@ -249,44 +265,44 @@
 
     <target name="build-lib-ctlv" depends="ant-javacard">
         <javacard jckit="${sdk.jc222}">
-            <cap output="build/javacard/openjavacard-lib-ctlv.cap"
-                 jar="build/javacard/openjavacard-lib-ctlv.jar"
+            <cap output="build/javacard/openjavacard-lib-ctlv-${version.lib.ctlv}.cap"
+                 jar="build/javacard/openjavacard-lib-ctlv-${version.lib.ctlv}.jar"
                  classes="build/classes/lib-ctlv"
                  export="build/classes/lib-ctlv"
                  sources="library-ctlv/src/main/java"
                  aid="D2760001771003100A0001"
                  package="org.openjavacard.lib.ctlv"
-                 version="0.0">
+                 version="${version.lib.ctlv}">
             </cap>
         </javacard>
     </target>
 
     <target name="build-lib-cvmpin" depends="ant-javacard">
         <javacard jckit="${sdk.jc222}">
-            <cap output="build/javacard/openjavacard-lib-cvmpin.cap"
-                 jar="build/javacard/openjavacard-lib-cvmpin.jar"
+            <cap output="build/javacard/openjavacard-lib-cvmpin-${version.lib.cvmpin}.cap"
+                 jar="build/javacard/openjavacard-lib-cvmpin-${version.lib.cvmpin}.jar"
                  classes="build/classes/lib-cvmpin"
                  export="build/classes/lib-cvmpin"
                  sources="library-cvmpin/src/main/java"
                  aid="D2760001771003100B0001"
                  package="org.openjavacard.lib.cvmpin"
-                 version="0.0">
-                <import jar="ext/globalplatform-exports/org.globalplatform-1.1/gpapi-globalplatform.jar"
-                        exps="ext/globalplatform-exports/org.globalplatform-1.1/exports"/>
+                 version="${version.lib.cvmpin}">
+                <import jar="${sdk.globalplatform}/org.globalplatform-1.1/gpapi-globalplatform.jar"
+                        exps="${sdk.globalplatform}/org.globalplatform-1.1/exports"/>
             </cap>
         </javacard>
     </target>
 
     <target name="build-app-demo" depends="ant-javacard">
         <javacard jckit="${sdk.jc222}">
-            <cap output="build/javacard/openjavacard-app-demo.cap"
-                 jar="build/javacard/openjavacard-app-demo.jar"
+            <cap output="build/javacard/openjavacard-app-demo-${version.app.demo}.cap"
+                 jar="build/javacard/openjavacard-app-demo-${version.app.demo}.jar"
                  classes="build/classes/app-demo"
                  export="build/classes/app-demo"
                  sources="applet-demo/src/main/java"
                  aid="D276000177100210010001"
                  package="org.openjavacard.app.demo"
-                 version="0.0">
+                 version="${version.app.demo}">
                 <import jar="build/classes/lib-ber"
                         exps="build/classes/lib-ber"/>
                 <import jar="build/classes/lib-string"
@@ -305,14 +321,14 @@
 
     <target name="build-svc-debug" depends="ant-javacard">
         <javacard jckit="${sdk.jc222}">
-            <cap output="build/javacard/openjavacard-svc-debug.cap"
-                 jar="build/javacard/openjavacard-svc-debug.jar"
+            <cap output="build/javacard/openjavacard-svc-debug-${version.svc.debug}.cap"
+                 jar="build/javacard/openjavacard-svc-debug-${version.svc.debug}.jar"
                  classes="build/classes/svc-debug"
                  export="build/classes/svc-debug"
                  sources="service-debug/src/main/java"
                  aid="D276000177100210200001"
                  package="org.openjavacard.svc.debug"
-                 version="0.0">
+                 version="${version.svc.debug}">
                 <import jar="build/classes/lib-ber"
                         exps="build/classes/lib-ber"/>
                 <import jar="build/classes/lib-debug"
@@ -325,14 +341,14 @@
 
     <target name="build-svc-random" depends="ant-javacard">
         <javacard jckit="${sdk.jc222}">
-            <cap output="build/javacard/openjavacard-svc-random.cap"
-                 jar="build/javacard/openjavacard-svc-random.jar"
+            <cap output="build/javacard/openjavacard-svc-random-${version.svc.random}.cap"
+                 jar="build/javacard/openjavacard-svc-random-${version.svc.random}.jar"
                  classes="build/classes/svc-random"
                  export="build/classes/svc-random"
                  sources="service-random/src/main/java"
                  aid="D276000177100210210001"
                  package="org.openjavacard.svc.random"
-                 version="0.0">
+                 version="${version.svc.random}">
                 <import jar="build/classes/lib-fortuna"
                         exps="build/classes/lib-fortuna"/>
                 <applet aid="D27600017710021021000101"
