@@ -129,37 +129,74 @@ public class PasswordHash implements PIN {
                 getDefaultDigestInstance());
     }
 
+    /**
+     * Get digest algorithm used for password hashing
+     * @return a MessageDigest algorithm identifier
+     */
     public byte getDigestAlgorithm() {
         return mDigest.getAlgorithm();
     }
 
+    /**
+     * Get the current password policy
+     * @return the policy or null
+     */
     public PasswordPolicy getPasswordPolicy() {
         return mPolicy;
     }
 
+    /**
+     * Set the password policy
+     * @param policy new policy or null
+     */
     public void setPasswordPolicy(PasswordPolicy policy) {
         mPolicy = policy;
     }
 
+    /**
+     * Get number of tried remaining before blocking
+     * @return number of tries
+     */
     public byte getTriesRemaining() {
         return (byte)(mMaxTries - mTries);
     }
 
+    /**
+     * Return true if the password has been entered since last deselect/reset
+     * @return true if validated
+     */
     public boolean isValidated() {
         return mFlags[FLAG_VALIDATED];
     }
 
+    /**
+     * Reset the try counter
+     * <p/>
+     * Only works when validated. Should be used at a safe point after login.
+     */
     public void reset() {
         if(mFlags[FLAG_VALIDATED]) {
             resetAndUnblock();
         }
     }
 
+    /**
+     * Reset the try counter and unblock
+     * <p/>
+     * Always works. Should be used for PUK-based recovery.
+     */
     public void resetAndUnblock() {
         mFlags[FLAG_VALIDATED] = false;
         mTries = 0;
     }
 
+    /**
+     * Check the given password
+     * @param buf containing password
+     * @param off of password
+     * @param len of password
+     * @return true if validated
+     */
     public boolean check(byte[] buf, short off, byte len) {
         // assume password is incorrect
         boolean correct;
@@ -199,6 +236,12 @@ public class PasswordHash implements PIN {
         return correct;
     }
 
+    /**
+     * Change the password
+     * @param buf containing new password
+     * @param off of password
+     * @param len of password
+     */
     public void update(byte[] buf, short off, byte len) {
         // get length of hash
         short hashLen = mDigest.getLength();
@@ -239,10 +282,16 @@ public class PasswordHash implements PIN {
         }
     }
 
+    /**
+     * Internal: wipe temporary buffer
+     */
     private void wipeTemp() {
         Util.arrayFillNonAtomic(mTemp, (short)0, (short)mTemp.length, (byte)0);
     }
 
+    /**
+     * Internal: throw a warning exception with tries remaining
+     */
     private void errorTriesRemaining() {
         short code = SW_PIN_TRIES_REMAINING;
         byte remaining = getTriesRemaining();
@@ -253,6 +302,10 @@ public class PasswordHash implements PIN {
         ISOException.throwIt(code);
     }
 
+    /**
+     * Return an instance with the best supported digest algorithm
+     * @return a MessageDigest instance
+     */
     public static MessageDigest getDefaultDigestInstance() {
         MessageDigest res = null;
         if(USE_SHA512 && res == null) {
