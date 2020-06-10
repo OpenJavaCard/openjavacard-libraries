@@ -204,7 +204,7 @@ public class PasswordHash implements PIN {
         ISOException.throwIt(code);
     }
 
-    private static MessageDigest getDefaultDigestInstance() {
+    public static MessageDigest getDefaultDigestInstance() {
         MessageDigest res = null;
         if(USE_SHA512 && res == null) {
             res = MessageDigest.getInstance(MessageDigest.ALG_SHA_512, false);
