@@ -28,34 +28,71 @@ import javacard.framework.Util;
 import javacard.security.MessageDigest;
 import javacard.security.RandomData;
 
+/**
+ * Salted hash password authenticator
+ * <p/>
+ * This class implements a salted hash password mechanism.
+ * <p/>
+ * The rationale behind this class is that hashing allows keeping the actual
+ * password secret even if card memory can be extracted after password setup.
+ * This can lead to design advantages from a trust and legal standpoint.
+ * <p/>
+ */
 public class PasswordHash implements PIN {
 
+    /** ISO7816: SW value for warning about remaining tries */
     private static final short SW_PIN_TRIES_REMAINING = (short)0x63C0;
 
+    /** Configuration: allow use of SHA512 */
     private static final boolean USE_SHA512 = true;
+    /** Configuration: allow use of SHA256 */
     private static final boolean USE_SHA256 = true;
+    /** Configuration: allow use of SHA1 */
     private static final boolean USE_SHA160 = true;
+    /** Configuration: allow use of MD5 */
     private static final boolean USE_MD5    = true;
 
+    /** RNG for salt generation */
     private final RandomData mRandom;
+    /** Digest for hash operations */
     private final MessageDigest mDigest;
 
+    /** Minimum password length */
     private final byte mMinLength;
+    /** Maximum password length */
     private final byte mMaxLength;
+    /** Maximum number of tries before blocking */
     private final byte mMaxTries;
 
+    /** Number of tries since last unblock */
     private byte mTries;
 
+    /** Optional password policy */
     private PasswordPolicy mPolicy;
 
+    /** Current password salt */
     private final byte[] mSalt;
+    /** Current password hash */
     private final byte[] mHash;
-    private final byte[] mTemp;
 
+    /** Transient flags */
     private final boolean[] mFlags;
     private static final byte FLAG_VALIDATED = 0;
     private static final byte NUM_FLAGS = 1;
 
+    /** Temporary buffer */
+    private final byte[] mTemp;
+
+    /**
+     * Full constructor
+     *
+     * @param minLength minimum password length
+     * @param maxLength maximum password length
+     * @param maxTries maximum number of tries before blocking
+     * @param clearOn memory type for validation state
+     * @param random RNG to use for generating salts
+     * @param digest digest to be used for hash operations
+     */
     public PasswordHash(byte minLength, byte maxLength, byte maxTries, byte clearOn,
                         RandomData random, MessageDigest digest) {
         byte hashLen = digest.getLength();
@@ -69,15 +106,23 @@ public class PasswordHash implements PIN {
         // state
         mTries = 0;
         mPolicy = null;
-        // variables
-        mFlags = JCSystem.makeTransientBooleanArray(NUM_FLAGS, clearOn);
         // password data
         mSalt = new byte[hashLen];
         mHash = new byte[hashLen];
+        // variables
+        mFlags = JCSystem.makeTransientBooleanArray(NUM_FLAGS, clearOn);
         // temporary buffer
         mTemp = JCSystem.makeTransientByteArray((short)(2 * hashLen), clearOn);
     }
 
+    /**
+     * Convenience constructor
+     *
+     * @param minLength minimum password length
+     * @param maxLength maximum password length
+     * @param maxTries maximum number of tries before blocking
+     * @param clearOn memory type for validation state
+     */
     public PasswordHash(byte minLength, byte maxLength, byte maxTries, byte clearOn) {
         this(minLength, maxLength, maxTries, clearOn,
                 RandomData.getInstance(RandomData.ALG_SECURE_RANDOM),
