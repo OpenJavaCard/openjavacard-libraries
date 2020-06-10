@@ -84,6 +84,10 @@ public class PasswordHash implements PIN {
                 getDefaultDigestInstance());
     }
 
+    public byte getDigestAlgorithm() {
+        return mDigest.getAlgorithm();
+    }
+
     public PasswordPolicy getPasswordPolicy() {
         return mPolicy;
     }
