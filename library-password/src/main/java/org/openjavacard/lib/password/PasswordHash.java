@@ -100,14 +100,6 @@ public class PasswordHash implements PIN {
         return mFlags[FLAG_VALIDATED];
     }
 
-    protected boolean getValidatedFlag() {
-        return mFlags[FLAG_VALIDATED];
-    }
-
-    protected void setValidatedFlag(boolean validated) {
-        mFlags[FLAG_VALIDATED] = validated;
-    }
-
     public void reset() {
         if(mFlags[FLAG_VALIDATED]) {
             resetAndUnblock();
