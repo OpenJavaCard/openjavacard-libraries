@@ -138,6 +138,14 @@ public class PasswordHash implements PIN {
     }
 
     /**
+     * Get digest length used for salt and hash
+     * @return length of digest
+     */
+    public byte getDigestLength() {
+        return mDigest.getLength();
+    }
+
+    /**
      * Get the current password policy
      * @return the policy or null
      */
@@ -151,6 +159,42 @@ public class PasswordHash implements PIN {
      */
     public void setPasswordPolicy(PasswordPolicy policy) {
         mPolicy = policy;
+    }
+
+    /**
+     * Get the current password salt value
+     * @param buf for output
+     * @param off for output
+     * @param len available in buf
+     * @return offset after output
+     */
+    public short getSalt(byte[] buf, short off, short len) {
+        short hashLen = mDigest.getLength();
+        if(len < hashLen) {
+            ISOException.throwIt(ISO7816.SW_UNKNOWN);
+        }
+        if(len > hashLen) {
+            len = hashLen;
+        }
+        return Util.arrayCopyNonAtomic(buf, off, mSalt, (short)0, len);
+    }
+
+    /**
+     * Get the current password hash value
+     * @param buf for output
+     * @param off for output
+     * @param len available in buf
+     * @return offset after output
+     */
+    public short getHash(byte[] buf, short off, short len) {
+        short hashLen = mDigest.getLength();
+        if(len < hashLen) {
+            ISOException.throwIt(ISO7816.SW_UNKNOWN);
+        }
+        if(len > hashLen) {
+            len = hashLen;
+        }
+        return Util.arrayCopyNonAtomic(buf, off, mHash, (short)0, len);
     }
 
     /**
