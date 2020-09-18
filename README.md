@@ -1,6 +1,6 @@
 ## OpenJavaCard Libraries
 
-This is a set of libraries for the JavaCard environment.
+This is a set of reusable libraries for the JavaCard environment.
 
 CAUTION: All completely experimental at this point.
 
@@ -11,6 +11,23 @@ CAUTION: All completely experimental at this point.
 For more information about this overall project, see our [website](https://openjavacard.org/).
 
 You can follow us on [Twitter](https://twitter.com/openjavacardorg) and chat with us on [Gitter](https://gitter.im/openjavacard/general).
+
+### Components
+
+| Name                  | Description                         | Status       |
+| --------------------- |------------------------------------ | ------------ |
+| library-auth          | Authentication framework            | Experimental |
+| library-ber           | BER-TLV processing                  | Usable       |
+| library-ctlv          | Compact-TLV utilities               | Experimental |
+| library-cvmpin        | CVM PIN wrapper                     | Experimental |
+| library-debug         | Debug utilities                     | Experimental |
+| library-fortuna       | Fortuna PRNG                        | Usable       |
+| library-isofs         | ISO7816 filesystem                  | Experimental |
+| library-oath          | OATH OTP authentication             | Experimental |
+| library-password      | Password authentication             | Experimental |
+| library-rsa           | RSA supplementary ciphers           | Experimental |
+| library-string        | String processing                   | Experimental |
+| library-tlv           | TLV object representation           | Experimental |
 
 ### Components
 
