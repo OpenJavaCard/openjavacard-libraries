@@ -288,10 +288,6 @@ public class PasswordHash implements PIN {
         short hashLen = mDigest.getLength();
         short offHash = (short)0;
         short offSalt = hashLen;
-        // check validated status
-        if(!mFlags[FLAG_VALIDATED]) {
-            ISOException.throwIt(ISO7816.SW_SECURITY_STATUS_NOT_SATISFIED);
-        }
         // check length restrictions
         if(len < mMinLength || len > mMaxLength) {
             ISOException.throwIt(ISO7816.SW_WRONG_DATA);
