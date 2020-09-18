@@ -5,4 +5,5 @@ install:
   - true
 script:
   - ant clean
-  - ant build
+  - ant test
+  - ant javadoc
