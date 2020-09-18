@@ -50,7 +50,7 @@ public class PasswordHash implements PIN {
     /** Configuration: allow use of SHA1 */
     private static final boolean USE_SHA160 = true;
     /** Configuration: allow use of MD5 */
-    private static final boolean USE_MD5    = true;
+    private static final boolean USE_MD5    = false;
 
     /** RNG for salt generation */
     private final RandomData mRandom;
