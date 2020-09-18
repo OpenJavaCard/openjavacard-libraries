@@ -82,13 +82,18 @@ public class PasswordHash implements PIN {
 
     /**
      * Full constructor
+     * <p/>
+     * This should be used if you want to share digest/random instances between
+     * password instances, and it can also be used to override the default choice
+     * of digest and random.
+     * <p/>
      *
      * @param minLength minimum password length
      * @param maxLength maximum password length
      * @param maxTries maximum number of tries before blocking
      * @param clearOn memory type for validation state
-     * @param random RNG to use for generating salts
-     * @param digest digest to be used for hash operations
+     * @param random RNG to use for generating salts, can be shared
+     * @param digest digest to be used for hash operations, can be shared
      */
     public PasswordHash(byte minLength, byte maxLength, byte maxTries, byte clearOn,
                         RandomData random, MessageDigest digest) {
@@ -114,6 +119,10 @@ public class PasswordHash implements PIN {
 
     /**
      * Convenience constructor
+     * <p/>
+     * This should be used if only one password instance is needed and the algorithms
+     * used do not matter. The best available algorithm will be used for the digest.
+     * <p/>
      *
      * @param minLength minimum password length
      * @param maxLength maximum password length
