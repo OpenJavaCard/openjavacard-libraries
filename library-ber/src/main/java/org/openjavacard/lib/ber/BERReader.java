@@ -89,12 +89,25 @@ public final class BERReader implements BERSource {
      * @param handler to call with results
      */
     public final void parse(byte[] buf, short off, short len, BERHandler handler) {
+        // initialize state
         mVars[VAR_BUF_OFF] = off;
         mVars[VAR_BUF_LEN] = len;
         mVars[VAR_POSN] = 0;
         mVars[VAR_DEPTH] = 0;
-        parseOne(buf, handler);
-        if(mVars[VAR_POSN] != len) {
+        // parse nodes while input lasts
+        parseMultiple(buf, handler, len);
+    }
+
+    private void parseMultiple(byte[] buf, BERHandler handler, short end) {
+        /* parse children */
+        while(mVars[VAR_POSN] < end) {
+            parseOne(buf, handler);
+            if(mVars[VAR_POSN] > end) {
+                parseError();
+            }
+        }
+        /* check final position */
+        if(mVars[VAR_POSN] != end) {
             parseError();
         }
     }
@@ -141,12 +154,7 @@ public final class BERReader implements BERSource {
             }
 
             /* parse children */
-            while(mVars[VAR_POSN] < e) {
-                parseOne(buf, handler);
-                if(mVars[VAR_POSN] > e) {
-                    parseError();
-                }
-            }
+            parseMultiple(buf, handler, e);
 
             /* done with this level of depth */
             mVars[VAR_DEPTH]--;
