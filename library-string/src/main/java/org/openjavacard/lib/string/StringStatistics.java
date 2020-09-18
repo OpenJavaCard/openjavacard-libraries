@@ -43,7 +43,11 @@ public class StringStatistics {
     private final short[] mStatistics;
 
     public StringStatistics() {
-        mStatistics = JCSystem.makeTransientShortArray(NUM_STATS, JCSystem.CLEAR_ON_DESELECT);
+        mStatistics = new short[NUM_STATS];
+    }
+
+    public StringStatistics(byte clearOn) {
+        mStatistics = JCSystem.makeTransientShortArray(NUM_STATS, clearOn);
     }
 
     public short get(byte statistic) {
