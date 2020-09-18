@@ -122,7 +122,7 @@ public class PasswordHash implements PIN {
      */
     public PasswordHash(byte minLength, byte maxLength, byte maxTries, byte clearOn) {
         this(minLength, maxLength, maxTries, clearOn,
-                RandomData.getInstance(RandomData.ALG_SECURE_RANDOM),
+                getDefaultRandomInstance(),
                 getDefaultDigestInstance());
     }
 
@@ -362,6 +362,14 @@ public class PasswordHash implements PIN {
             res = MessageDigest.getInstance(MessageDigest.ALG_MD5, false);
         }
         return res;
+    }
+
+    /**
+     * Return an instance with the best supported random source
+     * @return a RandomData instance
+     */
+    public static RandomData getDefaultRandomInstance() {
+        return RandomData.getInstance(RandomData.ALG_SECURE_RANDOM);
     }
 
 }
