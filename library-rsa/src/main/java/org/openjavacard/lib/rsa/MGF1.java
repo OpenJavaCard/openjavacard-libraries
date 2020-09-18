@@ -42,8 +42,9 @@ public class MGF1 {
 
     /**
      * Creates a new MGF1 mask generator
-     *
+     * <p/>
      * The generator will use the provided hash.
+     * <p/>
      *
      * @param hash to use for mask generation
      */
@@ -54,11 +55,12 @@ public class MGF1 {
 
     /**
      * Combined mask generation function and XOR (MGF1-XOR)
-     *
+     * <p/>
      * This is equivalent to generating a mask using MGF1
      * and applying it to the output buffer using XOR.
-     *
+     * <p/>
      * Doing this in one step saves an additional buffer.
+     * <p/>
      *
      * @param seed buffer for mask generation
      * @param seedOff offset of seed in buffer
@@ -84,7 +86,7 @@ public class MGF1 {
         for(short counter = 0; counter < rounds; counter++) {
             // compute number of bytes for current round
             short outBytes = shortMin(hLen, outRemaining);
-            // update in the counter
+            // update the counter
             mTemp[0] = 0;
             mTemp[1] = 0;
             mTemp[2] = (byte)((counter >> 8) & 0xFF);
