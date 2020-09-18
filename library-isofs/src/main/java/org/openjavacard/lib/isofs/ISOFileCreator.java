@@ -173,21 +173,25 @@ public class ISOFileCreator implements BERHandler, ISOExtensions {
     }
 
     public boolean handleBeginConstructed(BERSource source, byte depth, short tag) {
-        if(depth == 0 && tag == TAG_FCI) {
-            return true;
-        }
-        if(depth == 0 && tag == TAG_FCP) {
-            return true;
+        if(depth == 0) {
+            if (tag == TAG_FCI) {
+                return true;
+            }
+            if (tag == TAG_FCP) {
+                return true;
+            }
         }
         return false;
     }
 
     public boolean handleFinishConstructed(BERSource source, byte depth, short tag) {
-        if(depth == 0 && tag == TAG_FCI) {
-            return true;
-        }
-        if(depth == 0 && tag == TAG_FCP) {
-            return true;
+        if(depth == 0) {
+            if (tag == TAG_FCI) {
+                return true;
+            }
+            if (tag == TAG_FCP) {
+                return true;
+            }
         }
         return false;
     }
