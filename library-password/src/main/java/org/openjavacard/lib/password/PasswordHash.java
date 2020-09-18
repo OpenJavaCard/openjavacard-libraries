@@ -29,13 +29,10 @@ import javacard.security.MessageDigest;
 import javacard.security.RandomData;
 
 /**
- * Salted hash password authenticator
+ * Password hash authenticator
  * <p/>
- * This class implements a salted hash password mechanism.
- * <p/>
- * The rationale behind this class is that hashing allows keeping the actual
- * password secret even if card memory can be extracted after password setup.
- * This can lead to design advantages from a trust and legal standpoint.
+ * This class implements a salted hash password mechanism and can
+ * be used as an alternative to OwnerPIN with improved properties.
  * <p/>
  */
 public class PasswordHash implements PIN {
