@@ -30,7 +30,6 @@ import org.openjavacard.lib.ber.BERReader;
 import org.openjavacard.lib.ber.BERSource;
 import org.openjavacard.lib.ber.BERTag;
 import org.openjavacard.lib.ber.BERWriter;
-import org.openjavacard.lib.debug.Debug;
 import org.openjavacard.lib.fortuna.FortunaRandom;
 import org.openjavacard.lib.fortuna.LongNum;
 import org.openjavacard.lib.password.PasswordHash;
@@ -41,24 +40,32 @@ import org.openjavacard.lib.string.StringStatistics;
  */
 public final class DemoApplet extends Applet implements ISO7816 {
 
-    private static final byte CLA_PROPRIETARY = (byte)0x80;
+    private static final byte CLA_PROPRIETARY = (byte) 0x80;
 
-    private static final byte INS_FORTUNA_RESET = (byte)0x00;
-    private static final byte INS_FORTUNA_SEED = (byte)0x02;
-    private static final byte INS_FORTUNA_GENERATE = (byte)0x04;
+    private static final byte INS_FORTUNA_RESET = (byte) 0x00;
+    private static final byte INS_FORTUNA_SEED = (byte) 0x02;
+    private static final byte INS_FORTUNA_GENERATE = (byte) 0x04;
 
-    private static final byte INS_LONGNUM_GET = (byte)0x10;
-    private static final byte INS_LONGNUM_SET = (byte)0x12;
-    private static final byte INS_LONGNUM_ADD = (byte)0x14;
-    private static final byte INS_LONGNUM_SUB = (byte)0x16;
+    private static final byte INS_LONGNUM_GET = (byte) 0x10;
+    private static final byte INS_LONGNUM_SET = (byte) 0x12;
+    private static final byte INS_LONGNUM_ADD = (byte) 0x14;
+    private static final byte INS_LONGNUM_SUB = (byte) 0x16;
 
-    private static final byte INS_BER_PARSE = (byte)0x20;
-    private static final byte INS_BER_WRITE = (byte)0x22;
+    private static final byte INS_BER_PARSE = (byte) 0x20;
+    private static final byte INS_BER_WRITE = (byte) 0x22;
+    private static final byte INS_BER_COPY = (byte) 0x24;
 
-    private static final byte INS_DEBUG_MEMORY  = (byte)0x30;
-    private static final byte INS_DEBUG_MESSAGE = (byte)0x32;
+    private static final byte INS_DEBUG_MEMORY = (byte) 0x30;
+    private static final byte INS_DEBUG_MESSAGE = (byte) 0x32;
 
-    private static final byte INS_STRING_STATS  = (byte)0x40;
+    private static final byte INS_STRING_STATS = (byte) 0x40;
+
+    private static final byte INS_PASS_CHECK = (byte) 0x50;
+    private static final byte INS_PASS_UPDATE = (byte) 0x52;
+    private static final byte INS_PASS_RESET = (byte) 0x54;
+    private static final byte INS_PASS_UNBLOCK = (byte) 0x056;
+
+    private static final byte INS_CTLV_BUILD = (byte) 0x60;
 
     /**
      * Installation method for the applet
@@ -66,7 +73,7 @@ public final class DemoApplet extends Applet implements ISO7816 {
     public static void install(byte[] buf, short off, byte len) {
         short pos = off;
         // find AID (used for install)
-        byte  lenAID = buf[pos++];
+        byte lenAID = buf[pos++];
         short offAID = pos;
         pos += lenAID;
         // ignore the rest (control data and install data)
@@ -77,7 +84,7 @@ public final class DemoApplet extends Applet implements ISO7816 {
         applet.register(buf, offAID, lenAID);
     }
 
-    private final Debug mDebug;
+    //private final Debug mDebug;
 
     private final TempBuffer mBuffer;
 
@@ -91,28 +98,29 @@ public final class DemoApplet extends Applet implements ISO7816 {
     private final BERWriter mWriter;
     private final ParseHandler mParseHandler;
 
-    private final StringStatistics mStringStats;
-
     private final PasswordHash mPasswordHash;
+
+    private final StringStatistics mStringStats;
 
     /**
      * Main constructor
      */
     private DemoApplet() {
-        mDebug = Debug.getInstance(this);
-        mBuffer = new TempBuffer((short)128, JCSystem.CLEAR_ON_DESELECT);
-        mTmp = JCSystem.makeTransientByteArray((short)32, JCSystem.CLEAR_ON_DESELECT);
+        //mDebug = Debug.getInstance(this);
+        mBuffer = new TempBuffer((short) 128, JCSystem.CLEAR_ON_DESELECT);
+        mTmp = JCSystem.makeTransientByteArray((short) 32, JCSystem.CLEAR_ON_DESELECT);
         mFortuna = new FortunaRandom();
-        mLongNum = new LongNum((byte)8);
-        mReader = new BERReader((byte)4, JCSystem.CLEAR_ON_DESELECT);
-        mWriter = new BERWriter((byte)32, (byte)4, (short)128, JCSystem.CLEAR_ON_DESELECT);
+        mLongNum = new LongNum((byte) 8, JCSystem.CLEAR_ON_DESELECT);
+        mReader = new BERReader((byte) 4, JCSystem.CLEAR_ON_DESELECT);
+        mWriter = new BERWriter((byte) 32, (byte) 4, (short) 128, JCSystem.CLEAR_ON_DESELECT);
         mParseHandler = new ParseHandler();
-        mStringStats = new StringStatistics();
-        mPasswordHash = new PasswordHash((byte)12, (byte)32, (byte)3, JCSystem.CLEAR_ON_DESELECT);
+        mStringStats = new StringStatistics(JCSystem.CLEAR_ON_DESELECT);
+        mPasswordHash = new PasswordHash((byte) 8, (byte) 32, (byte) 5, JCSystem.CLEAR_ON_DESELECT);
     }
 
     /**
      * Applet select handler
+     *
      * @return true if select okay
      */
     public final boolean select() {
@@ -127,6 +135,7 @@ public final class DemoApplet extends Applet implements ISO7816 {
 
     /**
      * Process an APDU
+     *
      * @param apdu to be processed
      * @throws ISOException on error
      */
@@ -135,25 +144,25 @@ public final class DemoApplet extends Applet implements ISO7816 {
         byte cla = buffer[OFFSET_CLA];
         byte ins = buffer[OFFSET_INS];
 
-        // give the debugger a chance
-        if(mDebug.process(apdu)) {
+        // handle selection of the applet
+        if (selectingApplet()) {
             return;
         }
 
-        // handle selection of the applet
-        if(selectingApplet()) {
-            return;
-        }
+        // give the debugger a chance
+        //if (mDebug.process(apdu)) {
+        //    return;
+        //}
 
         // secure messaging is not supported
-        if(apdu.isSecureMessagingCLA()) {
+        if (apdu.isSecureMessagingCLA()) {
             ISOException.throwIt(SW_SECURE_MESSAGING_NOT_SUPPORTED);
         }
 
         mBuffer.clear();
 
         // process commands to the applet
-        if(cla == CLA_PROPRIETARY) {
+        if (cla == CLA_PROPRIETARY) {
             switch (ins) {
                 case INS_FORTUNA_RESET:
                     processFortunaReset(apdu);
@@ -182,14 +191,29 @@ public final class DemoApplet extends Applet implements ISO7816 {
                 case INS_BER_WRITE:
                     processBerWrite(apdu);
                     break;
+                case INS_BER_COPY:
+                    processBerCopy(apdu);
+                    break;
+                case INS_STRING_STATS:
+                    processStringStats(apdu);
+                    break;
+                case INS_PASS_CHECK:
+                    processPassCheck(apdu);
+                    break;
+                case INS_PASS_UPDATE:
+                    processPassUpdate(apdu);
+                    break;
+                case INS_PASS_RESET:
+                    processPassReset(apdu);
+                    break;
+                case INS_PASS_UNBLOCK:
+                    processPassUnblock(apdu);
+                    break;
                 case INS_DEBUG_MEMORY:
                     processDebugMemory(apdu);
                     break;
                 case INS_DEBUG_MESSAGE:
                     processDebugMessage(apdu);
-                    break;
-                case INS_STRING_STATS:
-                    processStringStats(apdu);
                     break;
                 default:
                     ISOException.throwIt(SW_INS_NOT_SUPPORTED);
@@ -206,14 +230,14 @@ public final class DemoApplet extends Applet implements ISO7816 {
     private final void processFortunaSeed(APDU apdu) {
         byte[] buffer = apdu.getBuffer();
         byte length = buffer[OFFSET_LC];
-        mFortuna.setSeed(buffer, (short)0, (short)length);
+        mFortuna.setSeed(buffer, (short) 0, (short) length);
     }
 
     private final void processFortunaGenerate(APDU apdu) {
         byte[] buffer = apdu.getBuffer();
         short request = Util.getShort(buffer, OFFSET_P1);
-        mFortuna.generateData(buffer, (short)0, request);
-        apdu.setOutgoingAndSend((short)0, request);
+        mFortuna.generateData(buffer, (short) 0, request);
+        apdu.setOutgoingAndSend((short) 0, request);
     }
 
     private final void processLongNumGet(APDU apdu) {
@@ -226,82 +250,86 @@ public final class DemoApplet extends Applet implements ISO7816 {
         mLongNum.set(buffer, OFFSET_CDATA, length);
         sendLongNum(apdu);
     }
+
     private final void processLongNumAdd(APDU apdu) {
         byte[] buffer = apdu.getBuffer();
         byte p1 = buffer[OFFSET_P1];
         mLongNum.add(p1);
         sendLongNum(apdu);
     }
+
     private final void processLongNumSub(APDU apdu) {
         byte[] buffer = apdu.getBuffer();
         byte p1 = buffer[OFFSET_P1];
         mLongNum.sub(p1);
         sendLongNum(apdu);
     }
+
     private final void sendLongNum(APDU apdu) {
         byte[] buffer = apdu.getBuffer();
         short length = mLongNum.getLength();
-        mLongNum.get(buffer, (short)0, length);
-        apdu.setOutgoingAndSend((short)0, length);
+        mLongNum.get(buffer, (short) 0, length);
+        apdu.setOutgoingAndSend((short) 0, length);
     }
 
     private final void processDebugMemory(APDU apdu) {
-        mDebug.logMemory();
+        //mDebug.logMemory();
     }
 
     private final void processDebugMessage(APDU apdu) {
         byte[] buffer = apdu.getBuffer();
         short code = Util.getShort(buffer, ISO7816.OFFSET_P1);
         short len = apdu.setIncomingAndReceive();
-        mDebug.logMessage(code, buffer, ISO7816.OFFSET_CDATA, (byte)len);
-    }
-
-    private final void processStringStats(APDU apdu) {
-        byte[] buffer = apdu.getBuffer();
-        short len = apdu.setIncomingAndReceive();
-        mStringStats.reset();
-        mStringStats.update(buffer, ISO7816.OFFSET_CDATA, (byte)len);
+        //mDebug.logMessage(code, buffer, ISO7816.OFFSET_CDATA, (byte) len);
     }
 
     private final void processBerParse(APDU apdu) {
         byte[] buffer = apdu.getBuffer();
-        short len = (short)(buffer[OFFSET_LC] & 0xFF);
+        short len = (short) (buffer[OFFSET_LC] & 0xFF);
         mReader.parse(buffer, OFFSET_CDATA, len, mParseHandler);
-        Util.arrayCopyNonAtomic(mBuffer.getBuffer(), (short)0, buffer, (short)0, mBuffer.getFill());
-        apdu.setOutgoingAndSend((short)0, mBuffer.getFill());
+        Util.arrayCopyNonAtomic(mBuffer.getBuffer(), (short) 0, buffer, (short) 0, mBuffer.getFill());
+        apdu.setOutgoingAndSend((short) 0, mBuffer.getFill());
     }
 
     private final void processBerWrite(APDU apdu) {
         byte[] buffer = apdu.getBuffer();
+        short len = apdu.setIncomingAndReceive();
 
-        Util.arrayCopyNonAtomic(buffer, (short)0, mTmp, (short)0, (short)32);
+        Util.arrayCopyNonAtomic(buffer, (short) 0, mTmp, (short) 0, (short) 4);
 
-        mWriter.begin((short)128);
+        mWriter.begin((short) 128);
         mWriter.beginConstructed(BERTag.TYPE_SEQUENCE);
 
-        mWriter.buildPrimitive(BERTag.TYPE_OCTETSTRING, mTmp, (short)0, (short)4);
-        mWriter.buildPrimitive(BERTag.TYPE_OCTETSTRING, mTmp, (short)0, (short)4);
+        mWriter.buildPrimitive(BERTag.TYPE_OCTETSTRING, mTmp, (short) 0, (short) 4);
+        mWriter.buildPrimitive(BERTag.TYPE_OCTETSTRING, mTmp, (short) 0, (short) 4);
 
         mWriter.beginConstructed(BERTag.TYPE_SEQUENCE);
-        mWriter.buildPrimitive(BERTag.TYPE_OCTETSTRING, mTmp, (short)0, (short)4);
-        mWriter.buildPrimitive(BERTag.TYPE_OCTETSTRING, mTmp, (short)0, (short)4);
+        mWriter.buildPrimitive(BERTag.TYPE_OCTETSTRING, mTmp, (short) 0, (short) 4);
+        mWriter.buildPrimitive(BERTag.TYPE_OCTETSTRING, mTmp, (short) 0, (short) 4);
         mWriter.endConstructed();
 
         mWriter.beginConstructed(BERTag.TYPE_SEQUENCE);
-        mWriter.buildPrimitive(BERTag.TYPE_OCTETSTRING, mTmp, (short)0, (short)4);
-        mWriter.buildPrimitive(BERTag.TYPE_OCTETSTRING, mTmp, (short)0, (short)4);
+        mWriter.buildPrimitive(BERTag.TYPE_OCTETSTRING, mTmp, (short) 0, (short) 4);
+        mWriter.buildPrimitive(BERTag.TYPE_OCTETSTRING, mTmp, (short) 0, (short) 4);
         mWriter.endConstructed();
 
         mWriter.endConstructed();
 
-        short len = mWriter.finish(buffer, (short)0, (short)128);
-        apdu.setOutgoingAndSend((short)0, len);
+        mWriter.finishAndSend(apdu);
+    }
+
+    private final void processBerCopy(APDU apdu) {
+        byte[] buffer = apdu.getBuffer();
+        short len = apdu.setIncomingAndReceive();
+        mWriter.begin((short) buffer.length);
+        mReader.parse(buffer, OFFSET_CDATA, len, mWriter);
+        mWriter.finishAndSend(apdu);
     }
 
     private final class ParseHandler implements BERHandler {
 
         public boolean handlePrimitive(BERSource source, byte depth, short tag, byte[] dataBuf, short dataOff, short dataLen) {
-            mBuffer.put((byte)0x53);
+            mBuffer.put((byte) 0x53);
             mBuffer.put(depth);
             mBuffer.put(tag);
             mBuffer.put(dataLen);
@@ -309,10 +337,10 @@ public final class DemoApplet extends Applet implements ISO7816 {
         }
 
         public boolean handleBeginConstructed(BERSource source, byte depth, short tag) {
-            mBuffer.put((byte)0x53);
+            mBuffer.put((byte) 0x53);
             mBuffer.put(depth);
             mBuffer.put(tag);
-            mBuffer.put((byte)0);
+            mBuffer.put((byte) 0);
             return true;
         }
 
@@ -320,6 +348,33 @@ public final class DemoApplet extends Applet implements ISO7816 {
             return true;
         }
 
+    }
+
+    private void processStringStats(APDU apdu) {
+        byte[] buffer = apdu.getBuffer();
+        short len = apdu.setIncomingAndReceive();
+        mStringStats.reset();
+        mStringStats.update(buffer, ISO7816.OFFSET_CDATA, (byte) len);
+    }
+
+    private void processPassCheck(APDU apdu) {
+        byte[] buffer = apdu.getBuffer();
+        short len = apdu.setIncomingAndReceive();
+        mPasswordHash.check(buffer, OFFSET_CDATA, (byte)len);
+    }
+
+    private void processPassUpdate(APDU apdu) {
+        byte[] buffer = apdu.getBuffer();
+        short len = apdu.setIncomingAndReceive();
+        mPasswordHash.update(buffer, OFFSET_CDATA, (byte)len);
+    }
+
+    private void processPassReset(APDU apdu) {
+        mPasswordHash.reset();
+    }
+
+    private void processPassUnblock(APDU apdu) {
+        mPasswordHash.resetAndUnblock();
     }
 
 }
