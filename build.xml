@@ -8,19 +8,18 @@
     <property name="sdk.jc222" value="ext/javacard-sdks/jc222_kit"/>
     <property name="sdk.globalplatform" value="ext/globalplatform-exports"/>
 
+    <property name="version.lib.auth" value="0.0"/>
     <property name="version.lib.ber" value="0.0"/>
-    <property name="version.lib.string" value="0.0"/>
-    <property name="version.lib.fortuna" value="0.0"/>
-    <property name="version.lib.rsa" value="0.0"/>
+    <property name="version.lib.cbor" value="0.0"/>
+    <property name="version.lib.codec" value="0.0"/>
     <property name="version.lib.ctlv" value="0.0"/>
     <property name="version.lib.cvmpin" value="0.0"/>
     <property name="version.lib.debug" value="0.0"/>
-    <property name="version.lib.cbor" value="0.0"/>
-    <property name="version.lib.auth" value="0.0"/>
-    <property name="version.lib.password" value="0.0"/>
+    <property name="version.lib.fortuna" value="0.0"/>
     <property name="version.lib.isofs" value="0.0"/>
-    <property name="version.svc.debug" value="0.0"/>
-    <property name="version.svc.random" value="0.0"/>
+    <property name="version.lib.password" value="0.0"/>
+    <property name="version.lib.rsa" value="0.0"/>
+    <property name="version.lib.string" value="0.0"/>
     <property name="version.app.demo" value="0.0"/>
 
     <target name="clean" description="Delete build output">
@@ -35,18 +34,16 @@
     </target>
 
     <target name="build" description="Build everything" depends="prepare">
+        <antcall target="build-lib-auth"/>
         <antcall target="build-lib-ber"/>
-        <antcall target="build-lib-string"/>
-        <antcall target="build-lib-fortuna"/>
-        <antcall target="build-lib-rsa"/>
         <antcall target="build-lib-ctlv"/>
         <antcall target="build-lib-cvmpin"/>
         <antcall target="build-lib-debug"/>
-        <antcall target="build-lib-auth"/>
-        <antcall target="build-lib-password"/>
+        <antcall target="build-lib-fortuna"/>
         <antcall target="build-lib-isofs"/>
-        <antcall target="build-svc-debug"/>
-        <antcall target="build-svc-random"/>
+        <antcall target="build-lib-password"/>
+        <antcall target="build-lib-rsa"/>
+        <antcall target="build-lib-string"/>
         <antcall target="build-app-demo"/>
     </target>
 
@@ -87,20 +84,14 @@
             <group title="Fortuna PRNG">
                 <package name="org.openjavacard.lib.fortuna"/>
             </group>
-            <group title="RSA extensions">
+            <group title="RSA cipher extensions">
                 <package name="org.openjavacard.lib.rsa"/>
             </group>
             <group title="Debug library">
                 <package name="org.openjavacard.lib.debug"/>
             </group>
-            <group title="Auth library">
-                <package name="org.openjavacard.lib.auth"/>
-            </group>
             <group title="Password functions">
                 <package name="org.openjavacard.lib.password"/>
-            </group>
-            <group title="CBOR processing">
-                <package name="org.openjavacard.lib.cbor"/>
             </group>
             <group title="ISO7816 file system">
                 <package name="org.openjavacard.lib.isofs"/>
@@ -113,7 +104,6 @@
             </group>
 
             <sourcepath>
-                <pathelement path="library-auth/src/main/java"/>
                 <pathelement path="library-ber/src/main/java"/>
                 <pathelement path="library-ctlv/src/main/java"/>
                 <pathelement path="library-debug/src/main/java"/>
@@ -311,48 +301,12 @@
                         exps="build/classes/lib-fortuna"/>
                 <import jar="build/classes/lib-password"
                         exps="build/classes/lib-password"/>
+                <import jar="build/classes/lib-ctlv"
+                        exps="build/classes/lib-ctlv"/>
                 <import jar="build/classes/lib-debug"
                         exps="build/classes/lib-debug"/>
                 <applet aid="D27600017710021001000101"
                         class="org.openjavacard.app.demo.DemoApplet"/>
-            </cap>
-        </javacard>
-    </target>
-
-    <target name="build-svc-debug" depends="ant-javacard">
-        <javacard jckit="${sdk.jc222}">
-            <cap output="build/javacard/openjavacard-svc-debug-${version.svc.debug}.cap"
-                 jar="build/javacard/openjavacard-svc-debug-${version.svc.debug}.jar"
-                 classes="build/classes/svc-debug"
-                 export="build/classes/svc-debug"
-                 sources="service-debug/src/main/java"
-                 aid="D276000177100210200001"
-                 package="org.openjavacard.svc.debug"
-                 version="${version.svc.debug}">
-                <import jar="build/classes/lib-ber"
-                        exps="build/classes/lib-ber"/>
-                <import jar="build/classes/lib-debug"
-                        exps="build/classes/lib-debug"/>
-                <applet aid="D27600017710021020000101"
-                        class="org.openjavacard.svc.debug.DebugApplet"/>
-            </cap>
-        </javacard>
-    </target>
-
-    <target name="build-svc-random" depends="ant-javacard">
-        <javacard jckit="${sdk.jc222}">
-            <cap output="build/javacard/openjavacard-svc-random-${version.svc.random}.cap"
-                 jar="build/javacard/openjavacard-svc-random-${version.svc.random}.jar"
-                 classes="build/classes/svc-random"
-                 export="build/classes/svc-random"
-                 sources="service-random/src/main/java"
-                 aid="D276000177100210210001"
-                 package="org.openjavacard.svc.random"
-                 version="${version.svc.random}">
-                <import jar="build/classes/lib-fortuna"
-                        exps="build/classes/lib-fortuna"/>
-                <applet aid="D27600017710021021000101"
-                        class="org.openjavacard.svc.random.RandomApplet"/>
             </cap>
         </javacard>
     </target>
