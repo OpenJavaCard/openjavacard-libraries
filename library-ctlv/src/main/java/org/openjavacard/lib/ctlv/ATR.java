@@ -1,5 +1,8 @@
 package org.openjavacard.lib.ctlv;
 
+/**
+ * Definitions for ATR historical bytes
+ */
 public class ATR {
 
     /** Category indicator: historical bytes coded in non-TLV format */
