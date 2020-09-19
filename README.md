@@ -12,22 +12,24 @@ For more information about this overall project, see our [website](https://openj
 
 You can follow us on [Twitter](https://twitter.com/openjavacardorg) and chat with us on [Gitter](https://gitter.im/openjavacard/general).
 
-### Components
+### Overview
 
 | Name                  | Description                         | Status       |
 | --------------------- |------------------------------------ | ------------ |
-| library-auth          | Authentication framework            | Experimental |
+| library-auth          | Authentication framework            | Experiment   |
 | library-ber           | BER-TLV processing                  | Usable       |
-| library-ctlv          | Compact-TLV utilities               | Experimental |
-| library-cvmpin        | CVM PIN wrapper                     | Experimental |
-| library-debug         | Debug utilities                     | Experimental |
+| library-codec         | Codec library                       | Experiment   |
+| library-ctlv          | Compact-TLV utilities               | Experiment   |
+| library-cvmpin        | CVM PIN wrapper                     | Experiment   |
+| library-debug         | Debug utilities                     | Experiment   |
 | library-fortuna       | Fortuna PRNG                        | Usable       |
-| library-isofs         | ISO7816 filesystem                  | Experimental |
-| library-oath          | OATH OTP authentication             | Experimental |
-| library-password      | Password authentication             | Experimental |
-| library-rsa           | RSA supplementary ciphers           | Experimental |
-| library-string        | String processing                   | Experimental |
-| library-tlv           | TLV object representation           | Experimental |
+| library-isofs         | ISO7816 filesystem                  | Experiment   |
+| library-oath          | OATH authentication                 | Experiment   |
+| library-password      | Password authentication             | Experiment   |
+| library-rsa           | RSA supplementary ciphers           | Experiment   |
+| library-string        | String processing                   | Experiment   |
+| library-tlv           | TLV object representation           | Experiment   |
+| --------------------- |------------------------------------ | ------------ |
 
 ### Components
 
@@ -36,39 +38,35 @@ You can follow us on [Twitter](https://twitter.com/openjavacardorg) and chat wit
    * Builder-based TLV writing
    * Supports 2-byte tags
    * Flexible interface
-   * Compact design
+   * Allocation-free design
  * Compact-TLV library
    * Minimalist implementation
    * Can construct historical bytes for ATR
- * GlobalPlatform CVM utilities
-   * Wraps a CVM as an OwnerPIN
- * Fortuna PRNG library
+ * Fortuna PRNG implementation
    * Well-Known algorithm
    * Refuses operation without seed
  * RSA library
    * OAEP encryption
    * MGF1 masking
- * Password library
-   * Password hashing for authentication
  * String library
    * Character type functions
    * String statistics utility
- * Debug library
-   * Determine exception types
-   * See memory usage
-   * Debug service for event recording
-   * Records APDUs, exceptions, log messages
-   * Needs polish and documentation
+ * Password library
+   * Salt and hash
 
 ### Hacks And Intentions
 
  * ISO filesystem library
-   * some code exists
+   * lots of code exists
    * nothing usable yet
-   * could use BER library
  * Authentication library
    * some code exists
    * modularize authentication
    * support key derivation
+ * TLV object representation
+ * OATH cipher suite
+ * Blinding ciphers (pseudonymous buddy matching)
  * CBOR implementation
    * we would love to have one
+ * Codec library
+   * hex, base64...
