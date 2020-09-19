@@ -33,19 +33,38 @@ public class CVMPIN implements PIN, Shareable {
         mCVM = cvm;
     }
 
+    /**
+     * @return number of tries remaining
+     */
     public byte getTriesRemaining() {
         return mCVM.getTriesRemaining();
     }
 
+    /**
+     * @return true if validated
+     */
     public boolean isValidated() {
         return mCVM.isVerified();
     }
 
+    /**
+     * Check the given PIN against the underlying CVM
+     *
+     * @param buf containing PIN
+     * @param off of PIN
+     * @param len of PIN
+     * @return true if PIN is correct
+     * @throws ArrayIndexOutOfBoundsException on usage error
+     * @throws NullPointerException on usage error
+     */
     public boolean check(byte[] buf, short off, byte len) throws ArrayIndexOutOfBoundsException, NullPointerException {
         short res = mCVM.verify(buf, off, len, CVM.FORMAT_ASCII);
         return res == CVM.CVM_SUCCESS;
     }
 
+    /**
+     * Reset and unblock the CVM
+     */
     public void reset() {
         mCVM.resetAndUnblockState();
     }
