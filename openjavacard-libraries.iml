@@ -5,22 +5,19 @@
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/library-ber/src/main/java" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/library-fortuna/src/main/java" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/service-debug/src/main/java" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/library-debug/src/main/java" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/library-auth/src/main/java" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/applet-demo/src/main/java" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/library-rsa/src/main/java" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/service-random/src/main/java" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/library-string/src/main/java" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/library-password/src/main/java" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/library-isofs/src/main/java" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/library-ctlv/src/main/java" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/applet-iso/src/main/java" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/library-cvm/src/main/java" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/library-tlv/src/main/java" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/lib-oath/src/main/java" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/library-oath/src/main/java" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/library-blinding/src/main/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/library-cvmpin/src/main/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/library-codec/src/main/java" isTestSource="false" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
