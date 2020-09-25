@@ -7,3 +7,8 @@ script:
   - ant clean
   - ant test
   - ant javadoc
+addons:
+  apt:
+    packages:
+      - ant
+      - junit4
