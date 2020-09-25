@@ -188,7 +188,7 @@ public class BERWriter implements BERHandler {
             error();
         }
         // check that we have only one top node
-        checkSingleToplevel();
+        //checkSingleToplevel();
         // check for available space
         checkSpace(totalLength);
         // push everything
@@ -266,7 +266,7 @@ public class BERWriter implements BERHandler {
             error();
         }
         // check that we have only one top node
-        checkSingleToplevel();
+        //checkSingleToplevel();
         // set constructed flag in tag
         tag = BERTag.tagAsConstructed(tag);
         // push everything
