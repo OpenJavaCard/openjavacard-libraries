@@ -7,3 +7,6 @@
 [submodule "ext/globalplatform-exports"]
 	path = ext/globalplatform-exports
 	url = https://github.com/OpenJavaCard/globalplatform-exports.git
+[submodule "ext/jcardsim"]
+	path = ext/jcardsim
+	url = https://github.com/licel/jcardsim

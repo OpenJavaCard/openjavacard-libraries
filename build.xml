@@ -4,9 +4,12 @@
     <description>OpenJavaCard Libraries</description>
 
     <property name="ext.ant-javacard" value="ext/ant-javacard"/>
+    <property name="ext.jcardsim" value="ext/jcardsim"/>
 
     <property name="sdk.jc222" value="ext/javacard-sdks/jc222_kit"/>
     <property name="sdk.globalplatform" value="ext/globalplatform-exports"/>
+
+    <property name="jar.jcardsim" value="${ext.jcardsim}/jcardsim-2.2.2-all.jar"/>
 
     <property name="version.lib.auth" value="0.0"/>
     <property name="version.lib.ber" value="0.0"/>
@@ -48,6 +51,37 @@
     </target>
 
     <target name="test" description="Run tests" depends="build">
+        <antcall target="testonly"/>
+    </target>
+
+    <target name="testonly" description="Run tests without building">
+        <mkdir dir="build/tests/lib-ber"/>
+
+        <path id="classpath.tests">
+            <pathelement path="build/classes/lib-ber"/>
+            <pathelement location="/usr/share/java/junit4.jar"/>
+            <pathelement path="${jar.jcardsim}"/>
+        </path>
+
+        <javac srcdir="library-ber/src/test/java"
+               destdir="build/tests/lib-ber"
+               includeantruntime="false"
+               classpathref="classpath.tests"/>
+
+        <junit printSummary="no" fork="yes" failureproperty="junit.failure">
+            <classpath>
+                <pathelement path="build/tests/lib-ber"/>
+                <pathelement path="build/classes/lib-ber"/>
+                <pathelement location="/usr/share/java/junit4.jar"/>
+                <pathelement path="${jar.jcardsim}"/>
+            </classpath>
+            <formatter type="plain" />
+            <formatter type="plain" usefile="false" />
+            <batchtest todir="build/tests">
+                <fileset dir="library-ber/src/test/java" includes="**/*.java" />
+            </batchtest>
+        </junit>
+        <fail if="junit.failure" message="Unit test(s) failed.  See reports!"/>
     </target>
 
     <target name="prebuilt" description="Update prebuilt files" depends="build">

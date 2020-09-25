@@ -18,6 +18,7 @@
       <sourceFolder url="file://$MODULE_DIR$/library-oath/src/main/java" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/library-cvmpin/src/main/java" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/library-codec/src/main/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/library-ber/src/test/java" isTestSource="true" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
@@ -39,6 +40,15 @@
         <SOURCES>
           <root url="jar://$MODULE_DIR$/ext/globalplatform-exports/org.globalplatform-1.1/gpapi-globalplatform.jar!/" />
         </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" scope="TEST">
+      <library>
+        <CLASSES>
+          <root url="jar:///usr/share/java/junit4.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
       </library>
     </orderEntry>
   </component>
