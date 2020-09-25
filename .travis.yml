@@ -11,4 +11,5 @@ addons:
   apt:
     packages:
       - ant
+      - ant-optional
       - junit4
