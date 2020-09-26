@@ -123,8 +123,10 @@ public class ISOFileSystem implements ISOConfig, ISOExtensions {
         return eft;
     }
 
-    private void accessFileRecord(EF file, byte access) {
+    private EFRecords accessFileRecord(EF file, byte access) {
+        EFRecords efr = (EFRecords)file;
         accessFile(file, access);
+        return efr;
     }
 
     private DF findByDFName(byte[] pathBuf, short pathOff, short pathLen) {
@@ -369,11 +371,18 @@ public class ISOFileSystem implements ISOConfig, ISOExtensions {
             ISOException.throwIt(SW_INCORRECT_P1P2);
         }
 
+        // always create below current DF
         DF currentDF = getSelectedDF();
         // prepare file creation logic
         mFileCreator.prepare(currentDF);
         // process provided FCP data
         mReader.parse(buf, OFFSET_CDATA, lc, mFileCreator);
+        // access the parent
+        if(mFileCreator.isCreatingDF()) {
+            accessDirectory(currentDF, ACCESS_DF_CREATE_DF);
+        } else {
+            accessDirectory(currentDF, ACCESS_DF_CREATE_EF);
+        }
         // actually create the file
         ISOFile newFile = mFileCreator.create();
         // select the file
@@ -445,7 +454,9 @@ public class ISOFileSystem implements ISOConfig, ISOExtensions {
         byte p1Type = (byte)(p1 & LIFECYCLE_P1_TYPE_MASK);
         if (p1Type == LIFECYCLE_P1_TYPE_FILE) {
             ISOFile file = processLifecycleFindFile(apdu);
+            DF parent = file.getParent();
             // XXX implement
+            selectFile(parent);
         } else {
             ISOException.throwIt(SW_WRONG_P1P2);
         }
@@ -650,7 +661,7 @@ public class ISOFileSystem implements ISOConfig, ISOExtensions {
      * @param apdu to process
      */
     private void processSearchBinary(APDU apdu, byte ins, EF file, short offset) {
-        byte[] buf = apdu.getBuffer();
+        // access the file
         EFTransparent eft = accessFileBinary(file, ACCESS_EF_READ);
 
         // unsupported
@@ -663,9 +674,10 @@ public class ISOFileSystem implements ISOConfig, ISOExtensions {
      * @param apdu to process
      */
     private void processWriteBinary(APDU apdu, byte ins, EF file, short offset) {
-        byte[] buf = apdu.getBuffer();
+        // access the file
         EFTransparent eft = accessFileBinary(file, ACCESS_EF_WRITE);
 
+        byte[] buf = apdu.getBuffer();
         short lc = apdu.getIncomingLength();
         short oc = apdu.getOffsetCdata();
 
@@ -691,9 +703,10 @@ public class ISOFileSystem implements ISOConfig, ISOExtensions {
      * @param apdu to process
      */
     private void processUpdateBinary(APDU apdu, byte ins, EF file, short offset) {
-        byte[] buf = apdu.getBuffer();
+        // access the file
         EFTransparent eft = accessFileBinary(file, ACCESS_EF_UPDATE);
 
+        byte[] buf = apdu.getBuffer();
         short lc = apdu.getIncomingLength();
         short oc = apdu.getOffsetCdata();
 
@@ -719,15 +732,17 @@ public class ISOFileSystem implements ISOConfig, ISOExtensions {
      * @param apdu to process
      */
     private void processEraseBinary(APDU apdu, byte ins, EF file, short offset) {
-        byte[] buf = apdu.getBuffer();
+        // access the file
         EFTransparent eft = accessFileBinary(file, ACCESS_EF_UPDATE);
 
+        // check things
         short endOffset = -1;
         // XXX !!?
         if(endOffset == -1) {
             endOffset = eft.getLength();
         }
 
+        // perform the operation
         eft.eraseData(offset, endOffset);
     }
 
@@ -786,10 +801,17 @@ public class ISOFileSystem implements ISOConfig, ISOExtensions {
 
     private void processReadRecord(APDU apdu, EF file, byte p1, byte p2) {
         byte[] buf = apdu.getBuffer();
+        // determine records to read
         byte firstRecord, lastRecord;
         byte p2Select = (byte)(p2 & READ_RECORD_P2_SELECT_MASK);
         switch (p2Select) {
             // XXX implement SELECT BY RID
+            case READ_RECORD_P2_SELECT_RID_FIRST:
+            case READ_RECORD_P2_SELECT_RID_LAST:
+            case READ_RECORD_P2_SELECT_RID_NEXT:
+            case READ_RECORD_P2_SELECT_RID_PREV:
+                ISOException.throwIt(SW_INCORRECT_P1P2);
+                break;
             case READ_RECORD_P2_SELECT_NUMBER:
                 firstRecord = p1;
                 lastRecord = p1;
@@ -858,6 +880,8 @@ public class ISOFileSystem implements ISOConfig, ISOExtensions {
 
     private void processAppendRecord(APDU apdu, EF file, byte p1, byte p2) {
         byte[] buf = apdu.getBuffer();
+        // access the file
+        EFRecords efr = accessFileRecord(file, ACCESS_EF_WRITE);
         // P1 must be 0
         if(p1 != 0) {
             ISOException.throwIt(SW_INCORRECT_P1P2);

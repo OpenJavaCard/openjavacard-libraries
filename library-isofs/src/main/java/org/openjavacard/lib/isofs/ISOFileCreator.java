@@ -32,6 +32,12 @@ public class ISOFileCreator implements BERHandler, ISOExtensions {
         mVars = JCSystem.makeTransientShortArray(NUM_VARS, JCSystem.CLEAR_ON_RESET);
     }
 
+    public boolean isCreatingDF() {
+        byte fdb = (byte)mVars[VAR_FDB];
+        return ((fdb & FDB_CATEGORY_MASK) == FDB_CATEGORY_SPECIAL)
+                && ((fdb & FDB_SPECIAL_MASK) == FDB_SPECIAL_DF);
+    }
+
     public void prepare(DF parent) {
         mRefs[REF_PARENT] = parent;
     }
