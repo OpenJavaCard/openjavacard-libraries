@@ -606,6 +606,7 @@ public class ISOFileSystem implements ISOConfig, ISOExtensions {
             }
         } else {
             // process offset DO?
+            ISOException.throwIt(SW_FUNC_NOT_SUPPORTED);
         }
         return off;
     }
@@ -651,6 +652,9 @@ public class ISOFileSystem implements ISOConfig, ISOExtensions {
     private void processSearchBinary(APDU apdu, byte ins, EF file, short offset) {
         byte[] buf = apdu.getBuffer();
         EFTransparent eft = accessFileBinary(file, ACCESS_EF_READ);
+
+        // unsupported
+        ISOException.throwIt(SW_INS_NOT_SUPPORTED);
     }
 
     /**
@@ -802,10 +806,16 @@ public class ISOFileSystem implements ISOConfig, ISOExtensions {
                 ISOException.throwIt(SW_INCORRECT_P1P2);
                 break;
         }
+
+        // XXX implement
+        ISOException.throwIt(SW_INS_NOT_SUPPORTED);
     }
 
     private void processSearchRecord(APDU apdu, EF file, byte p1, byte p2) {
         byte[] buf = apdu.getBuffer();
+
+        // XXX implement
+        ISOException.throwIt(SW_INS_NOT_SUPPORTED);
     }
 
     private void processWriteRecord(APDU apdu, EF file, byte p1, byte p2) {
@@ -828,6 +838,9 @@ public class ISOFileSystem implements ISOConfig, ISOExtensions {
                 ISOException.throwIt(SW_INCORRECT_P1P2);
                 break;
         }
+
+        // XXX implement
+        ISOException.throwIt(SW_INS_NOT_SUPPORTED);
     }
 
     private void processUpdateRecord(APDU apdu, EF file, byte p1, byte p2) {
@@ -838,6 +851,9 @@ public class ISOFileSystem implements ISOConfig, ISOExtensions {
                 ISOException.throwIt(SW_INCORRECT_P1P2);
                 break;
         }
+
+        // XXX implement
+        ISOException.throwIt(SW_INS_NOT_SUPPORTED);
     }
 
     private void processAppendRecord(APDU apdu, EF file, byte p1, byte p2) {
@@ -846,6 +862,9 @@ public class ISOFileSystem implements ISOConfig, ISOExtensions {
         if(p1 != 0) {
             ISOException.throwIt(SW_INCORRECT_P1P2);
         }
+
+        // XXX implement
+        ISOException.throwIt(SW_INS_NOT_SUPPORTED);
     }
 
     private void processEraseRecord(APDU apdu, EF file, byte p1, byte p2) {
@@ -854,10 +873,14 @@ public class ISOFileSystem implements ISOConfig, ISOExtensions {
 
     private void processGetData(APDU apdu) {
         byte[] buf = apdu.getBuffer();
+        // XXX implement
+        ISOException.throwIt(SW_INS_NOT_SUPPORTED);
     }
 
     private void processPutData(APDU apdu) {
         byte[] buf = apdu.getBuffer();
+        // XXX implement
+        ISOException.throwIt(SW_INS_NOT_SUPPORTED);
     }
 
 }
