@@ -1,4 +1,4 @@
-package org.openjavacard.lib.codecs;
+package org.openjavacard.lib.codec;
 
 import javacard.framework.ISO7816;
 import javacard.framework.ISOException;

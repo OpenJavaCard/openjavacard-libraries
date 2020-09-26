@@ -1,4 +1,4 @@
-package org.openjavacard.lib.codecs;
+package org.openjavacard.lib.codec;
 
 public interface Encoder {
 
